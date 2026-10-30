@@ -1,0 +1,446 @@
+/* =======================================================
+   1. IMPORTAÇÃO DE VARIÁVEIS GLOBAIS
+======================================================= */
+@import url("../css/style.css");
+
+/* =======================================================
+   2. CONFIGURAÇÕES E VISUAL DO TEXTO INFORMATIVO
+======================================================= */
+.badge-reading {
+    background-color: var(--success-light);
+    color: var(--success-green);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.text-main-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 750px;
+    margin: 0 auto;
+    gap: 25px;
+}
+
+.intro-heading {
+    text-align: center;
+}
+
+.info-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+    transition: transform 0.2s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+}
+
+.info-card h3 {
+    color: var(--primary-blue-dash);
+    font-size: 18px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-card p {
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+/* Caixa com a sequência da escalada musical */
+.escala-sequencia-box {
+    background: #f1f5f9;
+    padding: 14px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 12px;
+    font-weight: 600;
+    color: var(--primary-blue);
+    overflow-x: auto;
+    white-space: nowrap;
+    border: 1px solid var(--border-color);
+}
+
+/* =======================================================
+   3. ESTILOS DA MINI PAUTA INTERATIVA (CORRIGIDO)
+======================================================= */
+.pauta-interativa-card {
+    background-color: #fafbfc;
+}
+
+.pauta-subtext {
+    font-size: 14px !important;
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+}
+
+.pauta-controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.nota-selector {
+    background-color: #ffffff;
+    border: 1px solid var(--border-color, #e2e8f0);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary, #1a202c);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nota-selector:hover {
+    background-color: #f1f5f9;
+    border-color: var(--text-secondary, #4a5568);
+}
+
+.nota-selector.active {
+    background-color: var(--primary-blue, #002d72);
+    color: #ffffff;
+    border-color: var(--primary-blue, #002d72);
+}
+
+.mini-staff-wrapper {
+    background: #ffffff;
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Ajuste da pauta interna */
+.mini-staff {
+    margin-bottom: 0px !important;
+    width: 100%;
+    max-width: 500px;
+    height: 140px; /* Aumentado levemente para acomodar notas graves */
+    position: relative; /* Essencial para o posicionamento do 'top' da nota */
+    border-top: 1px solid transparent; 
+}
+
+/* Força a estilização uniforme da nota na minipauta */
+.mini-staff .note {
+    position: absolute;
+    left: 50%;
+    width: 22px;
+    height: 16px;
+    background: #1a202c;
+    border-radius: 50%;
+    transform: rotate(-20deg);
+    transition: top 0.2s ease-out;
+    z-index: 10;
+}
+
+/* Cria a linha extra para as notas que saem do pentagrama */
+.mini-staff .note::after {
+    content: '';
+    position: absolute;
+    background: #1a202c; /* Mesma cor da nota */
+    height: 2px;
+    width: 36px;
+    left: -7px;
+    top: 7px; /* Centraliza a linha no meio da nota */
+    display: none; /* Fica escondida por padrão */
+    transform: rotate(20deg); /* Desfaz a inclinação da nota para a linha ficar reta */
+}
+
+/* Mostra a linha CORTANDO o meio do Dó Central e do Mi Grave */
+.position-Do3::after, 
+.position-Mi1::after {
+    display: block;
+}
+
+/* Mostra a linha ACIMA do Ré Grave (já que ele fica no espaço) */
+.position-Re1::after {
+    display: block;
+    top: -13px; 
+}
+
+/* Criação da linha suplementar base */
+.mini-staff .note::before {
+    content: '';
+    position: absolute;
+    background: #1a202c; /* Mesma cor da nota */
+    height: 1.5px;
+    width: 34px;
+    left: -6px;
+    display: none; /* Fica oculta por padrão */
+    /* Desfaz a rotação de -20deg da nota para a linha ficar perfeitamente reta */
+    transform: rotate(20deg); 
+}
+
+/* Mostra a linha cortando o meio da nota para o Dó Central e Mi Grave */
+.position-Do3::before, 
+.position-Mi1::before {
+    display: block;
+    top: 7px; /* Exatamente o centro vertical da nota */
+}
+
+/* Mostra a linha ACIMA da nota para o Ré Grave (simulando a linha do Mi) */
+.position-Re1::before {
+    display: block;
+    top: -13px; 
+    /* Pequeno ajuste de eixo por causa da contra-rotação */
+    transform: rotate(20deg) translateX(4px);
+}
+
+/* Linhas do pentagrama */
+.mini-staff .line {
+    height: 1px;
+    background-color: #000000;
+    margin-top: 19px; /* Cria o espaçamento real do pentagrama */
+    width: 100%;
+}
+
+/* Ajuste do tamanho e alinhamento da Clave de Fá */
+.mini-staff .clef {
+    position: absolute;
+    left: 10px;
+    top: 2px; /* Ajuste para alinhar os dois pontos na linha certa */
+    font-size: 55px; /* Tamanho menor e mais adequado */
+    line-height: 1;
+    user-select: none;
+}
+
+/* =======================================================
+   7. MAPEAMENTO DE KEYFRAMES (FECHADO CORRETAMENTE)
+======================================================= */
+@keyframes waveFlow {
+    0% { background-position: -150px 0; }
+    100% { background-position: 300px 0; }
+}
+
+@keyframes floatClef {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes backgroundWave {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
+}
+
+/* =======================================================
+   CALIBRAÇÃO DE TODAS AS POSIÇÕES (CLAVE DE FÁ)
+======================================================= */
+.position-Re1 { top: 122px; }  
+.position-Mi1 { top: 112px; }  
+.position-Fa1 { top: 102px; }  
+.position-Sol1 { top: 92px; }  
+.position-La1 { top: 82px; }   
+.position-Si1 { top: 72px; }   
+.position-Do2 { top: 62px; }   
+.position-Re2 { top: 52px; }   
+.position-Mi2 { top: 42px; }   
+.position-Fa2 { top: 32px; }   
+.position-Sol2 { top: 22px; }  
+.position-La2 { top: 12px; }   
+.position-Si2 { top: 2px; }    
+.position-Do3 { top: -8px; }
+
+/* =======================================================
+   5. COMPOSIÇÃO DO LAYOUT E GRIDS
+======================================================= */
+.split-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media(max-width: 620px) {
+    .split-container { 
+        grid-template-columns: 1fr; 
+    }
+}
+
+.split-card {
+    background: #f8fafc;
+    border-left: 4px solid var(--primary-blue);
+    padding: 18px;
+    border-radius: 4px 12px 12px 4px;
+}
+
+.split-card h4 {
+    color: var(--text-dark);
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.split-card p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.highlight-card {
+    background-color: #fffbeb;
+    border: 1px dashed #f59e0b;
+}
+
+.highlight-card h3 {
+    color: #b45309;
+}
+
+.action-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-start-lessons {
+    padding: 16px 45px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: var(--primary-blue-dash);
+    color: #ffffff;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 45, 114, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-start-lessons:hover {
+    background-color: var(--active-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 45, 114, 0.3);
+}
+
+/* =======================================================
+   6. TELA DE CARREGAMENTO INTELIGENTE (WAVE LOADER)
+======================================================= */
+.wave-loader-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #ffffff;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.loader-center-box {
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+    position: relative;
+    z-index: 10;
+}
+
+.animated-clef {
+    font-size: 80px;
+    color: var(--primary-blue-dash);
+    line-height: 1;
+    margin-bottom: 15px;
+    animation: floatClef 2s infinite ease-in-out;
+}
+
+.loader-headline {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 16px;
+    margin-bottom: 25px;
+    letter-spacing: 0.5px;
+}
+
+.wave-bar-container {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background-color: #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.wave-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary-blue-dash);
+    border-radius: 12px;
+    transition: width 0.08s linear;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Fluxo interno da ondinha */
+.wave-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.4) 30%,
+        var(--active-blue) 50%,
+        rgba(255, 255, 255, 0.4) 70%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 150px 100%;
+    animation: waveFlow 1s infinite linear;
+}
+
+/* Decorações fluidas traseiras */
+.bg-wave-decoration {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120%;
+    height: 150px;
+    background: rgba(0, 45, 114, 0.03);
+    border-radius: 40%;
+    animation: backgroundWave 6s infinite linear;
+    z-index: 1;
+}
+
+.bg-wave-decoration-2 {
+    position: absolute;
+    bottom: -30px;
+    left: 45%;
+    transform: translateX(-50%);
+    width: 130%;
+    height: 160px;
+    background: rgba(0, 61, 165, 0.02);
+    border-radius: 43%;
+    animation: backgroundWave 9s infinite linear;
+    z-index: 2;
+}
+
+/* =======================================================
+   7. MAPEAMENTO DE KEYFRAMES
+======================================================= */
+@keyframes waveFlow {
+    0% { background-position: -150px 0; }
+    100% { background-position: 300px 0; }
+}
+
+@keyframes floatClef {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+@keyframes backgroundWave {
+    0% { transform: translateX(-50%) rotate(0deg); }
+    100% { transform: translateX(-50%) rotate(360deg); }
+}

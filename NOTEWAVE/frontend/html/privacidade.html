@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteWave - Políticas de Privacidade & LGPD</title>
+
+    <!-- Fontes e Ícones Oficiais -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+
+    <!-- CSS Padronizado -->
+    <link rel="stylesheet" href="../css/configuracoes.css">
+    
+    <style>
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .help-main-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-light);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .help-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.2s ease;
+        }
+
+        .btn-voltar:hover {
+            color: var(--primary-blue);
+        }
+
+        .privacy-section {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .privacy-item {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .privacy-item h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .privacy-item p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="help-main-container">
+
+        <!-- Barra superior com botão de voltar -->
+        <div class="help-top-bar">
+            <a href="configuracoes.html" class="btn-voltar">
+                <i class="ph ph-arrow-left"></i> Voltar para Configurações
+            </a>
+        </div>
+
+        <header class="page-header">
+            <h1>Políticas de Privacidade & LGPD</h1>
+            <p>Saiba como protegemos seus dados na plataforma de ensino NoteWave.</p>
+        </header>
+
+        <div class="privacy-section">
+            <h2 style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 10px;">
+                <i class="ph ph-shield-check" style="color: var(--primary-blue);"></i> Como Tratamos Seus Dados
+            </h2>
+
+            <div class="privacy-item">
+                <h3>1. Coleta de Informações</h3>
+                <p>Coletamos seu e-mail e senha para autenticação, ou dados básicos da sua Conta Google caso opte pelo login simplificado.</p>
+            </div>
+
+            <div class="privacy-item">
+                <h3>2. Acesso à Galeria de Fotos</h3>
+                <p>A permissão de acesso à galeria do dispositivo é usada <strong>exclusivamente</strong> quando você decide alterar sua foto de perfil na plataforma.</p>
+            </div>
+
+            <div class="privacy-item">
+                <h3>3. Sistema de Gamificação</h3>
+                <p>Seus pontos, conquistas de medalhes e registros de constância são associados ao seu perfil para exibir seu progresso nas aulas de música.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script do Modo Escuro -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>

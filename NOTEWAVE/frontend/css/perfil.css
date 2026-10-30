@@ -1,0 +1,531 @@
+/* --- RESET & VARIÁVEIS --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --primary-blue: #003399;
+  --primary-dark: #001845;
+  --bg-color: #f6f8fc;
+  --card-bg: #ffffff;
+  --text-main: #1a1d20;
+  --text-muted: #6c757d;
+  --border-light: #edf2f7;
+  --disabled-gray: #e2e8f0;
+  --disabled-icon: #a0aec0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* --- SIDEBAR BASE PADRONIZADA --- */
+.sidebar {
+width: 280px;
+min-width: 280px;
+height: 100vh;
+background: var(--card-bg, #ffffff);
+border-right: 1px solid var(--border-light, #edf2f7);
+display: flex;
+flex-direction: column;
+padding: 36px 24px;
+position: sticky;
+top: 0;
+transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar-header {
+display: flex;
+align-items: center;
+gap: 12px;
+font-size: 24px;
+font-weight: 700;
+color: var(--primary-dark, #001845);
+margin-bottom: 36px;
+}
+
+.sidebar-header i {
+font-size: 28px;
+color: var(--primary-blue, #003399);
+}
+
+body.dark-mode .sidebar-header {
+color: var(--text-main, #f8fafc);
+}
+
+body.dark-mode .sidebar-header i {
+color: var(--primary-blue, #38bdf8);
+}
+
+.sidebar-nav {
+display: flex;
+flex-direction: column;
+gap: 10px;
+flex: 1;
+}
+
+.nav-item {
+display: flex;
+align-items: center;
+gap: 16px;
+padding: 14px 20px;
+border-radius: 16px;
+text-decoration: none;
+color: var(--text-muted, #4a5568);
+font-weight: 600;
+font-size: 16px;
+transition: all 0.2s ease;
+}
+
+.nav-item i {
+font-size: 22px;
+}
+
+.nav-item:hover {
+background-color: var(--border-light, #f1f5f9);
+color: var(--primary-blue, #003399);
+}
+
+.nav-item.active {
+background-color: var(--primary-blue, #003399);
+color: #ffffff !important;
+}
+
+body.dark-mode .nav-item.active {
+background-color: var(--primary-blue, #38bdf8);
+color: #0b132b !important;
+}
+
+.sidebar-footer {
+margin-top: auto;
+padding-top: 20px;
+}
+
+.logout {
+color: #e53e3e;
+}
+
+.logout:hover {
+background-color: rgba(229, 62, 62, 0.1);
+color: #c53030;
+}
+
+/* ==========================================================================
+ SUPORTE AO MODO ESCURO (DARK MODE) - PERFIL
+ ========================================================================== */
+
+ body.dark-mode {
+  --primary-blue: #38bdf8;
+  --primary-dark: #f8fafc;
+  --bg-color: #0b132b;
+  --card-bg: #1c2541;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-light: #2e3a59;
+  --disabled-gray: #1e293b;
+  --disabled-icon: #475569;
+}
+
+/* Ajustes específicos de componentes no modo escuro */
+body.dark-mode .profile-card,
+body.dark-mode .stat-card,
+body.dark-mode .badges-section {
+  background-color: var(--card-bg);
+  border-color: var(--border-light);
+}
+
+body.dark-mode .day-circle {
+  background-color: var(--disabled-gray);
+  color: transparent;
+}
+
+body.dark-mode .day-item.completed .day-circle {
+  background-color: var(--primary-blue);
+  color: #0b132b;
+}
+
+body.dark-mode .day-item.completed span {
+  color: var(--primary-blue);
+}
+
+body.dark-mode .badge-item.locked .badge-icon {
+  background-color: #1e293b;
+  color: var(--disabled-icon);
+  border-color: #2e3a59;
+}
+
+body.dark-mode .modal-content {
+  background: var(--card-bg);
+  color: var(--text-main);
+  border: 1px solid var(--border-light);
+}
+
+body.dark-mode .btn-secondary {
+  background: #2e3a59;
+  color: var(--text-main);
+}
+
+/* Correção para o item ativo do menu lateral no perfil */
+body.dark-mode .nav-item.active {
+  background-color: var(--primary-blue);
+  color: #0b132b !important;
+}
+
+body.dark-mode .nav-item.active i,
+body.dark-mode .nav-item.active span {
+  color: #0b132b !important;
+}
+
+/* --- MAIN CONTENT --- */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 900px;
+  background: var(--card-bg);
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-light);
+}
+
+/* --- PROFILE HEADER --- */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.welcome-box h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.welcome-box p {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+/* AVATAR COM OVERLAY */
+.avatar-container {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid var(--border-light);
+}
+
+.avatar-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.avatar-container:hover .avatar-overlay {
+  opacity: 1;
+}
+
+/* --- GRID DE ESTATÍSTICAS --- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.stat-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text-main);
+}
+
+/* STREAK (SEQUÊNCIA) */
+.streak-count {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.flame-icon {
+  font-size: 32px;
+}
+
+.streak-count strong {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.days-label {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.streak-subtext {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* DIAS DA SEMANA (POR PADRÃO CINZAS) */
+.week-days {
+  display: flex;
+  justify-content: space-between;
+}
+
+.day-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.day-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--disabled-gray);
+  color: transparent; /* Esconde o check quando desativado */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+/* Classe Ativa para Dias Concluídos (Azul com Check Visível) */
+.day-item.completed .day-circle {
+  background-color: var(--primary-blue);
+  color: white;
+}
+
+.day-item.completed span {
+  color: var(--primary-blue);
+}
+
+/* PROGRESSO GERAL (ROSCA/CIRCLE) */
+.progress-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.circle-progress-wrapper {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-fill {
+  stroke-dasharray: 389.5; /* 2 * PI * 62 */
+  stroke-dashoffset: 389.5; /* Inicialmente 0% */
+  transition: stroke-dashoffset 0.5s ease;
+}
+
+.progress-percentage {
+  position: absolute;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.progress-subtext {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 12px;
+}
+
+/* --- MEDALHAS --- */
+.badges-section {
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.badges-section h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.badges-grid {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  width: 100px;
+}
+
+.badge-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 4px solid #e8f1ff;
+  transition: all 0.2s ease;
+}
+
+.badge-item span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Estado Bloqueado/Cinza das Medalhas */
+.badge-item.locked .badge-icon {
+  background-color: #f1f5f9;
+  color: var(--disabled-icon);
+  border-color: #ffffff;
+}
+
+.badge-item.locked span {
+  color: var(--disabled-icon);
+}
+
+/* --- MODAL DE CROP --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: none; /* Controlado via JS */
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  max-width: 500px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-content h2 {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.img-container {
+  max-height: 350px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.img-container img {
+  max-width: 100%;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--primary-blue);
+  color: white;
+}
+
+.btn-secondary {
+  background: #edf2f7;
+  color: #4a5568;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .badges-grid {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

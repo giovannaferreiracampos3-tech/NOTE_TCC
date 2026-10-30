@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteWave - Entrar / Cadastrar-se</title>
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <section class="brand-section">
+            <div class="logo-image-wrapper">
+                <img src="../imagem/nota.png" alt="Logo NoteWave" class="brand-logo-img">
+                <h1 class="brand-title">NoteWave</h1>
+                <p class="brand-subtitle">Aprenda. Pratique. Evolua.</p>
+            </div>
+        </section>
+
+        <section class="auth-card">
+
+            <div class="tabs">
+                <button type="button" class="tab-btn active" onclick="switchTab('login')">Entrar</button>
+                <button type="button" class="tab-btn" onclick="switchTab('register')">Cadastrar-se</button>
+            </div>
+
+            <div id="loginTab" class="tab-content active">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <div class="input-box">
+                            <i class="ph ph-envelope-simple"></i>
+                            <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loginPassword">Senha</label>
+                        <div class="input-box">
+                            <i class="ph ph-lock-key"></i>
+                            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required>
+                            <i class="ph ph-eye toggle-password" onclick="togglePasswordVisibility('loginPassword', this)"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember-me">
+                            <input type="checkbox" id="rememberMe">
+                            <span>Lembrar de mim</span>
+                        </label>
+                        <a href="#" class="forgot-link" onclick="openForgotModal(event)">Esqueceu sua senha?</a>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Entrar</button>
+                </form>
+            </div>
+
+            <div id="registerTab" class="tab-content">
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="regUser">Nome de usuário</label>
+                        <div class="input-box">
+                            <i class="ph ph-user"></i>
+                            <input type="text" id="regUser" placeholder="seu_usuario" autocomplete="username" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <div class="input-box">
+                            <i class="ph ph-envelope-simple"></i>
+                            <input type="email" id="regEmail" placeholder="seu@email.com" autocomplete="email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="regPassword">Senha</label>
+                        <div class="input-box">
+                            <i class="ph ph-lock-key"></i>
+                            <input type="password" id="regPassword" placeholder="Crie uma senha forte" autocomplete="new-password" required>
+                            <i class="ph ph-eye toggle-password" onclick="togglePasswordVisibility('regPassword', this)"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-options" style="margin-top: 10px; margin-bottom: 15px;">
+                        <label class="remember-me" style="font-size: 13px;">
+                            <input type="checkbox" id="regTerms" required>
+                            <span>Li e aceito os <a href="#" style="color: #4361ee; text-decoration: underline;">Termos de Uso</a> e a <a href="#" style="color: #4361ee; text-decoration: underline;">Política de Privacidade</a>.</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Criar conta</button>
+                </form>
+            </div>
+
+        </section>
+
+    </main>
+
+    <div id="forgotModal" class="forgot-modal">
+        <div class="forgot-content">
+            <h3>Recuperar Senha</h3>
+            <p>Digite seu e-mail cadastrado para redefinir sua senha.</p>
+            <form id="forgotForm">
+                <div class="form-group">
+                    <div class="input-box">
+                        <i class="ph ph-envelope-simple"></i>
+                        <input type="email" id="forgotEmail" placeholder="seu@email.com" required>
+                    </div>
+                </div>
+                <div class="modal-btns">
+                    <button type="button" class="btn-cancel" onclick="closeForgotModal()">Cancelar</button>
+                    <button type="submit" class="btn-submit">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/login.js"></script>
+
+</body>
+
+</html>

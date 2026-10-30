@@ -1,0 +1,581 @@
+/* ==========================================================================
+   NOTEWAVE - TELA DE MEDALHAS (PADRONIZADO COM MODO ESCURO E SIDEBAR)
+   ========================================================================== */
+
+/* --- RESET & TIPOGRAFIA PADRÃO --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  /* --- VARIÁVEIS OFICIAIS DE TEMA (MODO CLARO) --- */
+  :root {
+    --primary-blue: #003399;
+    --primary-dark: #001845;
+    --bg-color: #f6f8fc;
+    --card-bg: #ffffff;
+    --text-main: #1a1d20;
+    --text-muted: #6c757d;
+    --border-light: #edf2f7;
+    --border-color: #e2e8f0;
+    --disabled-gray: #f1f5f9;
+    --disabled-icon: #cbd5e1;
+    --success-green: #10b981;
+  }
+  
+  /* --- MODO ESCURO (ATIVADO AO ADICIONAR A CLASSE .dark-mode NO BODY) --- */
+  body.dark-mode {
+    --primary-blue: #38bdf8;
+    --primary-dark: #f8fafc;
+    --bg-color: #0b132b;
+    --card-bg: #1c2541;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-light: #2e3a59;
+    --border-color: #2e3a59;
+    --disabled-gray: #0f172a;
+    --disabled-icon: #475569;
+    --success-green: #34d399;
+  }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  /* --- SIDEBAR BASE PADRONIZADA --- */
+.sidebar {
+    width: 280px;
+    min-width: 280px;
+    height: 100vh;
+    background: var(--card-bg, #ffffff);
+    border-right: 1px solid var(--border-light, #edf2f7);
+    display: flex;
+    flex-direction: column;
+    padding: 36px 24px;
+    position: sticky;
+    top: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-dark, #001845);
+    margin-bottom: 36px;
+  }
+  
+  .sidebar-header i {
+    font-size: 28px;
+    color: var(--primary-blue, #003399);
+  }
+  
+  body.dark-mode .sidebar-header {
+    color: var(--text-main, #f8fafc);
+  }
+  
+  body.dark-mode .sidebar-header i {
+    color: var(--primary-blue, #38bdf8);
+  }
+  
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--text-muted, #4a5568);
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.2s ease;
+  }
+  
+  .nav-item i {
+    font-size: 22px;
+  }
+  
+  .nav-item:hover {
+    background-color: var(--border-light, #f1f5f9);
+    color: var(--primary-blue, #003399);
+  }
+  
+  .nav-item.active {
+    background-color: var(--primary-blue, #003399);
+    color: #ffffff !important;
+  }
+  
+  body.dark-mode .nav-item.active {
+    background-color: var(--primary-blue, #38bdf8);
+    color: #0b132b !important;
+  }
+  
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+  }
+  
+  .logout {
+    color: #e53e3e;
+  }
+  
+  .logout:hover {
+    background-color: rgba(229, 62, 62, 0.1);
+    color: #c53030;
+  }
+  
+  /* --- MAIN CONTENT & CARTÃO PRINCIPAL --- */
+  .main-content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    background-color: var(--bg-color);
+  }
+  
+  .medalhas-card-base {
+    width: 100%;
+    max-width: 900px;
+    background: var(--card-bg);
+    border-radius: 28px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-light);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin-bottom: 32px;
+  }
+  
+  /* --- GRID DE MEDALHAS --- */
+  .grid-medalhas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: flex-start;
+  }
+  
+  .card-medalha {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 28px 16px;
+    text-align: center;
+    width: 180px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .icone-medalha {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  .icone-medalha svg {
+    display: block;
+  }
+  
+  /* MEDALHAS DESBLOQUEADAS (ATIVA) */
+  .card-medalha.ativa .icone-medalha {
+    background-color: var(--primary-blue);
+    color: #ffffff;
+    border: 4px solid var(--primary-blue);
+    box-shadow: inset 0 0 0 2.5px var(--card-bg);
+  }
+  
+  body.dark-mode .card-medalha.ativa .icone-medalha {
+    color: #0b132b;
+  }
+  
+  .card-medalha.ativa h3 {
+    color: var(--text-main);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  
+  .card-medalha.ativa .status {
+    color: var(--success-green);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  
+  .card-medalha.ativa:hover {
+    transform: translateY(-8px);
+    border-color: var(--primary-blue);
+    box-shadow: 0 10px 20px rgba(0, 51, 153, 0.2);
+  }
+  
+  /* MEDALHAS BLOQUEADAS */
+  .card-medalha.bloqueada .icone-medalha {
+    background-color: var(--disabled-gray);
+    color: var(--disabled-icon);
+    border: 4px solid var(--disabled-gray);
+    box-shadow: inset 0 0 0 2.5px var(--card-bg);
+  }
+  
+  .card-medalha.bloqueada h3 {
+    color: var(--text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  
+  .card-medalha.bloqueada .status {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+  }
+  
+  .card-medalha.bloqueada:hover {
+    transform: translateY(-4px);
+  }
+  
+  /* --- MODAL FLUTUANTE --- */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+  }
+  
+  .modal-overlay.visivel {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .modal-balao {
+    background: var(--card-bg);
+    padding: 35px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--border-light);
+  }
+  
+  .btn-fechar {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--border-light);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 20px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-header h2 {
+    color: var(--text-main);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .tag-sucesso {
+    display: inline-block;
+    background-color: #d1fae5;
+    color: #065f46;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .tag-bloqueado {
+    display: inline-block;
+    background-color: #fee2e2;
+    color: #991b1b;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  
+  .estrelas {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: #ffd43b;
+  }
+  
+  .estrelas.bloqueadas {
+    color: var(--disabled-icon);
+  }
+  
+  .modal-secao {
+    margin-bottom: 20px;
+  }
+  
+  .modal-secao h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  
+  .modal-secao p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  
+  .modal-secao.incentivo {
+    background: var(--bg-color);
+    padding: 16px;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary-blue);
+  }
+  
+  /* RESPONSIVIDADE */
+  @media (max-width: 900px) {
+    .app-container {
+      flex-direction: column;
+    }
+    .sidebar {
+      width: 100%;
+      height: auto;
+    }
+    .grid-medalhas {
+      justify-content: center;
+    }
+  }
+
+ /* --- ESTILIZAÇÃO DO CARD COMO ADESIVO CROMADO / HOLOGRÁFICO --- */
+ .card-medalha {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 28px 16px;
+  text-align: center;
+  width: 190px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border: 2px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+
+/* Ícone Estilo Adesivo Cromado Azul (Apenas para ativas) */
+.card-medalha.ativa .icone-medalha {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #38bdf8 100%);
+  color: #ffffff;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 51, 153, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Efeito de brilho de arco-íris APENAS nas medalhas ATIVAS ao passar o mouse */
+.card-medalha.ativa::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 0, 0),
+    rgba(255, 154, 0, 0.1),
+    rgba(208, 222, 33, 0.15),
+    rgba(79, 220, 74, 0.15),
+    rgba(74, 234, 220, 0.15),
+    rgba(0, 51, 153, 0.2),
+    rgba(156, 39, 176, 0.15),
+    rgba(255, 0, 0, 0)
+  );
+  transform: rotate(45deg) translateY(-100%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.card-medalha.ativa:hover::before {
+  transform: rotate(45deg) translateY(100%);
+}
+
+/* Efeito Arco-íris dinâmico nas cores do card ativo no Hover */
+.card-medalha.ativa:hover {
+  transform: translateY(-8px) scale(1.03);
+  border-color: #38bdf8;
+  animation: rainbowGlow 3s infinite linear;
+}
+
+@keyframes rainbowGlow {
+  0% { box-shadow: 0 10px 25px rgba(0, 51, 153, 0.3), 0 0 20px rgba(56, 189, 248, 0.5); }
+  33% { box-shadow: 0 10px 25px rgba(79, 220, 74, 0.3), 0 0 20px rgba(74, 220, 74, 0.5); }
+  66% { box-shadow: 0 10px 25px rgba(156, 39, 176, 0.3), 0 0 20px rgba(156, 39, 176, 0.5); }
+  100% { box-shadow: 0 10px 25px rgba(0, 51, 153, 0.3), 0 0 20px rgba(56, 189, 248, 0.5); }
+}
+
+/* Estilos para as partículas cobrirem a tela e caírem */
+.particula-explosao {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: quedaAnimada 1.5s ease-out forwards;
+}
+
+@keyframes quedaAnimada {
+  0% {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 1;
+  }
+  40% {
+    /* Ponto de explosão inicial espalhado pela tela */
+    transform: translate(var(--tx-meio), var(--ty-meio)) scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    /* Queda gravitacional até o chão da tela */
+    transform: translate(var(--tx-fim), var(--ty-fim)) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* --- ESTILIZAÇÃO DO CARD COMO ADESIVO CROMADO / HOLOGRÁFICO --- */
+.card-medalha {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 28px 16px;
+  text-align: center;
+  width: 190px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  border: 2px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+
+/* Ícone Estilo Adesivo Cromado Azul (Apenas para ativas) */
+.card-medalha.ativa .icone-medalha {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #38bdf8 100%);
+  color: #ffffff;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 51, 153, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Efeito de brilho de arco-íris APENAS nas medalhas ATIVAS ao passar o mouse */
+.card-medalha.ativa::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 0, 0),
+    rgba(255, 154, 0, 0.1),
+    rgba(208, 222, 33, 0.15),
+    rgba(79, 220, 74, 0.15),
+    rgba(74, 234, 220, 0.15),
+    rgba(0, 51, 153, 0.2),
+    rgba(156, 39, 176, 0.15),
+    rgba(255, 0, 0, 0)
+  );
+  transform: rotate(45deg) translateY(-100%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.card-medalha.ativa:hover::before {
+  transform: rotate(45deg) translateY(100%);
+}
+
+/* Efeito Arco-íris dinâmico nas cores do card ativo no Hover */
+.card-medalha.ativa:hover {
+  transform: translateY(-8px) scale(1.03);
+  border-color: #38bdf8;
+  animation: rainbowGlow 3s infinite linear;
+}
+
+@keyframes rainbowGlow {
+  0% { box-shadow: 0 10px 25px rgba(0, 51, 153, 0.3), 0 0 20px rgba(56, 189, 248, 0.5); }
+  33% { box-shadow: 0 10px 25px rgba(79, 220, 74, 0.3), 0 0 20px rgba(79, 220, 74, 0.5); }
+  66% { box-shadow: 0 10px 25px rgba(156, 39, 176, 0.3), 0 0 20px rgba(156, 39, 176, 0.5); }
+  100% { box-shadow: 0 10px 25px rgba(0, 51, 153, 0.3), 0 0 20px rgba(56, 189, 248, 0.5); }
+}
+
+/* Estilos para as partículas cobrirem a tela e caírem */
+.particula-explosao {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: quedaAnimada 1.5s ease-out forwards;
+}
+
+@keyframes quedaAnimada {
+  0% {
+    transform: translate(0, 0) scale(0.4);
+    opacity: 1;
+  }
+  40% {
+    transform: translate(var(--tx-meio), var(--ty-meio)) scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx-fim), var(--ty-fim)) scale(0.8);
+    opacity: 0;
+  }
+}

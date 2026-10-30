@@ -1,0 +1,815 @@
+/* ==========================================================================
+   NOTEWAVE - TELA DE TRILHA DE AULAS (PADRONIZADO COM MODO ESCURO E SIDEBAR)
+   ========================================================================== */
+
+/* --- RESET & TIPOGRAFIA PADRÃO --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* --- VARIÁVEIS OFICIAIS DE TEMA (MODO CLARO) --- */
+:root {
+  --primary-blue: #003399;
+  --primary-dark: #001845;
+  --bg-color: #f6f8fc;
+  --card-bg: #ffffff;
+  --text-main: #1a1d20;
+  --text-muted: #6c757d;
+  --border-light: #edf2f7;
+  --border-color: #e2e8f0;
+  --disabled-gray: #f1f5f9;
+  --disabled-icon: #cbd5e1;
+  --timeline-line: #003399;
+}
+
+/* --- MODO ESCURO (ATIVADO AO ADICIONAR A CLASSE .dark-mode NO BODY) --- */
+body.dark-mode {
+  --primary-blue: #38bdf8;
+  --primary-dark: #f8fafc;
+  --bg-color: #0b132b;
+  --card-bg: #1c2541;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-light: #2e3a59;
+  --border-color: #2e3a59;
+  --disabled-gray: #0f172a;
+  --disabled-icon: #475569;
+  --timeline-line: #38bdf8;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* --- SIDEBAR LATERAL PADRONIZADA --- */
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  height: 100vh;
+  background: var(--card-bg);
+  border-right: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+  padding: 36px 24px;
+  position: sticky;
+  top: 0;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 36px;
+}
+
+.sidebar-header i {
+  font-size: 28px;
+  color: var(--primary-blue);
+}
+
+body.dark-mode .sidebar-header {
+  color: var(--text-main);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.nav-item i {
+  font-size: 22px;
+}
+
+.nav-item:hover {
+  background-color: var(--border-light);
+  color: var(--primary-blue);
+}
+
+.nav-item.active {
+  background-color: var(--primary-blue);
+  color: #ffffff !important;
+}
+
+body.dark-mode .nav-item.active {
+  background-color: var(--primary-blue);
+  color: #0b132b !important;
+}
+
+body.dark-mode .nav-item.active i,
+body.dark-mode .nav-item.active span {
+  color: #0b132b !important;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.logout {
+  color: #e53e3e;
+}
+
+.logout:hover {
+  background-color: rgba(229, 62, 62, 0.1);
+  color: #c53030;
+}
+
+/* --- MAIN CONTENT & CARTÃO BASE --- */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  background-color: var(--bg-color);
+}
+
+.trilha-card-base {
+  width: 100%;
+  max-width: 900px;
+  background: var(--card-bg);
+  border-radius: 28px;
+  padding: 40px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--border-light);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.page-header p {
+  color: var(--text-muted);
+  font-size: 15px;
+  margin-bottom: 32px;
+}
+
+/* --- LINHA DO TEMPO / TIMELINE --- */
+.lessons-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+/* Linha vertical conectora */
+.lessons-timeline::before {
+  content: '';
+  position: absolute;
+  left: 42px;
+  top: 30px;
+  bottom: 30px;
+  width: 2px;
+  background-color: var(--timeline-line);
+  z-index: 1;
+  transition: background-color 0.3s ease;
+}
+
+/* Item Base da Timeline */
+.timeline-item {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.timeline-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Indicadores da Aula */
+.status-indicator {
+  position: relative;
+  width: 84px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.check-icon {
+  width: 26px;
+  height: 26px;
+  background-color: var(--primary-blue);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+body.dark-mode .check-icon {
+  color: #0b132b;
+}
+
+.step-number {
+  width: 36px;
+  height: 36px;
+  background-color: var(--primary-blue);
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+body.dark-mode .step-number {
+  color: #0b132b;
+}
+
+/* Informações do Texto */
+.lesson-info {
+  flex: 1;
+}
+
+.lesson-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.lesson-info p {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.lesson-action {
+  color: var(--text-muted);
+  font-size: 18px;
+  padding-left: 20px;
+}
+
+/* --- ESTADO BLOQUEADO --- */
+.timeline-item.locked {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.timeline-item.locked .step-number {
+  background-color: var(--disabled-gray);
+  color: var(--disabled-icon);
+}
+
+.timeline-item.locked .lesson-info h3,
+.timeline-item.locked .lesson-info p,
+.timeline-item.locked .lesson-action {
+  color: var(--text-muted);
+}
+
+/* --- RESPONSIVIDADE --- */
+@media (max-width: 900px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+}
+
+/* ==========================================================================
+   ESTILOS DO MODAL DE BOAS-VINDAS (MARUJO)
+   ========================================================================== */
+   .marujo-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(7, 55, 99, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.marujo-card {
+    background: var(--card-bg);
+    width: min(420px, 100%);
+    padding: 35px 30px;
+    border-radius: 28px;
+    border: 2px solid var(--border-light);
+    box-shadow: 0 20px 40px rgba(5, 54, 92, 0.25);
+    text-align: center;
+    animation: modalPop 0.3s ease-out forwards;
+}
+
+.marujo-card h2 {
+    color: var(--text-main);
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.marujo-icone-topo {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+    vertical-align: -0.1em;
+}
+
+.marujo-card p {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.marujo-btn-ouro {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 50px;
+    padding: 14px 22px;
+    border: 0;
+    border-radius: 16px;
+    color: #49300a;
+    background: linear-gradient(135deg, #ffe78b, #ffbd30);
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #d79a1d;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.marujo-btn-ouro:hover {
+    filter: brightness(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #d79a1d;
+}
+
+.marujo-btn-ouro:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #d79a1d;
+}
+
+@keyframes modalPop {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}/* ==========================================================================
+   NOTEWAVE - TELA DE TRILHA DE AULAS (PADRONIZADO COM MODO ESCURO E SIDEBAR)
+   ========================================================================== */
+
+/* --- RESET & TIPOGRAFIA PADRÃO --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  /* --- VARIÁVEIS OFICIAIS DE TEMA (MODO CLARO) --- */
+  :root {
+    --primary-blue: #003399;
+    --primary-dark: #001845;
+    --bg-color: #f6f8fc;
+    --card-bg: #ffffff;
+    --text-main: #1a1d20;
+    --text-muted: #6c757d;
+    --border-light: #edf2f7;
+    --border-color: #e2e8f0;
+    --disabled-gray: #f1f5f9;
+    --disabled-icon: #cbd5e1;
+    --timeline-line: #003399;
+  }
+  
+  /* --- MODO ESCURO (ATIVADO AO ADICIONAR A CLASSE .dark-mode NO BODY) --- */
+  body.dark-mode {
+    --primary-blue: #38bdf8;
+    --primary-dark: #f8fafc;
+    --bg-color: #0b132b;
+    --card-bg: #1c2541;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-light: #2e3a59;
+    --border-color: #2e3a59;
+    --disabled-gray: #0f172a;
+    --disabled-icon: #475569;
+    --timeline-line: #38bdf8;
+  }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  /* --- SIDEBAR LATERAL PADRONIZADA --- */
+  .sidebar {
+    width: 280px;
+    min-width: 280px;
+    height: 100vh;
+    background: var(--card-bg);
+    border-right: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    padding: 36px 24px;
+    position: sticky;
+    top: 0;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    margin-bottom: 36px;
+  }
+  
+  .sidebar-header i {
+    font-size: 28px;
+    color: var(--primary-blue);
+  }
+  
+  body.dark-mode .sidebar-header {
+    color: var(--text-main);
+  }
+  
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 16px;
+    transition: all 0.2s ease;
+  }
+  
+  .nav-item i {
+    font-size: 22px;
+  }
+  
+  .nav-item:hover {
+    background-color: var(--border-light);
+    color: var(--primary-blue);
+  }
+  
+  .nav-item.active {
+    background-color: var(--primary-blue);
+    color: #ffffff !important;
+  }
+  
+  body.dark-mode .nav-item.active {
+    background-color: var(--primary-blue);
+    color: #0b132b !important;
+  }
+  
+  body.dark-mode .nav-item.active i,
+  body.dark-mode .nav-item.active span {
+    color: #0b132b !important;
+  }
+  
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+  }
+  
+  .logout {
+    color: #e53e3e;
+  }
+  
+  .logout:hover {
+    background-color: rgba(229, 62, 62, 0.1);
+    color: #c53030;
+  }
+  
+  /* --- MAIN CONTENT & CARTÃO BASE --- */
+  .main-content {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    background-color: var(--bg-color);
+  }
+  
+  .trilha-card-base {
+    width: 100%;
+    max-width: 900px;
+    background: var(--card-bg);
+    border-radius: 28px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-light);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .page-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  
+  .page-header p {
+    color: var(--text-muted);
+    font-size: 15px;
+    margin-bottom: 32px;
+  }
+  
+  /* --- LINHA DO TEMPO / TIMELINE --- */
+  .lessons-timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+  
+  /* Linha vertical conectora */
+  .lessons-timeline::before {
+    content: '';
+    position: absolute;
+    left: 42px;
+    top: 30px;
+    bottom: 30px;
+    width: 2px;
+    background-color: var(--timeline-line);
+    z-index: 1;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Item Base da Timeline */
+  .timeline-item {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-light);
+    border-radius: 20px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .timeline-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Indicadores da Aula */
+  .status-indicator {
+    position: relative;
+    width: 84px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .check-icon {
+    width: 26px;
+    height: 26px;
+    background-color: var(--primary-blue);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  
+  body.dark-mode .check-icon {
+    color: #0b132b;
+  }
+  
+  .step-number {
+    width: 36px;
+    height: 36px;
+    background-color: var(--primary-blue);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  
+  body.dark-mode .step-number {
+    color: #0b132b;
+  }
+  
+  /* Informações do Texto */
+  .lesson-info {
+    flex: 1;
+  }
+  
+  .lesson-info h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+  }
+  
+  .lesson-info p {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+  
+  .lesson-action {
+    color: var(--text-muted);
+    font-size: 18px;
+    padding-left: 20px;
+  }
+  
+  /* --- ESTADO BLOQUEADO --- */
+  .timeline-item.locked {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  .timeline-item.locked .step-number {
+    background-color: var(--disabled-gray);
+    color: var(--disabled-icon);
+  }
+  
+  .timeline-item.locked .lesson-info h3,
+  .timeline-item.locked .lesson-info p,
+  .timeline-item.locked .lesson-action {
+    color: var(--text-muted);
+  }
+  
+  /* --- RESPONSIVIDADE --- */
+  @media (max-width: 900px) {
+    .app-container {
+      flex-direction: column;
+    }
+  
+    .sidebar {
+      width: 100%;
+      height: auto;
+      position: relative;
+    }
+  }
+  
+  /* ==========================================================================
+     ESTILOS DO MODAL DE BOAS-VINDAS (MARUJO)
+     ========================================================================== */
+     .marujo-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 55, 99, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+  }
+  
+  .marujo-card {
+      background: var(--card-bg);
+      width: min(420px, 100%);
+      padding: 35px 30px;
+      border-radius: 28px;
+      border: 2px solid var(--border-light);
+      box-shadow: 0 20px 40px rgba(5, 54, 92, 0.25);
+      text-align: center;
+      animation: modalPop 0.3s ease-out forwards;
+  }
+  
+  .marujo-card h2 {
+      color: var(--text-main);
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+  }
+  
+  .marujo-icone-topo {
+      width: 68px;
+      height: 68px;
+      object-fit: contain;
+      vertical-align: -0.1em;
+  }
+  
+  .marujo-card p {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+  }
+  
+  .marujo-btn-ouro {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 50px;
+      padding: 14px 22px;
+      border: 0;
+      border-radius: 16px;
+      color: #49300a;
+      background: linear-gradient(135deg, #ffe78b, #ffbd30);
+      font: inherit;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #d79a1d;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  }
+  
+  .marujo-btn-ouro:hover {
+      filter: brightness(1.05);
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 #d79a1d;
+  }
+  
+  .marujo-btn-ouro:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #d79a1d;
+  }
+  
+  @keyframes modalPop {
+      from {
+          opacity: 0;
+          transform: scale(0.9);
+      }
+      to {
+          opacity: 1;
+          transform: scale(1);
+      }
+  }

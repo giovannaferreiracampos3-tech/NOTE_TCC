@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteWave - Configurações</title>
+
+    <!-- Fontes e Ícones Oficiais -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+
+    <!-- CSS Padronizado das Configurações -->
+    <link rel="stylesheet" href="../css/configuracoes.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+       <!-- SIDEBAR LATERAL PADRONIZADA -->
+       <aside class="sidebar">
+        <div class="sidebar-header"> 
+          <nav class="sidebar-nav">
+            <a href="../html/perfil.html" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+              <img src="../imagem/nota.png" alt="Logo NoteWave" style="width: 80px; height: 80px; object-fit: contain;">
+              <span class="logo-text" style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; color: #002b7a; text-transform: uppercase;">NoteWave</span>
+            </a>
+          </nav>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="../html/perfil.html" class="nav-item">
+            <i class="ph ph-user"></i>
+            <span>Perfil</span>
+          </a>
+          <a href="../html/trilha_de_aulas.html" class="nav-item">
+            <i class="ph ph-book-open"></i>
+            <span>Trilha de Aulas</span>
+          </a>
+          <a href="../html/medalhas.html" class="nav-item">
+            <i class="ph ph-medal"></i>
+            <span>Medalhas</span>
+          </a>
+          <a href="../html/configuracoes.html" class="nav-item active">
+            <i class="ph ph-gear"></i>
+            <span>Configurações</span>
+          </a>
+        </nav>
+    
+        <div class="sidebar-footer">
+            <a href="login.html" class="nav-item logout">
+                <i class="ph ph-sign-out"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+      </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
+            <div class="config-card-base">
+
+                <header class="page-header">
+                    <h1>Configurações do Sistema</h1>
+                    <p>Gerencie sua conta, preferências de perfil e navegação.</p>
+                </header>
+
+                <form class="config-form" id="formConfiguracoes">
+
+                    <!-- Seção 1: Aparência / Modo Escuro -->
+                    <section class="config-section">
+                        <h2><i class="ph ph-paint-brush"></i> Aparência</h2>
+
+                        <div class="toggle-container">
+                            <div class="toggle-info">
+                                <span class="toggle-title">Modo Escuro (Dark Mode)</span>
+                                <span class="toggle-desc">Ajuste as cores para uma navegação mais confortável à noite.</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="toggleDarkMode">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- Seção 2: Gerenciar Conta -->
+                    <section class="config-section">
+                        <h2><i class="ph ph-user-gear"></i> Gerenciar Conta</h2>
+
+                        <div class="form-group">
+                            <label for="email">Alterar Endereço de E-mail</label>
+                            <input type="email" id="email" placeholder="Novo e-mail" class="form-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="senha">Mudar Senha Atual</label>
+                            <input type="password" id="senha" placeholder="Nova senha" class="form-input">
+                        </div>
+                        <div class="form-actions" style="margin-top: 16px;">
+                            <button type="submit" class="btn-primary">Salvar Alterações</button>
+                        </div>
+                    </section>
+
+                    <!-- Seção 3: Privacidade e Cookies -->
+                    <section class="config-section">
+                        <h2><i class="ph ph-shield-check"></i> Privacidade e Dados</h2>
+                        <div class="links-privacidade">
+                            <a href="../html/cookies.html" class="link-item">
+                                <div>
+                                    <span class="title">Gerenciar Cookies</span>
+                                    <span class="description">Escolha quais cookies você permite que o NoteWave utilize.</span>
+                                </div>
+                                <i class="ph ph-caret-right"></i>
+                            </a>
+                            
+                            <a href="../html/privacidade.html" class="link-item">
+                                <div>
+                                    <span class="title">Leis de Privacidade & LGPD</span>
+                                    <span class="description">Leia nossos Termos de Uso e Políticas de Privacidade do NoteWave.</span>
+                                </div>
+                                <i class="ph ph-caret-right"></i>
+                            </a>
+                        </div>
+                    </section>
+
+                    <!-- Seção 4: Suporte e Dúvidas -->
+                    <section class="config-section">
+                        <h2><i class="ph ph-question"></i> Central de Ajuda</h2>
+                        <p class="description" style="margin-bottom: 16px; color: var(--text-muted);">Ficou com alguma dúvida sobre o funcionamento da plataforma ou das aulas?</p>
+                        <a href="tirar_duvidas.html" class="btn-suporte">
+                            <i class="ph ph-headset"></i> Tirar Dúvidas da Plataforma
+                        </a>
+                    </section>
+
+                    <!-- Seção 5: Tutorial da Plataforma (Refazer Tour) -->
+                    <section class="config-section" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+                        <h2><i class="ph ph-compass"></i> Tutorial da Plataforma</h2>
+                        <p class="description" style="margin-bottom: 16px; color: var(--text-muted);">Deseja rever a apresentação dos principais recursos da plataforma NoteWave?</p>
+                        <button type="button" id="btn-restart-tour" class="btn-suporte">
+                            <i class="ph ph-arrow-counter-clockwise"></i> Refazer Tour Guiado
+                        </button>
+                    </section>
+                </form>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/configuracoes.js"></script>
+    <script src="../js/tour.js"></script> <!-- Certifique-se de incluir seu arquivo do tour aqui -->
+    <script>
+        // Gerenciamento do Modo Escuro integrado com localStorage
+        const toggleDarkMode = document.getElementById('toggleDarkMode');
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            if (toggleDarkMode) toggleDarkMode.checked = true;
+        }
+
+        if (toggleDarkMode) {
+            toggleDarkMode.addEventListener('change', () => {
+                if (toggleDarkMode.checked) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

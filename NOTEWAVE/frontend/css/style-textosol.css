@@ -1,0 +1,405 @@
+/* =======================================================
+   NOTEWAVE — ESTILO TEÓRICO PROFISSIONAL (SEM EMOJIS)
+   Paleta exata baseada nos botões de recompensa e Fim da Trilha
+======================================================= */
+
+:root {
+    --bg-main-app: #f7fbfe;
+    --card-surface: #ffffff;
+    --border-soft: #cbe5f9;
+    --primary-blue-dark: #075784;
+    --primary-blue-mid: #087db5;
+    --accent-gold: #f9b21e;
+    --accent-gold-hover: #fcd063;
+    --text-dark: #1e293b;
+    --text-muted: #54738c;
+}
+
+body {
+    background: linear-gradient(145deg, #e3f7ff 0%, #f7fbfe 60%, #fffefc 100%);
+    color: var(--text-dark);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.badge-reading {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1px solid #bae6fd;
+}
+
+.text-main-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    margin: 0 auto;
+    gap: 28px;
+}
+
+.intro-heading {
+    text-align: center;
+}
+
+.lesson-number {
+    display: inline-block;
+    background-color: var(--primary-blue-mid);
+    color: #ffffff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* Cards Informativos */
+.info-card {
+    background: var(--card-surface);
+    border: 2px solid rgba(203, 229, 249, 0.7);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(7, 87, 132, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 35px rgba(7, 87, 132, 0.09);
+}
+
+/* Estrutura para os cards que possuem espaço de foto ao lado */
+.card-com-foto {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.card-conteudo-texto {
+    flex: 1;
+}
+
+/* Caixa/Moldura para Foto (Tamanho de um emoji grande/card fotográfico) */
+.photo-slot {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    background: linear-gradient(135deg, #eaf4fb, #d4edf9);
+    border: 2px dashed var(--primary-blue-mid);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+    transition: background 0.2s;
+}
+
+.photo-slot:hover {
+    background: linear-gradient(135deg, #d4edf9, #bde0fe);
+}
+
+.photo-placeholder-text {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary-blue-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Responsivo para telas menores */
+@media (max-width: 640px) {
+    .card-com-foto {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .photo-slot {
+        width: 100%;
+        height: 90px;
+    }
+}
+
+.info-card h3 {
+    color: var(--primary-blue-dark);
+    font-size: 19px;
+    margin-bottom: 12px;
+    font-weight: 800;
+}
+
+.info-card p {
+    color: var(--text-dark);
+    line-height: 1.65;
+    font-size: 15.5px;
+}
+
+/* Caixa com a sequência da escalada musical */
+.escala-sequencia-box {
+    background: #f0f9ff;
+    padding: 16px;
+    border-radius: 14px;
+    text-align: center;
+    margin-top: 14px;
+    font-weight: 700;
+    color: var(--primary-blue-mid);
+    font-size: 15px;
+    border: 1px dashed #7dd3fc;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+/* =======================================================
+   MINI PAUTA INTERATIVA — CALIBRAÇÃO DEFINITIVA
+======================================================= */
+.mini-staff-wrapper {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.mini-staff {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    height: 140px;
+    margin: 0 auto;
+}
+
+/* As 5 Linhas do Pentagrama */
+.mini-staff .line {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #334155;
+}
+
+/* Ordem estrita de baixo para cima */
+.mini-staff .line:nth-child(2) { top: 90px; } /* 1ª Linha (Mi) - Embaixo */
+.mini-staff .line:nth-child(3) { top: 75px; } /* 2ª Linha (Sol - Onde a clave abraça) */
+.mini-staff .line:nth-child(4) { top: 60px; } /* 3ª Linha (Si) */
+.mini-staff .line:nth-child(5) { top: 45px; } /* 4ª Linha (Ré) */
+.mini-staff .line:nth-child(6) { top: 30px; } /* 5ª Linha (Fá) - Em cima */
+
+/* =======================================================
+   CLAVE DE SOL — ANCORAGEM FIXA NA 2ª LINHA
+======================================================= */
+.mini-staff .clef {
+    position: absolute;
+    left: 8px;
+    top: 0;
+    width: 40px;
+    height: 100px;
+    color: var(--primary-blue-dark);
+    z-index: 5;
+    pointer-events: none;
+}
+
+.mini-staff .clef svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+/* Corpo da nota */
+.mini-staff .note {
+    position: absolute;
+    left: 55%;
+    width: 15px;
+    height: 12px;
+    background: var(--primary-blue-dark);
+    border-radius: 50%;
+    transform: rotate(-20deg);
+    transition: top 0.15s ease-out;
+    z-index: 10;
+}
+
+/* =======================================================
+   POSIÇÕES EXATAS DAS NOTAS
+======================================================= */
+.position-Do1  { top: 97px; }  /* Dó Central */
+.position-Re1  { top: 82.5px; }/* Ré (espaço abaixo da 1ª linha) */
+.position-Mi1  { top: 75px; }  /* Mi (1ª Linha) */
+.position-Fa1  { top: 67.5px; }/* Fá (1º Espaço) */
+.position-Sol1 { top: 60px; }  /* Sol (2ª Linha) */
+.position-La1  { top: 52.5px; }/* Lá (2º Espaço) */
+.position-Si1  { top: 45px; }  /* Si (3ª Linha) */
+.position-Do2  { top: 37.5px; }/* Dó (3º Espaço) */
+.position-Re2  { top: 30px; }  /* Ré (4ª Linha) */
+.position-Mi2  { top: 22.5px; }/* Mi (4º Espaço) */
+.position-Fa2  { top: 15px; }  /* Fá (5ª Linha) */
+.position-Sol2 { top: 7.5px; } /* Sol (espaço acima) */
+.position-La2  { top: 0px; }   /* Lá (linha suplementar) */
+.position-Si2  { top: -7.5px; }/* Si (agudo) */
+
+/* =======================================================
+   CARDS DE SUPORTE E DESTAQUE
+======================================================= */
+.split-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+@media(max-width: 650px) {
+    .split-container { grid-template-columns: 1fr; }
+}
+
+.split-card {
+    background: #f0f9ff;
+    border-left: 5px solid var(--primary-blue-mid);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #bae6fd;
+    border-left-width: 5px;
+}
+
+.split-card h4 {
+    color: var(--primary-blue-dark);
+    font-size: 16px;
+    margin-bottom: 8px;
+    font-weight: 800;
+}
+
+.split-card p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.highlight-card {
+    background-color: #fffbeb;
+    border: 2px solid #fde68a;
+}
+
+.highlight-card h3 {
+    color: #b45309;
+}
+
+/* =======================================================
+   BOTÃO PRINCIPAL (Exatamente no formato e padrão Fim da Trilha)
+======================================================= */
+.action-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 15px 0 35px;
+}
+
+.btn-start-lessons {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 380px;
+    min-height: 56px;
+    padding: 16px 28px;
+    border: 0;
+    border-radius: 17px;
+    color: #ffffff;
+    background-color: var(--accent-gold);
+    font-family: inherit;
+    font-size: 1.15rem;
+    font-weight: 900;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #c98200;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.2s;
+}
+
+.btn-start-lessons:hover {
+    background-color: var(--accent-gold-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #c98200;
+}
+
+.btn-start-lessons:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #c98200;
+}
+
+/* =======================================================
+   WAVE LOADER SCREEN
+======================================================= */
+.wave-loader-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #ffffff;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.loader-center-box {
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+    position: relative;
+    z-index: 10;
+}
+
+.animated-clef {
+    font-size: 80px;
+    color: var(--primary-blue-dark);
+    line-height: 1;
+    margin-bottom: 15px;
+    animation: floatClef 2s infinite ease-in-out;
+}
+
+.loader-headline {
+    font-weight: 700;
+    color: var(--primary-blue-dark);
+    font-size: 17px;
+    margin-bottom: 25px;
+}
+
+.wave-bar-container {
+    position: relative;
+    width: 100%;
+    height: 22px;
+    background-color: #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+}
+
+.wave-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary-blue-mid);
+    border-radius: 12px;
+    transition: width 0.08s linear;
+}
+
+/* Correção de visibilidade da clave de sol */
+.mini-staff .clef {
+    display: block !important;
+    position: absolute !important;
+    left: 8px !important;
+    top: -5px !important;
+    width: 45px !important;
+    height: 110px !important;
+    font-family: "Noto Music", "Segoe UI Symbol", serif !important;
+    font-size: 100px !important;
+    line-height: 1 !important;
+    font-weight: normal !important;
+    color: #075784 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 100 !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+}

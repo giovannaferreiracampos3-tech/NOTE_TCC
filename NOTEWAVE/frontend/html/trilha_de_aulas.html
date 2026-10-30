@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteWave - Trilha de Aulas</title>
+
+    <!-- Fontes e Ícones Oficiais -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+
+    <!-- CSS Padronizado da Trilha de Aulas -->
+    <link rel="stylesheet" href="../css/trilha_de_aulas.css">
+</head>
+<body>
+
+    <!-- MODAL DE BOAS-VINDAS (Adicionado) -->
+    <div id="welcomeModal" class="marujo-modal" style="display: none;">
+        <div class="marujo-card">
+            <h2>
+                Ahoy, Marujo! 
+                <img src="../imagem/ahoy.png" alt="Ícone Marujo" class="marujo-icone-topo">
+            </h2>
+            <p>Seja muito bem-vindo a bordo do NoteWave! Prepare-se para navegar pelas ondas da música e dominar cada nota musical com muita diversão. Ajuste as velas e boa jornada!</p>
+            <button id="closeWelcomeModal" class="marujo-btn-ouro">Entendido, Capitão!</button>
+        </div>
+    </div>
+
+    <div class="app-container">
+
+       <!-- SIDEBAR LATERAL PADRONIZADA -->
+       <aside class="sidebar">
+
+        <div class="sidebar-header">
+            <a href="../html/perfil.html" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                <img src="../imagem/nota.png" alt="Logo NoteWave" style="width: 80px; height: 80px; object-fit: contain;">
+                <span class="logo-text" style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; color: #002b7a; text-transform: uppercase;">NoteWave</span>
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="../html/perfil.html" class="nav-item">
+                <i class="ph ph-user"></i>
+                <span>Perfil</span>
+            </a>
+            <a href="../html/trilha_de_aulas.html" class="nav-item active">
+                <i class="ph ph-book-open"></i>
+                <span>Trilha de Aulas</span>
+            </a>
+            <a href="../html/medalhas.html" class="nav-item">
+                <i class="ph ph-medal"></i>
+                <span>Medalhas</span>
+            </a>
+            <a href="../html/configuracoes.html" class="nav-item">
+                <i class="ph ph-gear"></i>
+                <span>Configurações</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="login.html" class="nav-item logout">
+                <i class="ph ph-sign-out"></i>
+                <span>Sair</span>
+            </a>
+        </div>
+    </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="main-content">
+            <div class="trilha-card-base">
+
+                <header class="page-header">
+                    <h1>Trilha de Aulas</h1>
+                    <p>Siga o caminho e evolua passo a passo.</p>
+                </header>
+
+                <!-- Lista da Timeline de Aulas -->
+                <section class="lessons-timeline">
+
+                    <!-- Item 1: Concluído (Com o evento para abrir o modal de boas-vindas) -->
+                    <div class="timeline-item completed" id="welcomeItem" style="cursor: pointer;">
+                        <div class="status-indicator">
+                            <div class="check-icon"><i class="ph ph-check"></i></div>
+                            <div class="step-number">1</div>
+                        </div>
+                        <div class="lesson-info">
+                            <h3>Boas-vindas ao NoteWave</h3>
+                            <p>Introdução à plataforma e ao curso.</p>
+                        </div>
+                        <div class="lesson-action">
+                            <i class="ph ph-caret-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Item 2: Concluído / Link Atividade Texto -->
+                    <div class="timeline-item completed" onclick="window.location.href='../atividades/atividade-texto.html'">
+                        <div class="status-indicator">
+                            <div class="check-icon"><i class="ph ph-check"></i></div>
+                            <div class="step-number">2</div>
+                        </div>
+                        <div class="lesson-info">
+                            <h3>A Clave de Fá</h3>
+                            <p>Conheça a clave de fá e sua posição nas linhas.</p>
+                        </div>
+                        <div class="lesson-action">
+                            <i class="ph ph-caret-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Item 3: Concluído / Link Atividade Nota -->
+                    <div class="timeline-item completed" onclick="window.location.href='../atividades/atividades-nota.html'">
+                        <div class="status-indicator">
+                            <div class="check-icon"><i class="ph ph-check"></i></div>
+                            <div class="step-number">3</div>
+                        </div>
+                        <div class="lesson-info">
+                            <h3>Notas na Clave de Fá</h3>
+                            <p>Aprenda as primeiras notas</p>
+                        </div>
+                        <div class="lesson-action">
+                            <i class="ph ph-caret-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Item 4: Concluído / Link Texto Clave de Sol -->
+                    <div class="timeline-item completed" onclick="window.location.href='../atividades/atividades-texto-sol.html'">
+                        <div class="status-indicator">
+                            <div class="check-icon"><i class="ph ph-check"></i></div>
+                            <div class="step-number">4</div>
+                        </div>
+                        <div class="lesson-info">
+                            <h3>A Clave de Sol</h3>
+                            <p>Conheça a clave de sol e sua posição nas linhas.</p>
+                        </div>
+                        <div class="lesson-action">
+                            <i class="ph ph-caret-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Item 5: Bloqueado -->
+                    <div class="timeline-item locked">
+                        <div class="status-indicator">
+                            <div class="step-number">5</div>
+                        </div>
+                        <div class="lesson-info">
+                            <h3>Notas na Clave de Sol</h3>
+                            <p>Aprenda as primeiras notas.</p>
+                        </div>
+                        <div class="lesson-action">
+                            <i class="ph ph-lock"></i>
+                        </div>
+                    </div>
+
+                </section>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- SCRIPT DE CONFIGURAÇÃO DE TEMA -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+
+    <script src="../js/trilha_de_aulas.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introdução Teórica: Clave de Fá</title>
+    
+    <!-- CSS Global (Garante as variáveis como --primary-blue) -->
+    <link rel="stylesheet" href="../css/style-texto.css">
+</head>
+<body>
+
+    <!-- =======================================================
+       TELA DE CARREGAMENTO DINÂMICA (WAVE LOADER SCREEN)
+    ======================================================= -->
+    <div class="wave-loader-screen" id="waveLoaderScreen" style="display: none;">
+        <div class="bg-wave-decoration"></div>
+        <div class="bg-wave-decoration-2"></div>
+        
+        <div class="loader-center-box">
+            <div class="animated-clef">𝄢</div>
+            <p class="loader-headline" id="loaderHeadline">Sincronizando as pautas graves...</p>
+            <div class="wave-bar-container">
+                <div class="wave-bar-fill" id="waveBarFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =======================================================
+       CONTEÚDO PRINCIPAL DO APLICATIVO
+    ======================================================= -->
+    <div class="app-container">
+        <header class="app-header">
+            <a href="../html/trilha_de_aulas.html" class="btn-back" style="text-decoration: none; display: inline-block;">← Voltar para a trilha</a>
+            <span class="badge-reading">Leitura Obrigatória 📖</span>
+        </header>
+
+        <main class="text-main-content">
+            <!-- Cabeçalho Informativo -->
+            <section class="intro-heading">
+                <div class="lesson-number">Módulo 1: Teoria</div>
+                <h1 class="title">Dominando a Clave de Fá</h1>
+                <p class="instruction">Compreenda a lógica visual antes de iniciar as atividades práticas de ouvido e leitura.</p>
+            </section>
+
+            <!-- Card 1: Conceito Base -->
+            <article class="info-card">
+                <h3><span>𝄢</span> 1. O que é a Clave de Fá e para que serve?</h3>
+                <p>Na música, as claves funcionam como chaves de tradução do pentagrama. A <strong>Clave de Fá</strong> é o símbolo oficial utilizado para registrar os <strong>sons graves</strong>. Instrumentos robustos como o contrabaixo, o violoncelo, o trombone, o fagote e a mão esquerda do piano dependem totalmente dela para ler partituras.</p>
+            </article>
+
+            <!-- Card 2: A Quarta Linha -->
+            <article class="info-card">
+                <h3><span>📍</span> 2. O Segredo da Quarta Linha</h3>
+                <p>Repare bem no desenho da clave: ela possui <strong>dois pontos pretos</strong> empilhados. Esses pontos servem para abraçar perfeitamente a <strong>4ª linha</strong> do pentagrama (contada de baixo para cima). Por causa desse posicionamento, a quarta linha ganha o nome de <strong>FÁ</strong>. Ela será sempre o seu porto seguro de contagem.</p>
+            </article>
+
+            <!-- Card 3: As Escaladas Musicais -->
+            <article class="info-card">
+                <h3><span>🪜</span> 3. Compreendendo as Escaladas</h3>
+                <p>O movimento de leitura no pentagrama funciona exatamente como subir ou descer uma escada (por isso chamamos de <strong>escala musical</strong>). Quando os degraus sobem, o som fica mais agudo; quando os degraus descem, o som fica mais grave. Na Clave de Fá, se você domina a sequência natural das notas, consegue decifrar qualquer partitura visualizando o padrão em linha reta:</p>
+                <div class="escala-sequencia-box">
+                    Ré ➔ Mi ➔ Fá ➔ Sol ➔ Lá ➔ Si ➔ Dó ➔ Ré ➔ Mi ➔ Fá ➔ Sol ➔ Lá ➔ Si ➔ Dó
+                </div>
+            </article>
+
+            <!-- Card 4: Mini Pauta Interativa com Todas as Notas -->
+            <article class="info-card pauta-interativa-card">
+                <h3><span>𝄢</span> 4. Conheça Todas as Notas (Clique para Visualizar)</h3>
+                <p class="pauta-subtext">Clique nos botões abaixo para ver onde cada nota fica posicionada no pentagrama da Clave de Fá.</p>
+                
+                <!-- Seleção de Todas as Notas da Clave de Fá -->
+                <div class="pauta-controls">
+                    <button class="nota-selector active" data-pos="position-Re1">Ré (Grave)</button>
+                    <button class="nota-selector" data-pos="position-Mi1">Mi (Grave)</button>
+                    <button class="nota-selector" data-pos="position-Fa1">Fá (Grave)</button>
+                    <button class="nota-selector" data-pos="position-Sol1">Sol</button>
+                    <button class="nota-selector" data-pos="position-La1">Lá</button>
+                    <button class="nota-selector" data-pos="position-Si1">Si</button>
+                    <button class="nota-selector" data-pos="position-Do2">Dó</button>
+                    <button class="nota-selector" data-pos="position-Re2">Ré</button>
+                    <button class="nota-selector" data-pos="position-Mi2">Mi</button>
+                    <button class="nota-selector" data-pos="position-Fa2">Fá (4ª Linha)</button>
+                    <button class="nota-selector" data-pos="position-Sol2">Sol (Agudo)</button>
+                    <button class="nota-selector" data-pos="position-La2">Lá (Agudo)</button>
+                    <button class="nota-selector" data-pos="position-Si2">Si (Agudo)</button>
+                    <button class="nota-selector" data-pos="position-Do3">Dó (Central)</button>
+                </div>
+
+                <!-- Mini Pauta Estrutural Calibrada -->
+                <div class="mini-staff-wrapper">
+                    <div class="staff-container mini-staff">
+                        <div class="clef">𝄢</div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <!-- Nota com posição padrão inicializada no Ré Grave -->
+                        <div id="miniNoteElement" class="note position-Re1"></div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Direcionamentos Rápidos (Flex/Grid) -->
+            <section class="split-container">
+                <div class="split-card">
+                    <h4>Subindo no Pentagrama ➔</h4>
+                    <p>Ao subir uma nota a partir da linha de Fá, você avança no alfabeto musical. O espaço logo acima da 4ª linha é a nota <strong>SOL</strong>. A 5ª linha vira a nota <strong>LÁ</strong>.</p>
+                </div>
+                <div class="split-card">
+                    <h4>⬅ Descendo no Pentagrama</h4>
+                    <p>Ao descer posições, você lê as notas de trás para frente. O espaço logo abaixo da linha de Fá vira a nota <strong>MI</strong>. A 3ª linha abaixo vira a nota <strong>RÉ</strong>.</p>
+                </div>
+            </section>
+
+            <!-- Card de Dica de Ouro -->
+            <article class="info-card highlight-card">
+                <h3><span>💡</span> Dica de Ouro para as Lições</h3>
+                <p>Durante os exercícios práticos, você ouvirá o áudio e verá a nota no pentagrama. Não tente adivinhar! Localize os dois pontos da Clave de Fá na quarta linha e conte a distância para cima ou para baixo até chegar na nota indicada.</p>
+            </article>
+
+            <!-- Botão de Redirecionamento -->
+            <div class="action-wrapper">
+                <button type="button" class="btn-start-lessons" id="btnIrParaLicoes">Ir para as Lições</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script Lógico colocado estritamente antes do fim do body para encontrar os IDs -->
+    <script src="../js/atividade-texto.js"></script>
+</body>
+</html>

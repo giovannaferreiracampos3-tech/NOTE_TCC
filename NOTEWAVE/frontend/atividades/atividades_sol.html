@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercício: Leitura de Notas (Clave de Sol)</title>
+    <link rel="stylesheet" href="../css/style-sol.css">
+</head>
+
+<body>
+
+    <!-- TELA FINAL: CONCLUSÃO DA TRILHA (CLAVE DE SOL) -->
+    <section id="finalOcean" class="final-ocean" aria-hidden="true" style="display: none;">
+        <div class="ocean-background"></div>
+    
+        <div class="ocean-result">
+            <h2 id="oceanResultTitle"></h2>
+            <p id="oceanResultMessage"></p>
+            <p>
+                Aproveitamento:
+                <span id="finalPercentage">0%</span>
+            </p>
+    
+            <div id="resultStars" aria-label="Estrelas conquistadas">
+                <span class="result-star">⭐</span>
+                <span class="result-star">⭐</span>
+                <span class="result-star">⭐</span>
+            </div>
+    
+            <p id="starResultMessage"></p>
+    
+            <button id="retryLessonBtn" hidden class="ocean-button">
+                Refazer
+            </button>
+    
+            <button id="skipLessonBtn" hidden class="ocean-button ocean-button--secondary">
+                Pular
+            </button>
+    
+            <div id="skipConfirmation" class="skip-confirmation" hidden>
+                <p>
+                    Tem certeza que deseja pular?
+                    Você está tão perto de conseguir sua medalha!
+                </p>
+                <button id="cancelSkipBtn" class="ocean-button ocean-button--secondary">Continuar tentando</button>
+                <button id="confirmSkipBtn" class="ocean-button">Sim, pular</button>
+            </div>
+    
+            <button id="receiveMedalBtn" hidden class="ocean-button ocean-button--medal">
+                RECEBER MEDALHA!
+            </button>
+    
+            <div id="medalReveal" class="medal-reveal" hidden></div>
+        </div>
+    </section>
+
+    <!-- TELA DE RECOMPENSA 1: ESTRELAS (CLAVE DE SOL) -->
+    <div id="telaEstrelas" class="duo-tela" style="display: none;">
+        <div class="duo-card-recompensa">
+            <h2 class="duo-titulo">Fim da Lição!</h2>
+            <div class="duo-estrelas-container" id="duoEstrelasAnimadas"></div>
+            <p class="duo-mensagem">Você mandou muito bem!</p>
+            <button class="duo-btn" id="btnProximoEstrelas">Continuar</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RECOMPENSA 2: MEDALHA (CLAVE DE SOL) -->
+    <div id="telaMedalha" class="duo-tela" style="display: none;">
+        <div class="duo-card-recompensa">
+            <h2 class="duo-titulo-medalha">Nova Conquista!</h2>
+            <div class="duo-medalha-brilho">
+                <div class="icone-medalha-gigante">
+                    <svg viewBox="0 0 100 100" style="width: 80px; height: 80px;">
+                        <path fill="currentColor" d="M54.5,9 C50.1,9 46.2,16.5 45.1,25.4 C38.3,29.8 33.2,36.5 33.2,46.1 C33.2,58.3 42.1,65.2 50.5,65.2 C59.2,65.2 65.5,58.1 65.5,48.5 C65.5,41.3 61.2,35.4 55.3,32.3 C53.2,23.1 55.4,12.5 58.1,9.8 C56.8,9.2 55.7,9 54.5,9 Z M51.5,59.5 C46.2,59.5 40.8,55.1 40.8,47.2 C40.8,40.5 45.1,34.9 51.2,32.8 C53.2,41.2 57.1,51.8 59.2,56.8 C57.2,58.7 54.5,59.5 51.5,59.5 Z M53.5,67 C48.5,67 44,70.5 44,75.5 C44,80.5 48.5,84.5 53.5,84.5 C58.5,84.5 62.5,80.5 62.5,75.5 C62.5,70.5 58.5,67 53.5,67 Z" />
+                    </svg>
+                </div>
+            </div>
+            <p class="duo-mensagem-destaque">Medalha Clave de Sol</p>
+            <button class="duo-btn" id="btnIrParaMedalhas">Continuar</button>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <!-- Cabeçalho do aplicativo -->
+        <header class="app-header">
+            <a href="../html/trilha_de_aulas.html" class="btn-back"
+                style="text-decoration: none; display: inline-block;">← Voltar para a trilha</a>
+            <button class="btn-help" id="btnHelp">💡 Dicas</button>
+        </header>
+
+        <main class="main-content">
+            <!-- Seção principal do exercício -->
+            <section class="exercise-section">
+                <!-- Identificação dinâmica -->
+                <div class="lesson-number" id="lessonNumber">Lição...</div>
+                <h1 class="title" id="lessonTitle">Clave de Sol</h1>
+                <p class="instruction">Ouça o áudio e identifique a nota correspondente.</p>
+
+                <!-- Caixa de dica reflexiva -->
+                <div id="helpBox" class="help-box" style="display: none;">
+                    💡 <strong>Dica:</strong> <span id="helpText"></span>
+                </div>
+
+                <!-- Pentagrama musical estrutural -->
+                <div class="staff-container">
+                    <div class="clef">𝄞</div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div id="noteElement" class="note"></div>
+                </div>
+
+                <!-- Player de áudio integrado -->
+                <div class="audio-player">
+                    <button class="play-btn" id="playBtn"><span class="play-icon">▶</span></button>
+                    <div class="audio-wave">
+                        <div class="wave-line"></div>
+                    </div>
+                    <span class="audio-time" id="audioTime">0:00 / 0:00</span>
+                    <audio id="audioTrack" src=""></audio>
+                </div>
+
+                <!-- Botões puros, o clique será injetado pelo JS -->
+                <div class="options-container" id="optionsContainer">
+                    <button class="option-btn"></button>
+                    <button class="option-btn"></button>
+                    <button class="option-btn"></button>
+                    <button class="option-btn"></button>
+                </div>
+
+                <!-- Painel de Feedback dinâmico -->
+                <div class="feedback-panel" id="feedbackPanel" style="display: none;">
+                    <div class="feedback-text">
+                        <span class="feedback-icon" id="feedbackIcon"></span>
+                        <div>
+                            <strong id="feedbackTitle"></strong>
+                            <p id="feedbackMessage"></p>
+                        </div>
+                    </div>
+                    <button class="next-btn" id="actionBtn">Próxima</button>
+                </div>
+            </section>
+
+            <!-- Barra lateral de desempenho -->
+            <aside class="performance-section">
+                <h2 class="perf-title">Desempenho</h2>
+                <div class="stat-group">
+                    <span class="stat-label">Acertos</span>
+                    <span class="stat-value success-text" id="correctCount">0</span>
+                </div>
+
+                <div class="stat-group">
+                    <span class="stat-label">Erros</span>
+                    <span class="stat-value danger-text" id="wrongCount">0</span>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-ring" id="progressRing" style="--percent: 0;">
+                        <div class="progress-inner">
+                            <span class="percentage-value" id="percentageValue">0%</span>
+                        </div>
+                    </div>
+                    <p class="progress-label">de aproveitamento</p>
+                    <button id="resetBtn">Reiniciar Progresso</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- =====================================================
+
+         TELAS DE RECOMPENSA (ESTILO DUOLINGO) - CLAVE DE SOL
+
+         ===================================================== -->
+ <!-- Tela 1: Mostra as estrelas conquistadas -->
+<div id="telaEstrelas" class="duo-tela" style="display: none;">
+    <div class="duo-card-recompensa">
+        <h2 class="duo-titulo">Fim da Lição!</h2>
+        <div class="duo-estrelas-container" id="duoEstrelasAnimadas"></div>
+        <p class="duo-mensagem">Você mandou muito bem!</p>
+        <button class="duo-btn" id="btnProximoEstrelas">Continuar</button>
+    </div>
+</div>
+
+<!-- Tela 2: Revela a medalha conquistada -->
+<div id="telaMedalha" class="duo-tela" style="display: none;">
+    <div class="duo-card-recompensa">
+
+        <h2 class="duo-titulo-medalha">Nova Conquista!</h2>
+
+        <div class="duo-medalha-brilho">
+            <div class="icone-medalha-gigante">
+                <svg viewBox="0 0 100 100" style="width: 80px; height: 80px;">
+                    <path fill="currentColor"
+                        d="M54.5,9 C50.1,9 46.2,16.5 45.1,25.4 C38.3,29.8 33.2,36.5 33.2,46.1 C33.2,58.3 42.1,65.2 50.5,65.2 C59.2,65.2 65.5,58.1 65.5,48.5 C65.5,41.3 61.2,35.4 55.3,32.3 C53.2,23.1 55.4,12.5 58.1,9.8 C56.8,9.2 55.7,9 54.5,9 Z M51.5,59.5 C46.2,59.5 40.8,55.1 40.8,47.2 C40.8,40.5 45.1,34.9 51.2,32.8 C53.2,41.2 57.1,51.8 59.2,56.8 C57.2,58.7 54.5,59.5 51.5,59.5 Z M53.5,67 C48.5,67 44,70.5 44,75.5 C44,80.5 48.5,84.5 53.5,84.5 C58.5,84.5 62.5,80.5 62.5,75.5 C62.5,70.5 58.5,67 53.5,67 Z" />
+                </svg>
+            </div>
+        </div>
+
+        <p class="duo-mensagem-destaque">Medalha Clave de Sol</p>
+
+        <button class="duo-btn" id="btnIrParaMedalhas">
+            Continuar
+        </button>
+
+    </div>
+</div>
+
+
+
+    <!-- Scripts modulares para a Clave de Sol -->
+    <script src="../js/licoes-sol-data.js"></script>
+    <script src="../js/atividades-sol.js"></script>
+</body>
+
+</html>

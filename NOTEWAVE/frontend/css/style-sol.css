@@ -1,0 +1,2962 @@
+/* =======================================================
+
+   1. CONFIGURAÇÕES GLOBAIS E VARIÁVEIS
+
+======================================================= */
+/* Coloque os nomes e caminhos EXATOS do seu arquivo de fonte aqui */
+
+/* Aplica a fonte personalizada aos títulos das recompensas */
+#telaEstrelas .duo-titulo,
+#telaMedalha .duo-titulo-medalha {
+    font-family: 'NomeDaFonteMar', 'Georgia, serif';
+}
+
+#telaMedalha .duo-mensagem-destaque {
+    font-family: 'NomeDaFonteMar', 'Georgia, serif';
+}
+   
+ 
+:root {
+
+    /* Cores de Fundo */
+
+    --bg-color: #f7f9fa; /* Fundo principal do App */
+
+    --bg-main: #fcfbfc; /* Fundo principal do Dashboard */
+
+    --card-bg: #ffffff;
+
+    --bg-sidebar: #ffffff;
+ 
+    /* Cores de Texto */
+
+    --text-primary: #2d3748;
+
+    --text-secondary: #718096;
+
+    --text-dark: #1c1c1c;
+
+    --text-muted: #666666;
+
+    --text-light: #002d72;
+ 
+    /* Cores Principais (Azul) */
+
+    --primary-blue: #0b3c5d; /* Azul do App */
+
+    --primary-blue-dash: #002d72; /* Azul do Dashboard */
+
+    --active-blue: #003da5;
+ 
+    /* Feedbacks (Sucesso/Erro) */
+
+    --success-green: #2fa85a;
+
+    --success-light: #e8f7ee;
+
+    --danger-red: #e53e3e;
+ 
+    /* Bordas e Elementos Gráficos */
+
+    --border-color: #e2e8f0; /* Borda clara do App */
+
+    --border-dark: #666666; /* Borda escura do Dashboard */
+
+    --border-active: #002d72;
+
+    --timeline-line: #002d72;
+
+}
+ 
+* {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-shadow: none;
+
+    box-sizing: border-box;
+
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+}
+ 
+body {
+
+    background: var(--bg-color);
+
+    color: var(--text-primary);
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    padding: 20px;
+
+}
+ 
+/* =======================================================
+
+   2. DASHBOARD (ÁREA GERAL, MENU E TIMELINE)
+
+======================================================= */
+ 
+.dashboard-container {
+
+    display: flex;
+
+    width: 100%;
+
+    max-width: 1200px;
+
+    height: 90vh;
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+    overflow: hidden;
+
+}
+ 
+.sidebar {
+
+    width: 260px;
+
+    background-color: var(--bg-sidebar);
+
+    border-right: 1px solid var(--border-dark);
+
+    padding: 40px 24px;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+ 
+.logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    color: var(--primary-blue-dash);
+
+    margin-bottom: 48px;
+
+}
+ 
+.menu {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    flex-grow: 1;
+
+}
+ 
+.sidebar-footer {
+
+    margin-top: auto;
+
+}
+ 
+.main-content-dash { /* Alterado para não conflitar com a classe do App */
+
+    flex-grow: 1;
+
+    padding: 50px 60px;
+
+    background-color: var(--bg-main);
+
+    overflow-y: auto;
+
+}
+ 
+.content-header h1 {
+
+    font-size: 28px;
+
+    color: var(--text-dark);
+
+    margin-bottom: 6px;
+
+}
+ 
+.content-header p {
+
+    color: var(--text-muted);
+
+    font-size: 15px;
+
+    margin-bottom: 40px;
+
+}
+ 
+/* Menu e Sidebar */
+
+.sidebar-menu {
+
+    width: 250px;
+
+    background-color: #ffffff;
+
+    padding: 10px;
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    border-radius: 8px;
+
+}
+ 
+.sidebar-menu ul {
+
+    list-style: none;
+
+    padding: 0;
+
+    margin: 0;
+
+}
+ 
+.sidebar-menu li {
+
+    margin-bottom: 8px;
+
+}
+ 
+.menu-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 12px 16px;
+
+    color: #333333;
+
+    background-color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    border-radius: 8px;
+
+    transition: all 0.3s ease;
+
+}
+ 
+.menu-item i {
+
+    width: 20px;
+
+    font-size: 18px;
+
+    color: inherit; 
+
+}
+ 
+.menu-item:hover {
+
+    background-color: var(--primary-blue-dash);
+
+    color: #ffffff;
+
+}
+ 
+.menu-item.active {
+
+    background-color: var(--primary-blue-dash);
+
+    color: #ffffff;
+
+}
+ 
+/* Linha do Tempo / Lista de Exercícios */
+
+.lessons-timeline {
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+}
+ 
+.lessons-timeline::before {
+
+    content: '';
+
+    position: absolute;
+
+    left: 42px;
+
+    top: 30px;
+
+    bottom: 30px;
+
+    width: 2px;
+
+    background-color: var(--timeline-line);
+
+    z-index: 1;
+
+}
+ 
+.lessons-timeline:has(.timeline-item.locked)::before {
+
+    bottom: 120px; 
+
+}
+ 
+.timeline-item {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    align-items: center;
+
+    background: #ffffff;
+
+    border: 1px solid var(--border-dark);
+
+    border-radius: 12px;
+
+    padding: 20px 30px;
+
+    cursor: pointer;
+
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+}
+ 
+.timeline-item:hover {
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+}
+ 
+.status-indicator {
+
+    position: relative;
+
+    width: 84px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+ 
+.check-icon {
+
+    width: 26px;
+
+    height: 26px;
+
+    background-color: var(--primary-blue-dash);
+
+    color: white;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 11px;
+
+}
+ 
+.step-number {
+
+    width: 36px;
+
+    height: 36px;
+
+    background-color: var(--primary-blue-dash);
+
+    color: white;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-weight: bold;
+
+    font-size: 15px;
+
+}
+ 
+.lesson-info {
+
+    flex-grow: 1;
+
+}
+ 
+.lesson-info h3 {
+
+    font-size: 16px;
+
+    color: var(--text-dark);
+
+    margin-bottom: 4px;
+
+}
+ 
+.lesson-info p {
+
+    font-size: 14px;
+
+    color: var(--text-muted);
+
+}
+ 
+.lesson-action {
+
+    color: var(--text-muted);
+
+    font-size: 16px;
+
+    padding-left: 20px;
+
+}
+ 
+.timeline-item.active {
+
+    border: 2px solid var(--border-active);
+
+    padding: 19px 29px; 
+
+}
+ 
+.timeline-item.active .status-indicator {
+
+    padding-left: 38px; 
+
+}
+ 
+.timeline-item.locked {
+
+    opacity: 0.6;
+
+    cursor: not-allowed;
+
+}
+ 
+.timeline-item.locked .step-number {
+
+    background-color: #e2e8f0;
+
+    color: var(--text-light);
+
+}
+ 
+.timeline-item.locked .lesson-info h3,
+
+.timeline-item.locked .lesson-info p {
+
+    color: var(--text-light);
+
+}
+ 
+.timeline-item.locked .lesson-action {
+
+    color: var(--text-light);
+
+}
+ 
+/* =======================================================
+
+   3. APP DE EXERCÍCIO (LIÇÕES)
+
+======================================================= */
+ 
+.app-container {
+
+    width: 100%;
+
+    max-width: 1000px;
+
+    background: var(--card-bg);
+
+    border-radius: 20px;
+
+    padding: 25px;
+
+    border: 1px solid var(--border-color);
+
+    box-shadow: 0 10px 25px rgba(0,0,0,.05);
+
+}
+ 
+.app-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+
+}
+ 
+.btn-back,
+
+.btn-help {
+
+    background: none;
+
+    border: none;
+
+    color: var(--primary-blue);
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+ 
+.main-content {
+
+    display: grid;
+
+    grid-template-columns: 3fr 1fr;
+
+    gap: 30px;
+
+}
+ 
+.exercise-section {
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+ 
+.lesson-number {
+
+    display: inline-block;
+
+    background: var(--primary-blue);
+
+    color: white;
+
+    padding: 8px 20px;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+
+    font-size: 16px;
+
+    align-self: center;
+
+}
+ 
+.title {
+
+    text-align: center;
+
+    font-size: 24px;
+
+    color: #1a202c;
+
+    margin-bottom: 8px;
+
+}
+ 
+.instruction {
+
+    align-self: center;
+
+    background: #f1f5f9;
+
+    color: var(--text-secondary);
+
+    padding: 8px 20px;
+
+    border-radius: 20px;
+
+    font-size: 14px;
+
+    text-align: center;
+
+    margin-bottom: 30px;
+
+}
+ 
+/* Pentagrama e Notas */
+
+.staff-container {
+    width: 100%;
+    height: 120px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 0;
+    margin-bottom: 40px;
+    overflow: visible;
+}
+
+.line {
+    width: 100%;
+    height: 2px;
+    background: #333;
+}
+
+.clef {
+    position: absolute;
+    left: 15px;
+    top: -35px;
+    font-size: 155px;
+    line-height: 1;
+    color: #1a202c;
+    user-select: none;
+}
+ 
+.note {
+
+    position: absolute;
+
+    left: 50%;
+
+    width: 24px;
+
+    height: 17px;
+
+    background: #1a202c;
+
+    border-radius: 50%;
+
+    transform: rotate(-20deg);
+
+}
+ 
+
+
+/* =======================================================
+   POSICIONAMENTO DE NOTAS - CLAVE DE SOL (CORRIGIDO)
+   Passo matemático exato a cada 12px por nota/espaço
+======================================================= */
+
+/* =======================================================
+   POSICIONAMENTO DE NOTAS - CLAVE DE SOL (CORRIGIDO)
+   Espaçamento real: 12.25px por meio-passo (linha/espaço),
+   calculado a partir do layout flex do .staff-container
+   (5 linhas de 2px, space-between, container 120px, padding 10px)
+======================================================= */
+
+/* --- Linhas Suplementares Inferiores --- */
+.position-DoCentral { bottom: -22px; }    /* Dó Central (ledger abaixo) */
+.position-Re1       { bottom: -9.75px; }  /* Ré (espaço abaixo da 1ª linha) */
+
+/* --- Notas no Pentagrama --- */
+.position-Mi1       { bottom: 2.5px; }    /* Mi (1ª Linha) */
+.position-Fa1       { bottom: 14.75px; }  /* Fá (1º Espaço) */
+.position-Sol1      { bottom: 27px; }     /* Sol (2ª Linha - Referência) */
+.position-La1       { bottom: 39.25px; }  /* Lá (2º Espaço) */
+.position-Si1       { bottom: 51.5px; }   /* Si (3ª Linha) */
+.position-Do2       { bottom: 63.75px; }  /* Dó (3º Espaço) */
+.position-Re2       { bottom: 76px; }     /* Ré (4ª Linha) */
+.position-Mi2       { bottom: 88.25px; }  /* Mi (4º Espaço) */
+.position-Fa2       { bottom: 100.5px; }  /* Fá (5ª Linha) */
+
+/* --- Linhas Suplementares Superiores --- */
+.position-Sol2      { bottom: 112.75px; } /* Sol (espaço acima da 5ª linha) */
+.position-La2       { bottom: 125px; }    /* Lá (ledger acima) */
+.position-Si2       { bottom: 137.25px; } /* Si (espaço acima do ledger) */
+
+/* --- Desenho das Linhas Suplementares (Dó Central e Lá2) --- */
+.position-DoCentral::after,
+.position-La2::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 40px;
+    height: 2px;
+    background: #1a202c;
+    transform: translateY(-50%) rotate(20deg);
+    border-radius: 2px;
+}
+ 
+/* Player de Áudio */
+
+.audio-player {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 30px;
+
+    padding: 12px 20px;
+
+    background: white;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 30px;
+
+    box-shadow: 0 4px 6px rgba(0,0,0,.02);
+
+}
+ 
+.play-btn {
+
+    width: 45px;
+
+    height: 45px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: var(--primary-blue);
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    transition: .2s;
+
+}
+ 
+.play-btn:hover {
+
+    transform: scale(1.05);
+
+}
+ 
+.audio-wave {
+
+    flex: 1;
+
+    height: 4px;
+
+    background: #e2e8f0;
+
+    border-radius: 2px;
+
+}
+ 
+.wave-line {
+
+    width: 60%;
+
+    height: 100%;
+
+    background: var(--primary-blue);
+
+    border-radius: 2px;
+
+}
+ 
+.audio-time {
+
+    font-size: 13px;
+
+    color: var(--text-secondary);
+
+    font-variant-numeric: tabular-nums;
+
+}
+ 
+/* Opções de Resposta */
+
+.options-container {
+
+    display: grid;
+
+    grid-template-columns: repeat(4,1fr);
+
+    gap: 15px;
+
+    margin-bottom: 25px;
+
+}
+ 
+.option-btn {
+
+    padding: 15px;
+
+    background: white;
+
+    color: var(--text-primary);
+
+    border: 2px solid var(--border-color);
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    transition: .2s;
+
+}
+ 
+.option-btn:hover {
+
+    background: #f8fafc;
+
+    border-color: #cbd5e1;
+
+}
+ 
+.option-btn:disabled {
+
+    transform: none;
+
+    opacity: .5;
+
+    cursor: not-allowed;
+
+}
+ 
+#correct-choice {
+
+    background: #f0fdf4;
+
+    border-color: var(--success-green);
+
+    color: var(--success-green);
+
+}
+ 
+#wrong-choice {
+
+    background: #fef2f2;
+
+    border-color: var(--danger-red);
+
+    color: var(--danger-red);
+
+}
+ 
+/* Painel de Feedback */
+
+.feedback-panel {
+
+    display: none;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 20px;
+
+    margin-top: 10px;
+
+    border-radius: 15px;
+
+    animation: slideUp .3s ease;
+
+}
+ 
+.feedback-panel.success {
+
+    background: var(--success-light);
+
+    border: 1px solid #bbf7d0;
+
+}
+ 
+.feedback-panel.danger {
+
+    background: #fef2f2;
+
+    border: 1px solid #fecaca;
+
+}
+ 
+.feedback-text {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+}
+ 
+.feedback-icon {
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    border-radius: 50%;
+
+    background: var(--success-green);
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+}
+ 
+.feedback-panel.danger .feedback-icon {
+
+    background: var(--danger-red);
+
+}
+ 
+.feedback-text strong {
+
+    color: #1e293b;
+
+    font-size: 16px;
+
+}
+ 
+.feedback-text p {
+
+    margin-top: 2px;
+
+    color: #475569;
+
+    font-size: 14px;
+
+}
+ 
+.next-btn {
+
+    padding: 12px 30px;
+
+    background: var(--primary-blue);
+
+    color: white;
+
+    border: none;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+}
+ 
+/* Painel de Desempenho */
+
+.performance-section {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 20px;
+
+    padding-left: 30px;
+
+    border-left: 1px solid var(--border-color);
+
+}
+ 
+.perf-title {
+
+    margin-bottom: 10px;
+
+    color: var(--text-primary);
+
+    font-size: 16px;
+
+}
+ 
+.stat-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+
+}
+ 
+.stat-label {
+
+    color: var(--text-secondary);
+
+    font-size: 14px;
+
+}
+ 
+.stat-value {
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+}
+ 
+.stat-group strong {
+
+    font-size: 22px;
+
+}
+ 
+.success-text { color: var(--success-green); }
+
+.danger-text { color: var(--danger-red); }
+ 
+/* Progresso e Botão de Reset */
+
+.progress-container {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    margin-top: 20px;
+
+}
+ 
+.progress-ring {
+
+    width: 110px;
+
+    height: 110px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    border-radius: 50%;
+
+    background: conic-gradient(
+
+        var(--success-green) calc(var(--percent) * 1%),
+
+        #e2e8f0 0
+
+    );
+
+}
+ 
+.progress-inner {
+
+    width: 92px;
+
+    height: 92px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background: white;
+
+    border-radius: 50%;
+
+}
+ 
+.percentage-value {
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+}
+ 
+.progress-label {
+
+    margin-top: 10px;
+
+    color: var(--text-secondary);
+
+    font-size: 12px;
+
+}
+ 
+#resetBtn {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 12px 18px;
+
+    background: linear-gradient(135deg, #0b3c5d, #145b8a);
+
+    color: white;
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all .25s ease;
+
+    box-shadow: 0 5px 15px rgba(11,60,93,.25);
+
+}
+ 
+#resetBtn:hover {
+
+    transform: translateY(-2px);
+
+    background: linear-gradient(135deg, #145b8a, #1d74af);
+
+    box-shadow: 0 8px 20px rgba(11,60,93,.35);
+
+}
+ 
+#resetBtn:active {
+
+    transform: scale(.97);
+
+}
+ 
+@keyframes slideUp {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+ 
+/* =======================================================
+
+   4. MEDIA QUERIES (RESPONSIVIDADE)
+
+======================================================= */
+ 
+/* Telas Médias / Tablets */
+
+@media (max-width: 900px) {
+
+    .main-content {
+
+        flex-direction: column;
+
+    }
+
+    .performance-section {
+
+        width: 100%;
+
+    }
+
+}
+ 
+@media (max-width: 768px) {
+
+    .main-content {
+
+        grid-template-columns: 1fr;
+
+    }
+ 
+    .performance-section {
+
+        border-left: none;
+
+        border-top: 1px solid var(--border-color);
+
+        padding-left: 0;
+
+        padding-top: 30px;
+
+        flex-direction: row;
+
+        justify-content: space-around;
+
+        align-items: center;
+
+        gap: 15px;
+
+    }
+ 
+    .options-container {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+    .dashboard-container {
+
+        flex-direction: column;
+
+        height: auto;
+
+    }
+
+    .sidebar {
+
+        width: 100%;
+
+        border-right: none;
+
+        border-bottom: 1px solid var(--border-dark);
+
+        padding: 20px;
+
+    }
+
+}
+ 
+/* Telas Pequenas / Celulares */
+
+@media (max-width: 480px) {
+
+    body {
+
+        padding: 10px;
+
+        align-items: flex-start;
+
+    }
+ 
+    .app-container {
+
+        padding: 15px;
+
+        border-radius: 15px;
+
+    }
+ 
+    .title {
+
+        font-size: 20px;
+
+    }
+ 
+    .instruction {
+
+        font-size: 12px;
+
+        padding: 8px 15px;
+
+    }
+ 
+    .staff-container {
+
+        height: 100px;
+
+    }
+ 
+    .clef {
+
+        font-size: 65px;
+
+    }
+ 
+    .options-container {
+
+        grid-template-columns: 1fr;
+
+    }
+ 
+    .audio-player {
+
+        padding: 10px;
+
+    }
+ 
+    .performance-section {
+
+        flex-direction: column;
+
+    }
+ 
+    .feedback-panel {
+
+        flex-direction: column;
+
+        gap: 15px;
+
+        text-align: center;
+
+    }
+ 
+    .next-btn {
+
+        width: 100%;
+
+    }
+
+}
+ 
+/* =======================================================
+   CAIXA DE DICAS (HELP BOX)
+======================================================= */
+ 
+.help-box {
+    /* Cores de fundo e borda combinando com o azul do seu tema */
+    background-color: #f0f9ff; 
+    border: 1px solid #bae6fd; 
+    border-left: 5px solid var(--primary-blue); /* Borda lateral mais grossa para destaque */
+    /* Espaçamento e arredondamento */
+    padding: 16px 20px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    /* Estilo do texto */
+    color: #0369a1; 
+    font-size: 14.5px;
+    font-weight: 500;
+    line-height: 1.5;
+    /* Uma sombra super suave para dar profundidade */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    /* Animação suave para quando a dica aparecer na tela */
+    animation: fadeInDica 0.3s ease-out;
+}
+ 
+.help-box strong {
+    color: var(--primary-blue);
+    margin-right: 4px;
+}
+ 
+/* Animação de surgimento */
+@keyframes fadeInDica {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+ 
+/* =========================================================
+   NOTEWAVE — EXPERIÊNCIA FINAL DA TRILHA
+   Complemento: adicionar ao FINAL do style.css
+   Não substitui as regras originais do projeto.
+   ========================================================= */
+
+/* 1. CENA FINAL */
+
+.final-ocean {
+    --ocean-dark: #073763;
+    --ocean-blue: #087db5;
+    --ocean-light: #52c7eb;
+    --foam: #f7fdff;
+    --sand: #f6e5b9;
+    --star-gold: #ffc94a;
+
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 24px;
+    isolation: isolate;
+
+    background: linear-gradient(
+        180deg,
+        #dff7ff 0%,
+        #b8e9fa 40%,
+        #83d5ee 70%,
+        #f6e5b9 100%
+    );
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.final-ocean.is-active {
+    visibility: visible;
+    pointer-events: auto;
+    animation: oceanSceneAppear 0.7s ease forwards;
+}
+
+.final-ocean.is-closing {
+    animation: oceanSceneDisappear 0.7s ease forwards;
+}
+
+.final-ocean *,
+.final-ocean *::before,
+.final-ocean *::after {
+    box-sizing: border-box;
+}
+
+/* 2. FUNDO DO MAR E DA PRAIA */
+
+.ocean-background {
+    background:
+        transparent;
+}
+
+.ocean-sand {
+    position: absolute;
+    left: -10%;
+    bottom: -12%;
+    width: 120%;
+    height: 43%;
+    z-index: -1;
+
+    border-radius: 50% 50% 0 0 / 18% 18% 0 0;
+
+    background:
+        radial-gradient(
+            circle at 25% 25%,
+            rgba(255, 255, 255, 0.7) 0 1px,
+            transparent 2px
+        ),
+        radial-gradient(
+            circle at 70% 60%,
+            rgba(180, 135, 74, 0.13) 0 1px,
+            transparent 2px
+        ),
+        linear-gradient(
+            180deg,
+            #fff1c9,
+            #f4d99b 70%,
+            #e9c77d
+        );
+
+    background-size: 24px 24px, 31px 31px, auto;
+
+    transform: translateY(100%);
+}
+
+.final-ocean.is-active .ocean-sand {
+    animation: sandReveal 1.5s 1.5s cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+/* 3. ONDAS QUE SOBEM E DEPOIS RECUAM */
+
+.ocean-wave {
+    position: absolute;
+    left: -15%;
+    bottom: -8%;
+    width: 130%;
+    height: 90%;
+    z-index: 2;
+
+    border-radius: 46% 54% 0 0 / 15% 18% 0 0;
+
+    transform: translateY(110%) rotate(-3deg);
+    transform-origin: bottom center;
+    will-change: transform;
+}
+
+.ocean-wave--deep {
+    z-index: 1;
+    height: 90%;
+    background: linear-gradient(
+        160deg,
+        #07518a,
+        #087eb5 55%,
+        #24a6d4
+    );
+}
+
+.ocean-wave--middle {
+    z-index: 2;
+    height: 79%;
+    background: linear-gradient(
+        150deg,
+        #0d8cc3,
+        #36b9e3 65%,
+        #6ed7ed
+    );
+}
+
+.ocean-wave--foam {
+    z-index: 3;
+    height: 70%;
+    background: linear-gradient(
+        165deg,
+        #f8feff 0%,
+        #d8f6ff 32%,
+        #7edaf0 72%,
+        #35b6df 100%
+    );
+
+    border-top: 12px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 -12px 28px rgba(255, 255, 255, 0.35);
+}
+
+.final-ocean.is-active .ocean-wave--deep {
+    animation: waveRiseFall 3.4s 0.1s cubic-bezier(.22,.7,.24,1) forwards;
+}
+
+.final-ocean.is-active .ocean-wave--middle {
+    animation: waveRiseFall 3.4s 0.2s cubic-bezier(.22,.7,.24,1) forwards;
+}
+
+.final-ocean.is-active .ocean-wave--foam {
+    animation: waveRiseFall 3.4s 0.35s cubic-bezier(.22,.7,.24,1) forwards;
+}
+
+/* Movimento ondulado da espuma */
+
+.ocean-wave--foam::before,
+.ocean-wave--foam::after {
+    content: "";
+    position: absolute;
+    top: -20px;
+    width: 65%;
+    height: 65px;
+
+    border-radius: 50%;
+    background: #f8feff;
+}
+
+.ocean-wave--foam::before {
+    left: -5%;
+    transform: rotate(-5deg);
+}
+
+.ocean-wave--foam::after {
+    right: -5%;
+    transform: rotate(5deg);
+}
+
+/* 4. NOTA MUSICAL SURFISTA */
+
+.surfing-note {
+    position: absolute;
+    z-index: 5;
+    top: 28%;
+    left: 50%;
+
+    width: clamp(100px, 24vw, 180px);
+    aspect-ratio: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transform: translate(-50%, 90vh) rotate(-15deg);
+    opacity: 0;
+
+    filter: drop-shadow(0 14px 10px rgba(4, 49, 85, 0.18));
+    will-change: transform, opacity;
+}
+
+.surfing-note img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.final-ocean.is-active .surfing-note {
+    animation:
+        surferEntrance 1.2s 0.7s cubic-bezier(.18,.85,.28,1.2) forwards,
+        surferRide 1.6s 1.9s ease-in-out infinite alternate;
+}
+
+/* Brilhinhos ao redor da nota */
+
+.surfing-note::before,
+.surfing-note::after {
+    content: "✦";
+    position: absolute;
+    color: #fff9d9;
+    font-size: clamp(20px, 4vw, 34px);
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.95);
+    opacity: 0;
+}
+
+.surfing-note::before {
+    top: 0;
+    right: -14px;
+}
+
+.surfing-note::after {
+    left: -18px;
+    bottom: 18%;
+    font-size: 24px;
+}
+
+.final-ocean.is-active .surfing-note::before {
+    animation: sparkle 1.5s 1.4s ease-in-out infinite;
+}
+
+.final-ocean.is-active .surfing-note::after {
+    animation: sparkle 1.5s 1.8s ease-in-out infinite reverse;
+}
+
+
+/* 6. PAINEL DE RESULTADO */
+
+.ocean-result {
+    position: relative;
+    z-index: 10;
+
+    width: min(100%, 490px);
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 30px 26px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 30px;
+
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow:
+        0 24px 70px rgba(5, 54, 92, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    text-align: center;
+
+    opacity: 0;
+    transform: translateY(35px) scale(0.92);
+}
+
+.final-ocean.is-active .ocean-result {
+    animation: resultPop 0.75s 0.2s cubic-bezier(.2,.9,.25,1.2) forwards;
+}
+
+.ocean-result h2 {
+    margin: 0 0 12px;
+    color: #073763;
+    font-size: clamp(24px, 5vw, 34px);
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+
+.ocean-result p {
+    margin: 0 0 20px;
+    color: #45647b;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.ocean-result .result-percentage {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 94px;
+    min-height: 94px;
+    margin: 8px auto 20px;
+    padding: 15px;
+
+    border: 5px solid #7bd8ed;
+    border-radius: 50%;
+
+    color: #07518a;
+    background: #e8faff;
+
+    font-size: 25px;
+    font-weight: 900;
+}
+
+/* 7. ESTRELAS DO RESULTADO */
+
+.result-stars {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 20px;
+}
+
+.result-star {
+    display: inline-block;
+    color: #d9e4ea;
+    font-size: clamp(38px, 9vw, 55px);
+    transform: scale(0.5);
+    opacity: 0;
+}
+
+.result-star.is-earned {
+    color: #ffbd30;
+    filter: drop-shadow(0 4px 5px rgba(190, 133, 21, 0.25));
+}
+
+.final-ocean.is-active .result-star {
+    animation: earnedStarPop 0.55s calc(0.25s + var(--star-index, 0) * 0.12s)
+        cubic-bezier(.2,.9,.3,1.4) forwards;
+}
+
+/* 8. BOTÕES DA TELA FINAL */
+
+.ocean-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.ocean-button {
+    position: relative;
+    overflow: hidden;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 22px;
+
+    border: 0;
+    border-radius: 17px;
+
+    color: #fff;
+    background: #087db5;
+
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+
+    cursor: pointer;
+    touch-action: manipulation;
+
+    box-shadow: 0 5px 0 #075b89;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        filter 0.18s ease;
+}
+
+.ocean-button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 70%;
+    height: 100%;
+
+    background: linear-gradient(
+        110deg,
+        transparent,
+        rgba(255, 255, 255, 0.35),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+}
+
+.ocean-button:hover::after {
+    animation: buttonShimmer 0.7s ease;
+}
+
+.ocean-button:hover {
+    filter: brightness(1.07);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #598907;
+}
+
+.ocean-button:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #075b89;
+}
+
+.ocean-button:focus-visible {
+    outline: 4px solid #ffbd30;
+    outline-offset: 4px;
+}
+
+.ocean-button--secondary {
+    color: #07518a;
+    background: #e3f7ff;
+    box-shadow: 0 5px 0 #acdff0;
+}
+
+.ocean-button--secondary:hover {
+    box-shadow: 0 7px 0 #acdff0;
+}
+
+.ocean-button--medal {
+    color: #49300a;
+    background: linear-gradient(135deg, #ffe78b, #ffbd30);
+    box-shadow: 0 5px 0 #d79a1d;
+}
+
+.ocean-button--medal:hover {
+    box-shadow: 0 7px 0 #d79a1d;
+}
+
+/* 9. AVISO DO BOTÃO PULAR */
+
+.skip-confirmation {
+    padding: 14px;
+    border: 1px solid #f2d28b;
+    border-radius: 15px;
+
+    color: #785318;
+    background: #fff8df;
+
+    font-size: 14px;
+    line-height: 1.55;
+    text-align: left;
+}
+
+.skip-confirmation strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #68440c;
+}
+
+/* 10. MEDALHA CONQUISTADA */
+
+
+
+.medal-emblem {
+    display: grid;
+    place-items: center;
+
+    width: 110px;
+    aspect-ratio: 1;
+    border: 6px solid #fff0b1;
+    border-radius: 50%;
+
+    color: #fff8dc;
+    background: linear-gradient(145deg, #ffcf52, #e99a18);
+
+    font-size: 52px;
+    box-shadow:
+        0 0 0 7px rgba(255, 201, 74, 0.2),
+        0 12px 30px rgba(182, 126, 16, 0.25);
+
+    transform: scale(0) rotate(-35deg);
+}
+
+.medal-reveal.is-earned .medal-emblem {
+    animation: medalCelebrate 0.9s 0.15s cubic-bezier(.2,.9,.25,1.4) forwards;
+}
+
+.medal-reveal p {
+    margin: 0;
+    color: #79531a;
+    font-weight: 700;
+}
+
+/* 11. ANIMAÇÕES */
+
+@keyframes oceanSceneAppear {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes oceanSceneDisappear {
+    from { opacity: 1; }
+    to   { opacity: 0; visibility: hidden; }
+}
+
+@keyframes waveRiseFall {
+    0% {
+        transform: translateY(110%) rotate(-3deg);
+    }
+
+    35% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    52% {
+        transform: translateY(-3%) rotate(1deg);
+    }
+
+    72% {
+        transform: translateY(2%) rotate(-1deg);
+    }
+
+    100% {
+        transform: translateY(110%) rotate(3deg);
+    }
+}
+
+@keyframes sandReveal {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+@keyframes surferEntrance {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 90vh) rotate(-25deg) scale(0.55);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translate(-50%, -20px) rotate(8deg) scale(1.08);
+    }
+
+    82% {
+        transform: translate(-50%, 8px) rotate(-4deg) scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 0) rotate(0deg) scale(1);
+    }
+}
+
+@keyframes surferRide {
+    from {
+        transform: translate(-50%, -5px) rotate(-3deg);
+    }
+
+    to {
+        transform: translate(-50%, 8px) rotate(4deg);
+    }
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.3) rotate(0deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(45deg);
+    }
+}
+
+@keyframes starLanding {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px) rotate(-35deg) scale(0.2);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translateY(8px) rotate(15deg) scale(1.25);
+    }
+
+    82% {
+        transform: translateY(-4px) rotate(-8deg) scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) rotate(var(--star-rotation, 8deg)) scale(1);
+    }
+}
+
+@keyframes resultPop {
+    0% {
+        opacity: 0;
+        transform: translateY(35px) scale(0.92);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translateY(-5px) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes earnedStarPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.2) rotate(-25deg);
+    }
+
+    75% {
+        opacity: 1;
+        transform: scale(1.2) rotate(8deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes medalCelebrate {
+    0% {
+        transform: scale(0) rotate(-35deg);
+    }
+
+    65% {
+        transform: scale(1.18) rotate(8deg);
+    }
+
+    82% {
+        transform: scale(0.94) rotate(-3deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+@keyframes buttonShimmer {
+    from { left: -120%; }
+    to   { left: 150%; }
+}
+
+/* 12. ACESSIBILIDADE E CELULAR */
+
+@media (max-width: 600px) {
+    .final-ocean {
+        padding: 16px;
+    }
+
+    .surfing-note {
+        top: 17%;
+        width: min(36vw, 145px);
+    }
+
+    .ocean-result {
+        padding: 24px 19px;
+        border-radius: 25px;
+    }
+
+    .ocean-result p {
+        font-size: 15px;
+    }
+
+    .ocean-sand {
+        height: 37%;
+    }
+
+    .beach-star {
+        bottom: 9%;
+    }
+
+    .ocean-button {
+        min-height: 52px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .final-ocean *,
+    .final-ocean *::before,
+    .final-ocean *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+
+/* =======================================================
+
+   TELAS DE RECOMPENSA GAMIFICADAS (ESTILO DUOLINGO)
+
+======================================================= */
+
+/* Container das Telas: Fundo azul-piscina ensolarado, limpo e suave (RESTOURADO O BRILHO ORIGINAL) */
+/* Container das Telas: Fundo degradê sofisticado com todas as 7 cores da paleta */
+/* Container das Telas: Degradê sofisticado e ultra-suave com a paleta completa */
+.duo-tela {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 
+      As cores agora se espalham de forma natural:
+      O azul profundo fica sutil no topo, abrindo espaço para um meio iluminado 
+      e terminando em uma base areia/off-white super limpa e confortável.
+    */
+    background-image: url('../imagem/barco.jpeg');
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+    animation: fadeInSuave 0.4s ease-out forwards;
+    overflow: hidden;
+  }
+  
+  
+  /* Título de Medalha com o Azul Nobre da paleta */
+  .duo-titulo-medalha {
+    color: #075784 !important;
+  }
+  
+  /* Container das Estrelas-do-Mar */
+  .duo-estrelas-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 35px;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    width: 100%;
+  }
+  
+  /* Estrelas do Mar com Animação Carismática */
+  /* ESTRELAS-DO-MAR — NOTEWAVE */
+
+.duo-estrela-anim {
+    width: 100px;
+    height: 100px;
+    display: inline-block;
+    object-fit: contain;
+
+    transform: scale(0);
+
+    filter:
+        drop-shadow(0 5px 0 rgba(170, 105, 18, 0.22))
+        drop-shadow(0 9px 12px rgba(7, 55, 99, 0.16));
+
+    animation:
+        popGelatina 0.6s
+        cubic-bezier(0.175, 0.885, 0.32, 1.275)
+        forwards;
+}
+
+/* Estrela central em destaque */
+.duo-estrelas-container :nth-child(2) {
+    width: 125px;
+    height: 125px;
+    margin-top: -25px;
+}
+
+/* Movimento suave ao passar o mouse */
+.duo-estrela-anim:hover {
+    filter:
+        drop-shadow(0 5px 0 rgba(170, 105, 18, 0.25))
+        drop-shadow(0 0 12px rgba(255, 201, 74, 0.65));
+}
+  
+  /* Delays das estrelas */
+  .duo-estrelas-container :nth-child(1) {
+    animation-delay: 0.15s;
+  }
+  .duo-estrelas-container :nth-child(2) {
+    animation-delay: 0.35s;
+    width: 125px;
+    height: 125px;
+    margin-top: -25px;
+  }
+  .duo-estrelas-container :nth-child(3) {
+    animation-delay: 0.55s;
+  }
+  
+  /* Mensagens Textuais */
+  .duo-mensagem {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    color: #2a81a5 !important; /* Azul mar intermediário para legibilidade */
+    font-size: 1.6rem;
+    font-weight: 900;
+    margin-bottom: 35px;
+    text-align: center;
+    -webkit-text-stroke: 1px #ffffff !important;
+    text-shadow: 2px 2px 0px rgba(42, 129, 165, 0.15);
+  }
+  
+  /* Títulos Fofos - Mantendo o Stroke Grosso e Sombra Marcante Original */
+  .duo-titulo, .duo-titulo-medalha {
+    font-family: 'NomeDaFonteMar', 'Arial Black', system-ui, sans-serif !important;
+    color: #075784 !important;
+    font-size: 2.8rem !important;
+    font-weight: 900 !important;
+    margin-top: 0;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-align: center;
+    text-transform: uppercase;
+    -webkit-text-stroke: 3px #ffffff !important;
+    text-shadow: 4px 4px 0px rgba(7, 87, 132, 0.25) !important;
+  }
+  
+  /* Texto de Destaque da Medalha */
+  .duo-mensagem-destaque {
+    font-family: 'NomeDaFonteMar', 'Arial Black', system-ui, sans-serif !important;
+    color: #075784 !important;
+    font-size: 2rem !important;
+    font-weight: 900 !important;
+    margin-top: 25px;
+    margin-bottom: 35px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    -webkit-text-stroke: 0px !important;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.06) !important;
+  }
+  
+  /* =======================================================
+   BOTÃO DE RECOMPENSA (Fim de Lição / Nova Conquista)
+   Idêntico aos botões do Fim da Trilha (.ocean-button)
+======================================================= */
+
+.duo-tela .duo-btn,
+.duo-card-recompensa .duo-btn {
+    position: relative;
+    overflow: hidden;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;             /* Ocupa a largura ideal do card, assim como no fim da trilha */
+    max-width: 100%;         /* Remove limitações antigas de largura */
+    min-height: 54px;        /* Altura padrão padronizada */
+    padding: 14px 22px;
+
+    border: 0;
+    border-radius: 17px;     /* Mesmo formato arredondado moderno */
+
+    color: #fff;
+    background: #087db5;     /* Azul padrão NoteWave */
+
+    font-family: 'NomeDaFonteMar', Georgia, serif !important;
+    font-size: 16px;         /* Tamanho de fonte padronizado */
+    font-weight: 850;
+    text-align: center;
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+    touch-action: manipulation;
+
+    /* Sombra 3D e profundidade idênticas */
+    box-shadow: 0 5px 0 #075b89;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        filter 0.18s ease;
+}
+
+/* Efeito de brilho ao passar o mouse (Shimmer do Fim da Trilha) */
+.duo-tela .duo-btn::after,
+.duo-card-recompensa .duo-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 70%;
+    height: 100%;
+
+    background: linear-gradient(
+        110deg,
+        transparent,
+        rgba(255, 255, 255, 0.35),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+}
+
+.duo-tela .duo-btn:hover::after,
+.duo-card-recompensa .duo-btn:hover::after {
+    animation: buttonShimmer 0.7s ease;
+}
+
+/* Efeitos de Hover e Active idênticos */
+.duo-tela .duo-btn:hover,
+.duo-card-recompensa .duo-btn:hover {
+    filter: brightness(1.07);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #075b89;
+}
+
+.duo-tela .duo-btn:active,
+.duo-card-recompensa .duo-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #075b89;
+}
+
+.duo-tela .duo-btn:focus-visible,
+.duo-card-recompensa .duo-btn:focus-visible {
+    outline: 4px solid #ffbd30;
+    outline-offset: 4px;
+}
+  
+  .duo-btn:hover {
+    background-color: #fcd063; /* Tom iluminado no hover */
+  }
+  
+  /* =========================================
+   NOTEWAVE — TELA DE RECOMPENSA MARINHA
+   Tipografia elegante e fluida
+========================================= */
+
+.duo-tela .duo-titulo {
+    font-family: 'NomeDaFonteMar', Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    line-height: 1.25;
+    color: #164e63;
+    text-align: center;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.65);
+    margin-bottom: 18px;
+}
+
+.duo-tela .duo-mensagem {
+    font-family: 'NomeDaFonteMar', Georgia, serif;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    line-height: 1.7;
+    color: #356779;
+    text-align: center;
+    max-width: 440px;
+    margin: 20px auto 24px;
+}
+
+.duo-tela .duo-btn {
+    font-family: 'NomeDaFonteMar', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    padding: 13px 32px;
+    border-radius: 28px;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease;
+}
+
+.duo-tela .duo-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.04);
+    box-shadow: 0 7px 18px rgba(22, 78, 99, 0.18);
+}
+
+/* =========================================
+   NOTEWAVE — TIPOGRAFIA DAS TELAS DE RECOMPENSA
+   Mantém botões, fundos e animações originais
+========================================= */
+
+/* Títulos: Fim da Lição e Nova Conquista */
+.duo-tela .duo-titulo {
+    font-family: 'NomeDaFonteMar', Georgia, serif !important;
+    color: #075784 !important;
+    font-size: clamp(2rem, 4vw, 2.8rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.25;
+    letter-spacing: 1px;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 0 20px 20px;
+    
+    /* Remove o contorno branco exagerado */
+    -webkit-text-stroke: 0 !important;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Mensagens: Você mandou muito bem */
+.duo-tela .duo-mensagem {
+    font-family: 'NomeDaFonteMar', Georgia, serif !important;
+    color: #356779 !important;
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem) !important;
+    font-weight: 500 !important;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    text-align: center;
+    max-width: 440px;
+    margin: 20px 24px 35px;
+    
+    -webkit-text-stroke: 0 !important;
+    text-shadow: none !important;
+}
+
+/* Título da medalha */
+.duo-tela .duo-titulo-medalha {
+    font-family: inherit;
+    color: #075784 !important;
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.3;
+    letter-spacing: 0.8px;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 0 20px 20px;
+
+    -webkit-text-stroke: 0 !important;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Texto de destaque: MEDALHA CLAVE DE SOL */
+.duo-tela .duo-mensagem-destaque {
+    font-family:  inherit;
+    color: #075784 !important;
+    font-size: clamp(1.4rem, 3vw, 2rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.4;
+    letter-spacing: 0.8px;
+    text-align: center;
+    text-transform: uppercase;
+    margin: 25px 20px 35px;
+
+    -webkit-text-stroke: 0 !important;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.5) !important;
+}
+  
+  /* Cúpula da Medalha - Mantendo o centro bem iluminado com transição para os azuis da paleta */
+  .duo-medalha-brilho {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle at center, #ffffff 0%, rgba(224, 247, 250, 0.8) 30%, transparent 70%), 
+                radial-gradient(circle at 50% 50%, #76a2b2 10%, #3e7b93 60%, #075784 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    border: 6px solid #ffffff; /* Borda branca pura para destacar do fundo */
+    box-shadow: 0 10px 0px rgba(7, 87, 132, 0.2), inset 0 -12px 0px rgba(0, 0, 0, 0.06), inset 0 12px 0px rgba(255, 255, 255, 0.3);
+    animation: balancoFofo 3s infinite ease-in-out;
+  }
+  
+  /* Elemento interno para centralizar o SVG */
+  .icone-medalha-gigante {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* --- ANIMAÇÕES --- */
+  @keyframes fadeInSuave {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes popGelatina {
+    0% { transform: scale(0) rotate(-10deg); }
+    60% { transform: scale(1.15) rotate(5deg); }
+    80% { transform: scale(0.95) rotate(-2deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+  
+  @keyframes balancoFofo {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(3deg); }
+  }
+  
+  
+
+/* =======================================================
+
+   ONDA DE TRANSIÇÃO (ORGÂNICA E FLUIDA)
+
+======================================================= */
+
+.onda-transicao {
+
+    position: fixed;
+  
+    /* Fazemos ela um pouco mais larga que a tela para o balanço não mostrar as bordas cortadas */
+  
+    left: -10%;
+  
+    width: 120%;
+  
+    height: 120vh; /* Altura de sobra para cobrir tudo */
+  
+    background: #0077b6; /* Cor do fundo da água */
+  
+    z-index: 10005;
+  
+    pointer-events: none;
+  
+    /* Cria uma leve curva na parte de baixo para quando a onda estiver saindo da tela */
+  
+    border-radius: 0 0 50% 50% / 0 0 80px 80px; 
+  
+  }
+   
+  /* CAMADA 1: A Espuma (Onda mais alta e azul clara, fica por trás) */
+  
+  .onda-transicao::before {
+  
+    content: '';
+  
+    position: absolute;
+  
+    bottom: 99%; /* Gruda exatamente no topo do bloco azul */
+  
+    left: 0;
+  
+    width: 100%;
+  
+    height: 160px;
+  
+    background: #48cae4;
+  
+    /* Cria a curva parabólica da água */
+  
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  
+  }
+   
+  /* CAMADA 2: A Crista da onda (Onda mais baixa e azul escura, fica na frente) */
+  
+  .onda-transicao::after {
+  
+    content: '';
+  
+    position: absolute;
+  
+    bottom: 99%;
+  
+    left: -5%;
+  
+    width: 110%;
+  
+    height: 100px;
+  
+    background: #0077b6;
+  
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  
+  }
+   
+  /* O gatilho disparado pelo JavaScript */
+  
+  .onda-transicao.animar {
+  
+    animation: varreduraOndaFluida 1.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
+  
+  }
+   
+  /* Animação com efeito "Slosh" (Balança pros lados enquanto sobe) */
+  
+  @keyframes varreduraOndaFluida {
+  
+    0% { 
+  
+      top: 100%; 
+  
+      transform: translateX(3%);
+  
+    }
+  
+    45% { 
+  
+      top: -10%; 
+  
+      transform: translateX(-3%);
+  
+    }
+  
+    55% { 
+  
+      top: -10%; 
+  
+      transform: translateX(-3%);
+  
+    }
+  
+    100% { 
+  
+      top: -150%; /* Sobe até sumir completamente lá no alto */
+  
+      transform: translateX(3%);
+  
+    }
+  
+  }
+
+  #finalOcean {
+    background-image: url("../imagem/barco.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* NOTEWAVE — ESTRELAS DO RESULTADO FINAL */
+
+#resultStars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin: 20px 0;
+}
+
+#resultStars .result-star {
+    display: inline-block;
+    font-size: clamp(48px, 10vw, 68px);
+    line-height: 1;
+    color: #dbe5ec;
+    filter: none;
+    opacity: 1;
+    transform: scale(1);
+    transition:
+        color 0.3s ease,
+        transform 0.3s ease,
+        filter 0.3s ease;
+}
+
+#resultStars .result-star.is-earned {
+    color: #ffc94a;
+    filter: drop-shadow(0 4px 5px rgba(190, 133, 21, 0.25));
+    animation: noteWaveStar 0.45s ease both;
+}
+
+#resultStars .result-star:nth-child(2).is-earned {
+    animation-delay: 0.12s;
+}
+
+#resultStars .result-star:nth-child(3).is-earned {
+    animation-delay: 0.24s;
+}
+
+@keyframes noteWaveStar {
+    0% {
+        transform: scale(0.65);
+    }
+
+    70% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Card das telas de recompensa do NoteWave */
+.duo-card-recompensa {
+    position: relative;
+    z-index: 1;
+
+    width: min(490px, calc(100% - 32px));
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    padding: 30px 26px;
+
+    background: rgba(255, 255, 255, 0.94);
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 30px;
+
+    box-shadow:
+        0 24px 70px rgba(5, 54, 92, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    text-align: center;
+}
+
+/* Evita que os elementos sejam comprimidos */
+.duo-card-recompensa > * {
+    flex-shrink: 0;
+}
+
+/* Mantém os botões clicáveis */
+.duo-card-recompensa .duo-btn {
+    position: relative;
+    z-index: 2;
+}
+
+@media (max-width: 480px) {
+    .duo-card-recompensa {
+        padding: 24px 18px;
+        border-radius: 24px;
+        gap: 10px;
+    }
+}
+
+/* ==========================================
+   NOTEWAVE — CARD HORIZONTAL DE RECOMPENSA
+========================================== */
+
+.duo-card-recompensa {
+    position: relative;
+    isolation: isolate;
+
+    width: min(680px, calc(100% - 36px));
+    min-height: 280px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+
+    padding: 36px 48px;
+
+    background:
+        radial-gradient(
+            ellipse at top,
+            rgba(224, 244, 255, 0.85),
+            transparent 65%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.98),
+            rgba(239, 248, 255, 0.96)
+        );
+
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 32px;
+
+    box-shadow:
+        0 22px 65px rgba(20, 86, 135, 0.22),
+        0 0 0 5px rgba(255, 255, 255, 0.12),
+        inset 0 1px 2px rgba(255, 255, 255, 1);
+
+    text-align: center;
+
+    animation: duoCardEntrada 0.55s ease-out both;
+}
+
+/* Brilho decorativo na borda superior */
+.duo-card-recompensa::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+
+    top: 0;
+    left: 12%;
+    width: 76%;
+    height: 3px;
+
+    border-radius: 50%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        #8edbff,
+        #ffffff,
+        #8edbff,
+        transparent
+    );
+
+    box-shadow: 0 0 14px rgba(92, 190, 255, 0.5);
+}
+
+/* Mantém os elementos e as animações intactos */
+.duo-card-recompensa > * {
+    flex-shrink: 0;
+}
+
+/* Títulos */
+.duo-card-recompensa .duo-titulo,
+.duo-card-recompensa .duo-titulo-medalha {
+    margin: 0 0 6px;
+    max-width: 100%;
+}
+
+/* Área das estrelas */
+.duo-card-recompensa .duo-estrelas-container {
+    margin: 8px 0 12px;
+}
+
+/* Medalha com espaço ao redor */
+.duo-card-recompensa .duo-medalha-brilho {
+    margin: 6px 0;
+}
+
+/* Botão */
+.duo-card-recompensa .duo-btn {
+    position: relative;
+    z-index: 2;
+    margin-top: 6px;
+}
+
+/* Entrada suave do painel */
+@keyframes duoCardEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Adaptação para celulares */
+@media (max-width: 520px) {
+    .duo-card-recompensa {
+        width: calc(100% - 28px);
+        min-height: 250px;
+        padding: 28px 20px;
+        gap: 12px;
+        border-radius: 26px;
+    }
+}
+
+/* Telas baixas: evita que o painel fique cortado */
+@media (max-height: 520px) {
+    .duo-card-recompensa {
+        min-height: 0;
+        padding: 18px 28px;
+        gap: 8px;
+    }
+}
+
+/* =========================================================
+   NOTEWAVE — ESTÉTICA DA CLAVE DE SOL (IDÊNTICA À DE FÁ)
+   ========================================================= */
+
+   #finalOcean {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    overflow: hidden;
+    isolation: isolate;
+    background: url("../imagem/barco.jpeg") center / cover no-repeat;
+    z-index: 9998;
+}
+
+#finalOcean.is-active {
+    display: flex !important;
+}
+
+.ocean-background {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: transparent;
+    pointer-events: none;
+}
+
+.ocean-result, .duo-card-recompensa {
+    position: relative;
+    z-index: 3;
+    width: min(680px, calc(100% - 36px));
+    min-height: 280px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 36px 48px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 32px;
+    box-shadow: 0 22px 65px rgba(20, 86, 135, 0.22);
+    text-align: center;
+}
+
+/* Animação Arco-Íris para a Medalha Flutuante no Hover */
+@keyframes arcoIrisCoresSol {
+    0% { filter: hue-rotate(0deg) brightness(1.1); }
+    50% { filter: hue-rotate(180deg) brightness(1.2); }
+    100% { filter: hue-rotate(360deg) brightness(1.1); }
+}
+
+.duo-medalha-brilho {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    background: radial-gradient(circle at center, #ffffff 0%, rgba(202, 240, 248, 0.9) 30%, transparent 70%), 
+                radial-gradient(circle at 50% 50%, #48cae4 15%, #0077b6 60%, #03045e 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    border: 6px solid #caf0f8;
+    box-shadow: 0 10px 0px rgba(3, 4, 94, 0.25), inset 0 -12px 0px rgba(0, 0, 0, 0.08), inset 0 12px 0px rgba(255, 255, 255, 0.4);
+    animation: balancoFofo 3s infinite ease-in-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.duo-medalha-brilho:hover {
+    transform: translateY(-10px) scale(1.08) rotate(3deg);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.6);
+    animation: balancoFofo 3s infinite ease-in-out, arcoIrisCoresSol 3s linear infinite;
+}
+
