@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introdução Teórica: Clave de Fá</title>
-    
-    <!-- CSS Global (Garante as variáveis como --primary-blue) -->
+    <title>Introdução Teórica: Clave de Fá | NoteWave</title>
+
+    <!-- CSS Global e Específico (mesma ordem da página de Sol) -->
     <link rel="stylesheet" href="../css/style-texto.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 
     <!-- =======================================================
-       TELA DE CARREGAMENTO DINÂMICA (WAVE LOADER SCREEN)
+        TELA DE CARREGAMENTO DINÂMICA
     ======================================================= -->
     <div class="wave-loader-screen" id="waveLoaderScreen" style="display: none;">
         <div class="bg-wave-decoration"></div>
         <div class="bg-wave-decoration-2"></div>
-        
+
         <div class="loader-center-box">
             <div class="animated-clef">𝄢</div>
             <p class="loader-headline" id="loaderHeadline">Sincronizando as pautas graves...</p>
@@ -27,38 +28,48 @@
     </div>
 
     <!-- =======================================================
-       CONTEÚDO PRINCIPAL DO APLICATIVO
+        CONTEÚDO PRINCIPAL DO APLICATIVO
     ======================================================= -->
     <div class="app-container">
         <header class="app-header">
             <a href="../html/trilha_de_aulas.html" class="btn-back" style="text-decoration: none; display: inline-block;">← Voltar para a trilha</a>
-            <span class="badge-reading">Leitura Obrigatória 📖</span>
+            <span class="badge-reading">Módulo Teórico</span>
         </header>
 
         <main class="text-main-content">
             <!-- Cabeçalho Informativo -->
             <section class="intro-heading">
-                <div class="lesson-number">Módulo 1: Teoria</div>
+                <div class="lesson-number">Fundamentos da Música</div>
                 <h1 class="title">Dominando a Clave de Fá</h1>
-                <p class="instruction">Compreenda a lógica visual antes de iniciar as atividades práticas de ouvido e leitura.</p>
+                <p class="instruction">Compreenda a lógica visual e estrutural antes de iniciar as atividades práticas de leitura.</p>
             </section>
 
-            <!-- Card 1: Conceito Base -->
-            <article class="info-card">
-                <h3><span>𝄢</span> 1. O que é a Clave de Fá e para que serve?</h3>
-                <p>Na música, as claves funcionam como chaves de tradução do pentagrama. A <strong>Clave de Fá</strong> é o símbolo oficial utilizado para registrar os <strong>sons graves</strong>. Instrumentos robustos como o contrabaixo, o violoncelo, o trombone, o fagote e a mão esquerda do piano dependem totalmente dela para ler partituras.</p>
+            <!-- Card 1: Conceito Base com Moldura de Foto -->
+            <article class="info-card card-com-foto">
+                <div class="card-conteudo-texto">
+                    <h3>1. Para que serve a Clave de Fá?</h3>
+                    <p>As claves funcionam como chaves de tradução do pentagrama. A <strong>Clave de Fá</strong> é o símbolo oficial utilizado para registrar os <strong>sons graves</strong>. Instrumentos como o contrabaixo, o violoncelo, o trombone, o fagote e a mão esquerda do piano dependem totalmente dela para ler partituras no dia a dia.</p>
+                </div>
+                <div class="photo-slot" title="Insira sua foto aqui">
+                    <span class="photo-placeholder-text">Sua Foto Aqui</span>
+                </div>
             </article>
 
-            <!-- Card 2: A Quarta Linha -->
-            <article class="info-card">
-                <h3><span>📍</span> 2. O Segredo da Quarta Linha</h3>
-                <p>Repare bem no desenho da clave: ela possui <strong>dois pontos pretos</strong> empilhados. Esses pontos servem para abraçar perfeitamente a <strong>4ª linha</strong> do pentagrama (contada de baixo para cima). Por causa desse posicionamento, a quarta linha ganha o nome de <strong>FÁ</strong>. Ela será sempre o seu porto seguro de contagem.</p>
+            <!-- Card 2: A Quarta Linha com Moldura de Foto -->
+            <article class="info-card card-com-foto">
+                <div class="card-conteudo-texto">
+                    <h3>2. O Segredo da Quarta Linha</h3>
+                    <p>Repare bem no desenho da clave: ela possui <strong>dois pontos</strong>, um acima e outro abaixo da <strong>4ª linha</strong> do pentagrama (contada de baixo para cima). Por causa desse posicionamento exato, a quarta linha ganha o nome de <strong>FÁ</strong>, servindo como o seu porto seguro de contagem em qualquer partitura.</p>
+                </div>
+                <div class="photo-slot" title="Insira sua foto aqui">
+                    <span class="photo-placeholder-text">Sua Foto Aqui</span>
+                </div>
             </article>
 
-            <!-- Card 3: As Escaladas Musicais -->
+            <!-- Card 3: A Escala Musical -->
             <article class="info-card">
-                <h3><span>🪜</span> 3. Compreendendo as Escaladas</h3>
-                <p>O movimento de leitura no pentagrama funciona exatamente como subir ou descer uma escada (por isso chamamos de <strong>escala musical</strong>). Quando os degraus sobem, o som fica mais agudo; quando os degraus descem, o som fica mais grave. Na Clave de Fá, se você domina a sequência natural das notas, consegue decifrar qualquer partitura visualizando o padrão em linha reta:</p>
+                <h3>3. Compreendendo as Escaladas</h3>
+                <p>O movimento de leitura no pentagrama funciona exatamente como subir ou descer uma escada (a famosa <strong>escala musical</strong>). Quando os degraus sobem, o som fica mais agudo; quando descem, mais grave. Veja a sequência contínua que você vai treinar:</p>
                 <div class="escala-sequencia-box">
                     Ré ➔ Mi ➔ Fá ➔ Sol ➔ Lá ➔ Si ➔ Dó ➔ Ré ➔ Mi ➔ Fá ➔ Sol ➔ Lá ➔ Si ➔ Dó
                 </div>
@@ -66,58 +77,72 @@
 
             <!-- Card 4: Mini Pauta Interativa com Todas as Notas -->
             <article class="info-card pauta-interativa-card">
-                <h3><span>𝄢</span> 4. Conheça Todas as Notas (Clique para Visualizar)</h3>
-                <p class="pauta-subtext">Clique nos botões abaixo para ver onde cada nota fica posicionada no pentagrama da Clave de Fá.</p>
-                
-                <!-- Seleção de Todas as Notas da Clave de Fá -->
+                <h3>4. Conheça Todas as Notas (Painel Interativo)</h3>
+                <p class="pauta-subtext">Clique nos seletores abaixo para visualizar o posicionamento exato de cada nota na pauta da Clave de Fá:</p>
+
                 <div class="pauta-controls">
-                    <button class="nota-selector active" data-pos="position-Re1">Ré (Grave)</button>
-                    <button class="nota-selector" data-pos="position-Mi1">Mi (Grave)</button>
-                    <button class="nota-selector" data-pos="position-Fa1">Fá (Grave)</button>
-                    <button class="nota-selector" data-pos="position-Sol1">Sol</button>
-                    <button class="nota-selector" data-pos="position-La1">Lá</button>
-                    <button class="nota-selector" data-pos="position-Si1">Si</button>
-                    <button class="nota-selector" data-pos="position-Do2">Dó</button>
-                    <button class="nota-selector" data-pos="position-Re2">Ré</button>
-                    <button class="nota-selector" data-pos="position-Mi2">Mi</button>
-                    <button class="nota-selector" data-pos="position-Fa2">Fá (4ª Linha)</button>
-                    <button class="nota-selector" data-pos="position-Sol2">Sol (Agudo)</button>
-                    <button class="nota-selector" data-pos="position-La2">Lá (Agudo)</button>
-                    <button class="nota-selector" data-pos="position-Si2">Si (Agudo)</button>
-                    <button class="nota-selector" data-pos="position-Do3">Dó (Central)</button>
+                    <button class="nota-selector active" data-step="-3">Ré (abaixo da suplementar)</button>
+                    <button class="nota-selector" data-step="-2">Mi (linha suplementar)</button>
+                    <button class="nota-selector" data-step="-1">Fá (abaixo da 1ª linha)</button>
+                    <button class="nota-selector" data-step="0">Sol (1ª Linha)</button>
+                    <button class="nota-selector" data-step="1">Lá (1º Espaço)</button>
+                    <button class="nota-selector" data-step="2">Si (2ª Linha)</button>
+                    <button class="nota-selector" data-step="3">Dó (2º Espaço)</button>
+                    <button class="nota-selector" data-step="4">Ré (3ª Linha)</button>
+                    <button class="nota-selector" data-step="5">Mi (3º Espaço)</button>
+                    <button class="nota-selector" data-step="6">Fá (4ª Linha)</button>
+                    <button class="nota-selector" data-step="7">Sol (4º Espaço)</button>
+                    <button class="nota-selector" data-step="8">Lá (5ª Linha)</button>
+                    <button class="nota-selector" data-step="9">Si (acima da 5ª linha)</button>
+                    <button class="nota-selector" data-step="10">Dó (Central)</button>
                 </div>
 
-                <!-- Mini Pauta Estrutural Calibrada -->
-                <div class="mini-staff-wrapper">
-                    <div class="staff-container mini-staff">
-                        <div class="clef">𝄢</div>
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <div class="line"></div>
-                        <!-- Nota com posição padrão inicializada no Ré Grave -->
-                        <div id="miniNoteElement" class="note position-Re1"></div>
-                    </div>
+                <div class="nw-pauta-box">
+                    <svg class="nw-pauta-svg" viewBox="0 0 420 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pauta com clave de fá">
+                        <!-- 5 linhas: de baixo para cima = Sol, Si, Ré, Fá, Lá -->
+                        <g stroke="#334155" stroke-width="2">
+                            <line x1="0" y1="91" x2="420" y2="91"/>
+                            <line x1="0" y1="76" x2="420" y2="76"/>
+                            <line x1="0" y1="61" x2="420" y2="61"/>
+                            <line x1="0" y1="46" x2="420" y2="46"/>
+                            <line x1="0" y1="31" x2="420" y2="31"/>
+                        </g>
+
+                        <!-- Clave de Fá: bolinha na 4ª linha (y = 46), dois pontos a abraçam -->
+                        <g transform="translate(8,0)" fill="none" stroke="#075784" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M 20 46 C 20 33, 32 29, 41 33 C 52 38, 54 52, 47 64 C 41 75, 30 85, 14 93"/>
+                            <circle cx="20" cy="46" r="5" fill="#075784" stroke="none"/>
+                            <circle cx="61" cy="38.5" r="2.8" fill="#075784" stroke="none"/>
+                            <circle cx="61" cy="53.5" r="2.8" fill="#075784" stroke="none"/>
+                        </g>
+
+                        <!-- Linha suplementar (só para Ré, Mi e Dó central) -->
+                        <line id="nwLedger" x1="236" x2="264" y1="106" y2="106" stroke="#334155" stroke-width="2" style="display:none"/>
+
+                        <!-- Nota -->
+                        <g id="nwNote" style="transition: transform 0.15s ease-out;">
+                            <ellipse cx="250" cy="0" rx="8.5" ry="6.2" fill="#075784" transform="rotate(-20 250 0)"/>
+                        </g>
+                    </svg>
                 </div>
             </article>
 
-            <!-- Direcionamentos Rápidos (Flex/Grid) -->
+            <!-- Direcionamentos Rápidos -->
             <section class="split-container">
                 <div class="split-card">
                     <h4>Subindo no Pentagrama ➔</h4>
-                    <p>Ao subir uma nota a partir da linha de Fá, você avança no alfabeto musical. O espaço logo acima da 4ª linha é a nota <strong>SOL</strong>. A 5ª linha vira a nota <strong>LÁ</strong>.</p>
+                    <p>Ao subir uma nota a partir da linha de Fá, você avança no alfabeto musical. O espaço logo acima da 4ª linha é o <strong>SOL</strong> e a 5ª linha é o <strong>LÁ</strong>.</p>
                 </div>
                 <div class="split-card">
                     <h4>⬅ Descendo no Pentagrama</h4>
-                    <p>Ao descer posições, você lê as notas de trás para frente. O espaço logo abaixo da linha de Fá vira a nota <strong>MI</strong>. A 3ª linha abaixo vira a nota <strong>RÉ</strong>.</p>
+                    <p>Ao descer posições, você lê as notas em ordem reversa. O espaço logo abaixo da linha de Fá vira o <strong>MI</strong> e a 3ª linha do pentagrama é o <strong>RÉ</strong>.</p>
                 </div>
             </section>
 
             <!-- Card de Dica de Ouro -->
             <article class="info-card highlight-card">
-                <h3><span>💡</span> Dica de Ouro para as Lições</h3>
-                <p>Durante os exercícios práticos, você ouvirá o áudio e verá a nota no pentagrama. Não tente adivinhar! Localize os dois pontos da Clave de Fá na quarta linha e conte a distância para cima ou para baixo até chegar na nota indicada.</p>
+                <h3>Dica de Ouro para as Lições</h3>
+                <p>Durante os exercícios práticos, ouça o áudio com calma e observe a nota no pentagrama. Localize sempre a âncora da Clave de Fá na quarta linha, entre os dois pontos, e conte os intervalos. A prática consistente trará fluidez natural à sua leitura.</p>
             </article>
 
             <!-- Botão de Redirecionamento -->
@@ -127,7 +152,6 @@
         </main>
     </div>
 
-    <!-- Script Lógico colocado estritamente antes do fim do body para encontrar os IDs -->
     <script src="../js/atividade-texto.js"></script>
 </body>
 </html>

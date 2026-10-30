@@ -13,6 +13,7 @@
 
     <!-- CSS Padronizado da Trilha de Aulas -->
     <link rel="stylesheet" href="../css/trilha_de_aulas.css">
+    <link rel="stylesheet" href="../css/tour.css">
 </head>
 <body>
 
@@ -49,6 +50,10 @@
                 <i class="ph ph-book-open"></i>
                 <span>Trilha de Aulas</span>
             </a>
+            <a href="../html/caderno.html" class="nav-item">
+                <i class="ph ph-book"></i>
+                <span>Caderno</span>
+              </a>
             <a href="../html/medalhas.html" class="nav-item">
                 <i class="ph ph-medal"></i>
                 <span>Medalhas</span>
@@ -139,14 +144,43 @@
                         </div>
                     </div>
 
-                    <!-- Item 5: Bloqueado -->
-                    <div class="timeline-item locked">
+                    <!-- Item 5: Concluído / Link Texto Clave de Sol -->
+                    <div class="timeline-item completed" onclick="window.location.href='../atividades/atividades_sol.html'">
                         <div class="status-indicator">
+                            <div class="check-icon"><i class="ph ph-check"></i></div>
                             <div class="step-number">5</div>
                         </div>
                         <div class="lesson-info">
                             <h3>Notas na Clave de Sol</h3>
                             <p>Aprenda as primeiras notas.</p>
+                        </div>
+                        <div class="lesson-action">
+                            <i class="ph ph-caret-right"></i>
+                        </div>
+                    </div>
+
+                      <!-- Item 6: Bloqueado -->
+                      <div class="timeline-item locked">
+                        <div class="status-indicator">
+                            <div class="step-number">6</div>
+                        </div>
+                        <div class="lesson-info">
+                            <h3>atividade em desenvolvimento</h3>
+                            <p>Logo mais em a NoteWave...</p>
+                        </div>
+                        <div class="lesson-action">
+                            <i class="ph ph-lock"></i>
+                        </div>
+                    </div>
+
+                    <!-- Item 7: Bloqueado -->
+                    <div class="timeline-item locked">
+                        <div class="status-indicator">
+                            <div class="step-number">7</div>
+                        </div>
+                        <div class="lesson-info">
+                            <h3>atividade em desenvolvimento</h3>
+                            <p>Logo mais em a NoteWave...</p>
                         </div>
                         <div class="lesson-action">
                             <i class="ph ph-lock"></i>
@@ -168,5 +202,10 @@
     </script>
 
     <script src="../js/trilha_de_aulas.js"></script>
+    <script src="../js/tour.js"></script>
+    <a href="../html/caderno.html" class="nav-item">
+        <i class="ph ph-notebook"></i>
+        <span>Caderno</span>
+      </a>
 </body>
 </html>

@@ -1,0 +1,397 @@
+/* =========================================================
+   NOTEWAVE — TOUR GUIADO (versão balão de fala)
+   A imagem fica FORA do card, ao lado, e o card é um balão
+   de fala com a "ponta" apontando para a imagem.
+   ========================================================= */
+
+   :root {
+    --nw-navy: #073763;
+    --nw-blue: #087db5;
+    --nw-blue-dark: #075b89;
+    --nw-aqua: #52c7eb;
+    --nw-foam: #f7fdff;
+    --nw-sand: #f6e5b9;
+    --nw-gold: #ffc94a;
+    --nw-text: #45647b;
+    --nw-borda-balao: #bfe9f7;
+}
+
+/* ---------- Destaque do elemento da página ---------- */
+
+.nw-tour-alvo {
+    outline: 3px solid var(--nw-aqua) !important;
+    outline-offset: 5px;
+    border-radius: 14px;
+    animation: nwPulso 1.8s ease-out infinite;
+}
+
+@keyframes nwPulso {
+    0%   { box-shadow: 0 0 0 0 rgba(82, 199, 235, 0.55); }
+    70%  { box-shadow: 0 0 0 16px rgba(82, 199, 235, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(82, 199, 235, 0); }
+}
+
+/* ---------- Fundo do convite inicial ---------- */
+
+.nw-tour-fundo {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(7, 55, 99, 0.55);
+    backdrop-filter: blur(3px);
+}
+
+/* ---------- Cena: imagem (fora) + balão ---------- */
+
+.nw-tour-cena {
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+    font-family: 'Inter', system-ui, sans-serif;
+    animation: nwEntrada 0.45s cubic-bezier(.2, .9, .25, 1.15) both;
+}
+
+/* Passo do tour: canto inferior direito */
+.nw-tour-cena--passo {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    z-index: 10000;
+    width: min(600px, calc(100vw - 32px));
+}
+
+/* Se o elemento destacado estiver atrás, o JS joga a cena para a esquerda */
+.nw-tour-cena--passo.nw-esquerda {
+    right: auto;
+    left: 28px;
+    flex-direction: row-reverse;
+}
+
+.nw-tour-cena--convite {
+    width: min(600px, 100%);
+}
+
+@keyframes nwEntrada {
+    from { opacity: 0; transform: translateY(18px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------- Imagem (fora do card) ---------- */
+
+.nw-tour-foto {
+    position: relative;
+    flex: 0 0 150px;
+    width: 150px;
+    height: 150px;
+    margin: 0;
+    animation: nwBoiar 3.4s ease-in-out infinite;
+}
+
+@keyframes nwBoiar {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+/* Só a imagem, solta, sem círculo, borda ou fundo */
+.nw-tour-foto img {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 14px rgba(7, 55, 99, 0.35));
+}
+
+/* Aparece quando não há imagem */
+.nw-tour-foto-vazia {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    color: var(--nw-aqua);
+    font-size: 72px;
+    text-shadow: 0 8px 14px rgba(7, 55, 99, 0.3);
+}
+
+/* ---------- Balão de fala ---------- */
+
+.nw-tour-balao {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    padding: 20px 22px 16px;
+    border: 3px solid var(--nw-borda-balao);
+    border-radius: 24px;
+    background: linear-gradient(180deg, #ffffff 0%, var(--nw-foam) 100%);
+    box-shadow: 0 18px 44px rgba(7, 55, 99, 0.3);
+}
+
+/* Ponta do balão (contorno) apontando para a imagem */
+.nw-tour-balao::before,
+.nw-tour-balao::after {
+    content: "";
+    position: absolute;
+    bottom: 38px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-color: transparent;
+}
+
+.nw-tour-balao::before {
+    left: -24px;
+    border-width: 13px 21px 13px 0;
+    border-right-color: var(--nw-borda-balao);
+}
+
+.nw-tour-balao::after {
+    left: -18px;
+    bottom: 40px;
+    border-width: 11px 18px 11px 0;
+    border-right-color: #ffffff;
+}
+
+/* Cena espelhada: ponta do lado direito */
+.nw-esquerda .nw-tour-balao::before {
+    left: auto;
+    right: -24px;
+    border-width: 13px 0 13px 21px;
+    border-color: transparent;
+    border-left-color: var(--nw-borda-balao);
+}
+
+.nw-esquerda .nw-tour-balao::after {
+    left: auto;
+    right: -18px;
+    border-width: 11px 0 11px 18px;
+    border-color: transparent;
+    border-left-color: #ffffff;
+}
+
+.nw-tour-passo {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #e3f7ff;
+    color: var(--nw-blue-dark);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.nw-tour-pagina {
+    margin-left: 6px;
+    color: #7a93a5;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.nw-tour-balao h3 {
+    margin: 0 0 6px;
+    color: var(--nw-navy);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.nw-tour-balao p {
+    margin: 0;
+    color: var(--nw-text);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+/* ---------- Rodapé do balão ---------- */
+
+.nw-tour-rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.nw-tour-pontos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+}
+
+.nw-tour-pontos span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #c9e6f1;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.nw-tour-pontos span.ativo {
+    background: var(--nw-gold);
+    transform: scale(1.3);
+}
+
+.nw-tour-acoes {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.nw-tour-btn {
+    min-height: 42px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 14px;
+    background: var(--nw-blue);
+    color: #ffffff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--nw-blue-dark);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.nw-tour-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 var(--nw-blue-dark), 0 0 16px 4px rgba(82, 199, 235, 0.5);
+}
+
+.nw-tour-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--nw-blue-dark);
+}
+
+/* Sem borda: o botão só brilha um pouquinho mais em azul */
+.nw-tour-btn:focus,
+.nw-tour-btn:focus-visible,
+.nw-tour-btn-sair:focus,
+.nw-tour-btn-sair:focus-visible {
+    outline: none;
+}
+
+.nw-tour-btn:focus-visible {
+    filter: brightness(1.08);
+    box-shadow: 0 4px 0 var(--nw-blue-dark), 0 0 16px 4px rgba(82, 199, 235, 0.55);
+}
+
+.nw-tour-btn--claro:focus-visible {
+    box-shadow: 0 4px 0 #acdff0, 0 0 16px 4px rgba(82, 199, 235, 0.45);
+}
+
+.nw-tour-btn-sair:focus-visible {
+    color: var(--nw-blue);
+}
+
+.nw-tour-btn--claro {
+    background: #e3f7ff;
+    color: var(--nw-navy);
+    box-shadow: 0 4px 0 #acdff0;
+}
+
+.nw-tour-btn--claro:hover { box-shadow: 0 6px 0 #acdff0; }
+.nw-tour-btn--claro:active { box-shadow: 0 1px 0 #acdff0; }
+
+.nw-tour-btn-sair {
+    padding: 8px 4px;
+    border: 0;
+    background: transparent;
+    color: #7a93a5;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.nw-tour-btn-sair:hover {
+    color: var(--nw-navy);
+    text-decoration: underline;
+}
+
+/* ---------- Modo escuro ---------- */
+
+body.dark-mode .nw-tour-balao {
+    border-color: #2e3a59;
+    background: linear-gradient(180deg, #1c2541 0%, #16203a 100%);
+}
+
+body.dark-mode .nw-tour-balao::before { border-right-color: #2e3a59; }
+body.dark-mode .nw-tour-balao::after  { border-right-color: #1c2541; }
+body.dark-mode .nw-esquerda .nw-tour-balao::before { border-right-color: transparent; border-left-color: #2e3a59; }
+body.dark-mode .nw-esquerda .nw-tour-balao::after  { border-right-color: transparent; border-left-color: #1c2541; }
+
+body.dark-mode .nw-tour-balao h3 { color: #f8fafc; }
+body.dark-mode .nw-tour-balao p  { color: #b8c7d9; }
+body.dark-mode .nw-tour-passo    { background: #2e3a59; color: #7fd8f5; }
+body.dark-mode .nw-tour-pontos span { background: #2e3a59; }
+body.dark-mode .nw-tour-pontos span.ativo { background: var(--nw-gold); }
+
+body.dark-mode .nw-tour-btn--claro {
+    background: #2e3a59;
+    color: #f8fafc;
+    box-shadow: 0 4px 0 #1e293b;
+}
+
+/* ---------- Celular ---------- */
+
+@media (max-width: 560px) {
+    .nw-tour-cena { gap: 16px; }
+
+    .nw-tour-cena--passo,
+    .nw-tour-cena--passo.nw-esquerda {
+        right: 12px;
+        left: 12px;
+        bottom: 12px;
+        width: auto;
+        flex-direction: row;
+    }
+
+    .nw-tour-foto {
+        flex-basis: 76px;
+        width: 76px;
+        height: 76px;
+    }
+
+    .nw-tour-foto-vazia { font-size: 38px; }
+
+    .nw-tour-balao { padding: 16px 16px 12px; }
+    .nw-tour-balao h3 { font-size: 17px; }
+    .nw-tour-balao p  { font-size: 13px; }
+
+    .nw-tour-balao::before,
+    .nw-tour-balao::after { bottom: 22px; }
+    .nw-tour-balao::after { bottom: 24px; }
+
+    /* No celular a ponta sempre fica à esquerda */
+    .nw-esquerda .nw-tour-balao::before {
+        left: -24px; right: auto;
+        border-width: 13px 21px 13px 0;
+        border-color: transparent;
+        border-right-color: var(--nw-borda-balao);
+    }
+    .nw-esquerda .nw-tour-balao::after {
+        left: -18px; right: auto;
+        border-width: 11px 18px 11px 0;
+        border-color: transparent;
+        border-right-color: #ffffff;
+    }
+}
+
+/* ---------- Respeita quem prefere menos movimento ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .nw-tour-cena,
+    .nw-tour-foto,
+    .nw-tour-alvo {
+        animation: none !important;
+    }
+}

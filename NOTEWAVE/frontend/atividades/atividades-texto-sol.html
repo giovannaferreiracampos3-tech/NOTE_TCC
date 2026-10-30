@@ -69,67 +69,62 @@
             <!-- Card 3: A Escala Musical -->
             <article class="info-card">
                 <h3>3. Compreendendo as Escaladas</h3>
-                <p>O movimento de leitura no pentagrama funciona exatamente como subir ou descer uma escada (a famosa <strong>escala musical</strong>). Quando os degraus sobem, o som aguda; quando descem, grave. Veja a sequência contínua que você vai treinar:</p>
+                <p>O movimento de leitura no pentagrama funciona exatamente como subir ou descer uma escada (a famosa <strong>escala musical</strong>). Quando os degraus sobem, o som fica mais agudo; quando descem, mais grave. Veja a sequência contínua que você vai treinar:</p>
                 <div class="escala-sequencia-box">
                     Dó ➔ Ré ➔ Mi ➔ Fá ➔ Sol ➔ Lá ➔ Si ➔ Dó ➔ Ré ➔ Mi ➔ Fá ➔ Sol ➔ Lá ➔ Si ➔ Dó
                 </div>
             </article>
 
            <!-- Card 4: Mini Pauta Interativa com Todas as Notas -->
-<article class="info-card pauta-interativa-card">
-    <h3>4. Conheça Todas as Notas (Painel Interativo)</h3>
-    <p class="pauta-subtext">Clique nos seletores abaixo para visualizar o posicionamento exato de cada nota na pauta da Clave de Sol:</p>
-    
-    <div class="pauta-controls">
-        <button class="nota-selector active" data-pos="position-Do1">Dó (Central)</button>
-        <button class="nota-selector" data-pos="position-Re1">Ré</button>
-        <button class="nota-selector" data-pos="position-Mi1">Mi (1ª Linha)</button>
-        <button class="nota-selector" data-pos="position-Fa1">Fá (1º Espaço)</button>
-        <button class="nota-selector" data-pos="position-Sol1">Sol (2ª Linha)</button>
-        <button class="nota-selector" data-pos="position-La1">Lá (2º Espaço)</button>
-        <button class="nota-selector" data-pos="position-Si1">Si (3ª Linha)</button>
-        <button class="nota-selector" data-pos="position-Do2">Dó (3º Espaço)</button>
-        <button class="nota-selector" data-pos="position-Re2">Ré (4ª Linha)</button>
-        <button class="nota-selector" data-pos="position-Mi2">Mi (4º Espaço)</button>
-        <button class="nota-selector" data-pos="position-Fa2">Fá (5ª Linha)</button>
-        <button class="nota-selector" data-pos="position-Sol2">Sol (Acima)</button>
-        <button class="nota-selector" data-pos="position-La2">Lá (Linha Sup.)</button>
-        <button class="nota-selector" data-pos="position-Si2">Si (Agudo)</button>
-    </div>
-
-    <!-- Mini Pauta Estrutural -->
-    <div class="mini-staff-wrapper">
-        <div class="staff-container mini-staff">
-            <div class="clef">
-                <svg viewBox="0 0 50 120" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M27 5
-                           C15 5 12 18 20 25
-                           C29 32 39 27 36 18
-                           C34 10 25 10 23 17
-                           C20 26 34 34 31 47
-                           L25 86
-                           C23 101 12 104 9 94
-                           C6 84 19 79 24 87
-                           C30 98 20 112 14 114
-                           C4 116 2 105 8 99
-                           C15 93 25 101 28 91
-                           C32 79 27 53 26 40
-                           C24 29 18 24 20 15
-                           C21 8 25 5 27 5 Z"
-                        fill="#075784"
-                    />
+           <article class="info-card pauta-interativa-card">
+            <h3>4. Conheça Todas as Notas (Painel Interativo)</h3>
+            <p class="pauta-subtext">Clique nos seletores abaixo para visualizar o posicionamento exato de cada nota na pauta da Clave de Sol:</p>
+        
+            <div class="pauta-controls">
+                <button class="nota-selector active" data-step="-2">Dó (Central)</button>
+                <button class="nota-selector" data-step="-1">Ré (abaixo da 1ª linha)</button>
+                <button class="nota-selector" data-step="0">Mi (1ª Linha)</button>
+                <button class="nota-selector" data-step="1">Fá (1º Espaço)</button>
+                <button class="nota-selector" data-step="2">Sol (2ª Linha)</button>
+                <button class="nota-selector" data-step="3">Lá (2º Espaço)</button>
+                <button class="nota-selector" data-step="4">Si (3ª Linha)</button>
+                <button class="nota-selector" data-step="5">Dó (3º Espaço)</button>
+                <button class="nota-selector" data-step="6">Ré (4ª Linha)</button>
+                <button class="nota-selector" data-step="7">Mi (4º Espaço)</button>
+                <button class="nota-selector" data-step="8">Fá (5ª Linha)</button>
+                <button class="nota-selector" data-step="9">Sol (acima da 5ª linha)</button>
+                <button class="nota-selector" data-step="10">Lá (linha suplementar)</button>
+                <button class="nota-selector" data-step="11">Si (acima da suplementar)</button>
+            </div>
+        
+            <div class="nw-pauta-box">
+                <svg class="nw-pauta-svg" viewBox="0 0 420 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pauta com clave de sol">
+                    <!-- 5 linhas: de baixo para cima = Mi, Sol, Si, Ré, Fá -->
+                    <g stroke="#334155" stroke-width="2">
+                        <line x1="0" y1="91" x2="420" y2="91"/>
+                        <line x1="0" y1="76" x2="420" y2="76"/>
+                        <line x1="0" y1="61" x2="420" y2="61"/>
+                        <line x1="0" y1="46" x2="420" y2="46"/>
+                        <line x1="0" y1="31" x2="420" y2="31"/>
+                    </g>
+        
+                    <!-- Clave de Sol: a espiral central envolve a 2ª linha (y = 76) -->
+                    <g transform="translate(8,0)" fill="none" stroke="#075784" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M 25 100 C 26 88, 28 62, 30 42 C 32 26, 34 12, 29 9 C 24 7, 20 18, 22 30 C 24 46, 41 54, 41 69 C 41 84, 22 90, 16 80 C 11 70, 22 60, 30 62 C 37 64, 36 75, 29 74"/>
+                        <path d="M 25 100 C 24 112, 9 114, 10 106"/>
+                        <circle cx="10" cy="106" r="3.6" fill="#075784" stroke="none"/>
+                    </g>
+        
+                    <!-- Linha suplementar (aparece só para Dó central, Lá e Si agudo) -->
+                    <line id="nwLedger" x1="236" x2="264" y1="106" y2="106" stroke="#334155" stroke-width="2" style="display:none"/>
+        
+                    <!-- Nota -->
+                    <g id="nwNote" style="transition: transform 0.15s ease-out;">
+                        <ellipse cx="250" cy="0" rx="8.5" ry="6.2" fill="#075784" transform="rotate(-20 250 0)"/>
+                    </g>
                 </svg>
             </div>
-            <div class="line"></div>
-            <div class="line"></div>
-            <div class="line"></div>
-            <div class="line"></div>
-            <div class="line"></div>
-            <div id="miniNoteElement" class="note position-Do1"></div>
-        </div>
-    </div>
-</article>
+        </article>
 
             <!-- Direcionamentos Rápidos -->
             <section class="split-container">

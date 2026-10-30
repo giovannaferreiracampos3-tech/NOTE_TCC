@@ -229,9 +229,9 @@ function computarEscolha(botaoClicado, respostaSelecionada) {
             if (proximaExiste) {
                 window.location.href =
                     `atividades_sol.html?id=${proximoId}`;
-            } else {
-                abrirConclusaoFinal();
-            }
+                } else {
+                    NoteWaveOnda.passar(() => abrirConclusaoFinal());
+                }
         };
 
         atualizarProgressoGeral();
@@ -508,23 +508,6 @@ medalBtn.hidden = true;
     document.getElementById("feedbackPanel").style.display =
         "none";
 }
-
-/* =====================================================
-   NOTEWAVE — RECOMPENSA MARINHA
-   PARTE 2: ESTRELAS, TRANSIÇÃO E MEDALHA
-   ===================================================== */
-
-// =====================================================
-// BOTÃO REFAZER LIÇÃO
-// =====================================================
-
-document.getElementById("retryLessonBtn")?.addEventListener(
-    "click",
-    () => {
-        window.location.href =
-            `atividades_sol.html?id=${licaoId}`;
-    }
-);
 
 // =====================================================
 // BOTÃO PULAR E CONFIRMAÇÃO
@@ -822,42 +805,20 @@ document.getElementById("receiveMedalBtn")?.addEventListener(
 document.getElementById("btnProximoEstrelas")?.addEventListener(
     "click",
     () => {
-        const telaEstrelas =
-            document.getElementById("telaEstrelas");
-
-        const telaMedalha =
-            document.getElementById("telaMedalha");
+        const telaEstrelas = document.getElementById("telaEstrelas");
+        const telaMedalha = document.getElementById("telaMedalha");
 
         if (!telaEstrelas || !telaMedalha) {
-            console.error(
-                "Não foi possível encontrar as telas da recompensa."
-            );
+            console.error("Não foi possível encontrar as telas da recompensa.");
             return;
         }
 
-        const onda = document.createElement("div");
-        onda.className = "onda-transicao";
-
-        document.body.appendChild(onda);
-
-        // Inicia a animação após a renderização
-        requestAnimationFrame(() => {
-            onda.classList.add("animar");
-        });
-
-        // Troca as telas quando a onda cobrir a tela
-        setTimeout(() => {
+        NoteWaveOnda.passar(() => {
             telaEstrelas.style.display = "none";
             telaMedalha.style.display = "flex";
-        }, 800);
-
-        // Remove a onda depois da animação
-        setTimeout(() => {
-            onda.remove();
-        }, 1700);
+        });
     }
 );
-
 // =====================================================
 // BOTÃO FINAL — SALVAR E ABRIR MEDALHAS
 // =====================================================
@@ -872,16 +833,34 @@ document.getElementById("btnIrParaMedalhas")?.addEventListener(
     }
 );
 
-// =====================================================
-// BOTÃO REFAZER LIÇÃO (VOLTA PARA A LIÇÃO 1)
-// =====================================================
+// Zera tudo da Clave de Sol e volta para a lição 1 (sem perguntar)
+function reiniciarProgressoSemConfirmar() {
+    localStorage.removeItem("musical_sol_correctCount");
+    localStorage.removeItem("musical_sol_wrongCount");
 
-document.getElementById("retryLessonBtn")?.addEventListener(
-    "click",
-    () => {
-        window.location.href = `atividades_sol.html?id=1`;
-    }
-);
+    licoesDeNotasSol.forEach(licao => {
+        localStorage.removeItem(`status_sol_concluido_licao_${licao.id}`);
+    });
+
+    correctCount = 0;
+    wrongCount = 0;
+
+    window.location.href = "atividades_sol.html?id=1";
+}
+
+// Botão "Reiniciar Progresso" da barra lateral (com confirmação)
+function reiniciarTodoOProgresso() {
+    const confirmou = confirm(
+        "Deseja realmente zerar todo o seu histórico e desempenho da Clave de Sol?"
+    );
+    if (!confirmou) return;
+
+    reiniciarProgressoSemConfirmar();
+}
+
+document.getElementById("retryLessonBtn")?.addEventListener("click", () => {
+    reiniciarProgressoSemConfirmar();
+});
 
 // =====================================================
 // BOTÃO FINAL — SALVAR E ABRIR MEDALHAS COM DESTAQUE DE SOL
@@ -1056,4 +1035,3 @@ function abrirConclusaoFinal() {
     if (feedbackPanel) feedbackPanel.style.display = "none";
 
 }
- 

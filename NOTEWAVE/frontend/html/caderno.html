@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NoteWave - Caderno</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700&family=Nunito:wght@500;600;700;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+  <link rel="stylesheet" href="../css/menu-lateral.css">
+  <link rel="stylesheet" href="../css/caderno.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../html/perfil.html" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
+          <img src="../imagem/nota.png" alt="Logo NoteWave" style="width:80px;height:80px;object-fit:contain;">
+          <span class="logo-text" style="font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:700;letter-spacing:1px;color:#002b7a;text-transform:uppercase;">NoteWave</span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../html/perfil.html" class="nav-item"><i class="ph ph-user"></i><span>Perfil</span></a>
+        <a href="../html/trilha_de_aulas.html" class="nav-item"><i class="ph ph-book-open"></i><span>Trilha de Aulas</span></a>
+        <a href="../html/caderno.html" class="nav-item active"><i class="ph ph-notebook"></i><span>Caderno</span></a>
+        <a href="../html/medalhas.html" class="nav-item"><i class="ph ph-medal"></i><span>Medalhas</span></a>
+        <a href="../html/configuracoes.html" class="nav-item"><i class="ph ph-gear"></i><span>Configurações</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="login.html" class="nav-item logout"><i class="ph ph-sign-out"></i><span>Sair</span></a>
+      </div>
+    </aside>
+
+    <main class="caderno-main">
+      <div id="root"></div>
+    </main>
+  </div>
+
+  <script>
+    // aceita as duas chaves usadas hoje no site
+    if (localStorage.getItem('theme') === 'dark' || localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark-mode');
+    }
+  </script>
+  <script src="../js/caderno.js"></script>
+</body>
+</html>

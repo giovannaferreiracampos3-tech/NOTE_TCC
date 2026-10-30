@@ -3,25 +3,86 @@
 // =======================================================
 (function iniciarPautaInterativa() {
     const botoesNotas = document.querySelectorAll('.nota-selector');
-    const elementoNotaMiniatura = document.getElementById('miniNoteElement');
+    const nota = document.getElementById('nwNote');
+    const ledger = document.getElementById('nwLedger');
 
-    if (!elementoNotaMiniatura || botoesNotas.length === 0) {
-        return;
+    if (!nota || !ledger || botoesNotas.length === 0) return;
+
+    const Y_MI = 91;        // centro da 1ª linha (Mi)
+    const MEIO_PASSO = 7.5; // metade da distância entre duas linhas (15)
+
+    // Uma cor por nome de nota (mesma cor para notas repetidas)
+    const CORES = {
+        'Dó': '#e63946', // vermelho
+        'Ré': '#f4802a', // laranja
+        'Mi': '#c99700', // dourado
+        'Fá': '#2e9e5b', // verde
+        'Sol': '#1d7fd6', // azul
+        'Lá': '#7c4dcc', // roxo
+        'Si': '#d6336c'  // rosa
+    };
+    const COR_PADRAO = '#075784';
+
+    // Lê o nome da nota a partir do texto do botão ("Mi (1ª Linha)" -> "Mi")
+    function corDoBotao(botao) {
+        const nome = botao.textContent.trim().split(' ')[0];
+        return CORES[nome] || COR_PADRAO;
+    }
+
+    function limparBotao(botao) {
+        botao.style.removeProperty('background');
+        botao.style.removeProperty('background-color');
+        botao.style.removeProperty('border-color');
+        botao.style.removeProperty('color');
+    }
+
+    function pintarBotao(botao, cor) {
+        botao.style.setProperty('background', cor, 'important');
+        botao.style.setProperty('border-color', cor, 'important');
+        botao.style.setProperty('color', '#ffffff', 'important');
+    }
+
+    // step 0 = Mi (1ª linha); cada +1 sobe uma posição (linha -> espaço -> linha)
+    function mostrarNota(step, cor) {
+        const y = Y_MI - step * MEIO_PASSO;
+        nota.style.transform = 'translateY(' + y + 'px)';
+
+        const cabeca = nota.querySelector('ellipse');
+        if (cabeca) cabeca.setAttribute('fill', cor);
+
+        if (step <= -2) {            // Dó central
+            ledger.setAttribute('y1', Y_MI + 15);
+            ledger.setAttribute('y2', Y_MI + 15);
+            ledger.style.display = '';
+        } else if (step >= 10) {     // Lá e Si agudos
+            ledger.setAttribute('y1', Y_MI - 75);
+            ledger.setAttribute('y2', Y_MI - 75);
+            ledger.style.display = '';
+        } else {
+            ledger.style.display = 'none';
+        }
+    }
+
+    function selecionar(botao) {
+        botoesNotas.forEach(btn => {
+            btn.classList.remove('active');
+            limparBotao(btn);
+        });
+
+        const cor = corDoBotao(botao);
+        botao.classList.add('active');
+        pintarBotao(botao, cor);
+        mostrarNota(parseInt(botao.dataset.step, 10), cor);
     }
 
     botoesNotas.forEach(botao => {
-        botao.addEventListener('click', function() {
-            botoesNotas.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            const novaPosicao = this.getAttribute('data-pos');
-            elementoNotaMiniatura.className = "note";
-            
-            if (novaPosicao) {
-                elementoNotaMiniatura.classList.add(novaPosicao);
-            }
+        botao.addEventListener('click', function () {
+            selecionar(this);
         });
     });
+
+    // Estado inicial = botão marcado como active
+    selecionar(document.querySelector('.nota-selector.active') || botoesNotas[0]);
 })();
 
 // =======================================================
@@ -59,9 +120,9 @@ if (botaoOriginal) {
             }
 
             if (textoLoader) {
-                if (progresso === 25) textoLoader.innerText = "Preparando o pentagrama...";
-                if (progresso === 50) textoLoader.innerText = "Ajustando a clave na 2ª linha...";
-                if (progresso === 75) textoLoader.innerText = "Quase pronto para começar...";
+                if (progresso >= 75) textoLoader.innerText = "Quase pronto para começar...";
+                else if (progresso >= 50) textoLoader.innerText = "Ajustando a clave na 2ª linha...";
+                else if (progresso >= 25) textoLoader.innerText = "Preparando o pentagrama...";
             }
 
             if (progresso >= 100) {
@@ -70,6 +131,7 @@ if (botaoOriginal) {
                     textoLoader.innerText = "Navegando para as lições...";
                 }
                 setTimeout(() => window.location.href = "./atividades_sol.html", 400);
+                localStorage.setItem("status_leitura_sol_concluida", "true");
             }
         }, 25);
     });

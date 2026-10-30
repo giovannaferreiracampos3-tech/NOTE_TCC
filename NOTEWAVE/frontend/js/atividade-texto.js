@@ -1,36 +1,87 @@
 // =======================================================
-// 1. LÓGICA DA PAUTA INTERATIVA (TROCA DE NOTAS)
+// LÓGICA DO PAINEL INTERATIVO DE NOTAS (CLAVE DE FÁ)
 // =======================================================
 (function iniciarPautaInterativa() {
     const botoesNotas = document.querySelectorAll('.nota-selector');
-    const elementoNotaMiniatura = document.getElementById('miniNoteElement');
+    const nota = document.getElementById('nwNote');
+    const ledger = document.getElementById('nwLedger');
 
-    // Previne erros caso o script tente rodar antes do HTML terminar de renderizar
-    if (!elementoNotaMiniatura || botoesNotas.length === 0) {
-        setTimeout(iniciarPautaInterativa, 50);
-        return;
+    if (!nota || !ledger || botoesNotas.length === 0) return;
+
+    const Y_BASE = 91;       // centro da 1ª linha (Sol na Clave de Fá)
+    const MEIO_PASSO = 7.5;  // metade da distância entre duas linhas (15)
+
+    const CORES = {
+        'Dó': '#e63946', // vermelho
+        'Ré': '#f4802a', // laranja
+        'Mi': '#c99700', // dourado
+        'Fá': '#2e9e5b', // verde
+        'Sol': '#1d7fd6', // azul
+        'Lá': '#7c4dcc', // roxo
+        'Si': '#d6336c'  // rosa
+    };
+    const COR_PADRAO = '#075784';
+
+    function corDoBotao(botao) {
+        const nome = botao.textContent.trim().split(' ')[0];
+        return CORES[nome] || COR_PADRAO;
+    }
+
+    function limparBotao(botao) {
+        botao.style.removeProperty('background');
+        botao.style.removeProperty('border-color');
+        botao.style.removeProperty('color');
+    }
+
+    function pintarBotao(botao, cor) {
+        botao.style.setProperty('background', cor, 'important');
+        botao.style.setProperty('border-color', cor, 'important');
+        botao.style.setProperty('color', '#ffffff', 'important');
+    }
+
+    // step 0 = Sol (1ª linha); cada +1 sobe uma posição (linha -> espaço -> linha)
+    function mostrarNota(step, cor) {
+        const y = Y_BASE - step * MEIO_PASSO;
+        nota.style.transform = 'translateY(' + y + 'px)';
+
+        const cabeca = nota.querySelector('ellipse');
+        if (cabeca) cabeca.setAttribute('fill', cor);
+
+        if (step <= -2) {            // Ré e Mi: linha suplementar abaixo
+            ledger.setAttribute('y1', Y_BASE + 15);
+            ledger.setAttribute('y2', Y_BASE + 15);
+            ledger.style.display = '';
+        } else if (step >= 10) {     // Dó central: linha suplementar acima
+            ledger.setAttribute('y1', Y_BASE - 75);
+            ledger.setAttribute('y2', Y_BASE - 75);
+            ledger.style.display = '';
+        } else {
+            ledger.style.display = 'none';
+        }
+    }
+
+    function selecionar(botao) {
+        botoesNotas.forEach(btn => {
+            btn.classList.remove('active');
+            limparBotao(btn);
+        });
+        const cor = corDoBotao(botao);
+        botao.classList.add('active');
+        pintarBotao(botao, cor);
+        mostrarNota(parseInt(botao.dataset.step, 10), cor);
     }
 
     botoesNotas.forEach(botao => {
-        botao.addEventListener('click', function() {
-            // Remove o destaque visual ativo de todos os botões
-            botoesNotas.forEach(btn => btn.classList.remove('active'));
-            
-            // Aplica o destaque azul apenas no botão que foi clicado
-            this.classList.add('active');
-            
-            // Reseta a classe da nota para o valor base limpo
-            elementoNotaMiniatura.className = "note";
-            
-            // Captura a coordenada armazenada no atributo data-pos e injeta na nota
-            const novaPosicao = this.getAttribute('data-pos');
-            elementoNotaMiniatura.classList.add(novaPosicao);
+        botao.addEventListener('click', function () {
+            selecionar(this);
         });
     });
+
+    selecionar(document.querySelector('.nota-selector.active') || botoesNotas[0]);
 })();
 
 // =======================================================
-// 2. LÓGICA DE CARREGAMENTO MANUAL FORÇADO (3 SEGUNDOS)
+// LÓGICA DE CARREGAMENTO PARA AS LIÇÕES
 // =======================================================
 const botaoOriginal = document.getElementById("btnIrParaLicoes");
 
@@ -38,7 +89,7 @@ if (botaoOriginal) {
     const btnIrParaLicoes = botaoOriginal.cloneNode(true);
     botaoOriginal.parentNode.replaceChild(btnIrParaLicoes, botaoOriginal);
 
-    btnIrParaLicoes.addEventListener("click", function(evento) {
+    btnIrParaLicoes.addEventListener("click", function (evento) {
         evento.preventDefault();
         evento.stopPropagation();
 
@@ -48,7 +99,6 @@ if (botaoOriginal) {
 
         if (telaLoader) {
             telaLoader.style.setProperty("display", "flex", "important");
-            telaLoader.style.display = "flex";
         }
 
         if (preenchimentoBarra) {
@@ -58,36 +108,26 @@ if (botaoOriginal) {
         let progresso = 0;
 
         const intervaloLoading = setInterval(() => {
-            progresso += 1;
-            
+            progresso += 2;
+
             if (preenchimentoBarra) {
                 preenchimentoBarra.style.width = progresso + "%";
             }
 
             if (textoLoader) {
-                if (progresso === 25) textoLoader.innerText = "Desenhando o pentagrama...";
-                if (progresso === 50) textoLoader.innerText = "Posicionando a clave na 4ª linha...";
-                if (progresso === 75) textoLoader.innerText = "Carregando faixas de áudio...";
+                if (progresso >= 75) textoLoader.innerText = "Quase pronto para começar...";
+                else if (progresso >= 50) textoLoader.innerText = "Ajustando a clave na 4ª linha...";
+                else if (progresso >= 25) textoLoader.innerText = "Preparando o pentagrama...";
             }
 
             if (progresso >= 100) {
                 clearInterval(intervaloLoading);
-                
                 if (textoLoader) {
-                    textoLoader.innerText = "Pronto! Entrando nas lições...";
+                    textoLoader.innerText = "Navegando para as lições...";
                 }
-
-                setTimeout(() => window.location.href = "./atividades-nota.html", 500);
+                setTimeout(() => window.location.href = "./atividades-nota.html", 400);
+                localStorage.setItem("status_leitura_fá_concluida", "true");
             }
-        }, 30);
+        }, 25);
     });
 }
-
-
-// // Dentro do seu arquivo ../js/atividade-texto.js
-// if (btnIrParaLicoes) {
-//     btnIrParaLicoes.addEventListener("click", () => {
-//         // Aponta para o arquivo que você salvou no Passo 1
-//         window.location.href = "atividades-nota.html"; 
-//     });
-// }

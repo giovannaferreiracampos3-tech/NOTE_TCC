@@ -17,6 +17,7 @@
 
   <!-- CSS do Perfil -->
   <link rel="stylesheet" href="../css/perfil.css">
+  <link rel="stylesheet" href="../css/tour.css">
 </head>
 <body>
 
@@ -44,6 +45,10 @@
           <i class="ph ph-book-open"></i>
           <span>Trilha de Aulas</span>
         </a>
+          <a href="../html/caderno.html" class="nav-item">
+            <i class="ph ph-book"></i>
+            <span>Caderno</span>
+          </a>
         <a href="../html/medalhas.html" class="nav-item">
           <i class="ph ph-medal"></i>
           <span>Medalhas</span>
@@ -53,6 +58,7 @@
           <span>Configurações</span>
         </a>
       </nav>
+      
   
       <div class="sidebar-footer">
           <a href="login.html" class="nav-item logout">
@@ -154,34 +160,7 @@
         <!-- Seção: Medalhas -->
         <section class="badges-section">
           <h3>Medalhas</h3>
-          <div class="badges-grid">
-            
-            <div class="badge-item locked" id="badge-1">
-              <div class="badge-icon"><i class="ph ph-musical-notes"></i></div>
-              <span>Primeiros Passos</span>
-            </div>
-
-            <div class="badge-item locked" id="badge-2">
-              <div class="badge-icon"><i class="ph ph-treble-clef"></i></div>
-              <span>Clave de Fá</span>
-            </div>
-
-            <div class="badge-item locked" id="badge-3">
-              <div class="badge-icon"><i class="ph ph-music-note-simple"></i></div>
-              <span>Nota por Nota</span>
-            </div>
-
-            <div class="badge-item locked" id="badge-4">
-              <div class="badge-icon"><i class="ph ph-lock-key"></i></div>
-              <span>Ritmo e Pulsação</span>
-            </div>
-
-            <div class="badge-item locked" id="badge-5">
-              <div class="badge-icon"><i class="ph ph-lock-key"></i></div>
-              <span>Leitura Avançada</span>
-            </div>
-
-          </div>
+          <div class="badges-grid" id="badgesGrid"></div>
         </section>
 
       </div>
@@ -204,7 +183,14 @@
   
  <!-- Script Cropper.js e Script da aplicação -->
  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
- <script src="../js/perfil.js"></script>
+ <script src="../js/licoes-sol-data.js"></script>
+<script src="../js/licoes-data.js"></script>
+<script src="../js/perfil.js"></script>
+<script src="../js/tour.js"></script>
+<a href="../html/caderno.html" class="nav-item">
+  <i class="ph ph-notebook"></i>
+  <span>Caderno</span>
+</a>
  
  <!-- SCRIPT PARA APLICAR O MODO ESCURO SALVO -->
  <script>

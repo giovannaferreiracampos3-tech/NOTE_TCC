@@ -101,9 +101,76 @@ background-color: var(--primary-blue, #003399);
 color: #ffffff !important;
 }
 
-body.dark-mode .nav-item.active {
-background-color: var(--primary-blue, #38bdf8);
-color: #0b132b !important;
+/* --- MEDALHAS NO PERFIL (estilo adesivo cromado) --- */
+.badge-item {
+  position: relative;
+  overflow: hidden;
+  width: 120px;
+  padding: 18px 8px 14px;
+  border-radius: 20px;
+  border: 2px solid var(--border-light);
+  background: var(--card-bg);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Ícone cromado azul (só nas desbloqueadas) */
+.badge-item:not(.locked) .badge-icon {
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #38bdf8 100%);
+  color: #ffffff;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 15px rgba(0, 51, 153, 0.4),
+              inset 0 2px 4px rgba(255, 255, 255, 0.6),
+              inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Faixa de brilho arco-íris que atravessa o card */
+.badge-item:not(.locked)::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 0, 0, 0),
+    rgba(255, 154, 0, 0.1),
+    rgba(208, 222, 33, 0.15),
+    rgba(79, 220, 74, 0.15),
+    rgba(74, 234, 220, 0.15),
+    rgba(0, 51, 153, 0.2),
+    rgba(156, 39, 176, 0.15),
+    rgba(255, 0, 0, 0)
+  );
+  transform: rotate(45deg) translateY(-100%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.badge-item:not(.locked):hover::before {
+  transform: rotate(45deg) translateY(100%);
+}
+
+/* Hover: sobe, aumenta um pouco e brilha com várias cores */
+.badge-item:not(.locked):hover {
+  transform: translateY(-8px) scale(1.05);
+  border-color: #38bdf8;
+  animation: rainbowGlow 3s infinite linear;
+}
+
+@keyframes rainbowGlow {
+  0%   { box-shadow: 0 10px 25px rgba(0, 51, 153, 0.3),  0 0 20px rgba(56, 189, 248, 0.5); }
+  33%  { box-shadow: 0 10px 25px rgba(79, 220, 74, 0.3), 0 0 20px rgba(79, 220, 74, 0.5); }
+  66%  { box-shadow: 0 10px 25px rgba(156, 39, 176, 0.3), 0 0 20px rgba(156, 39, 176, 0.5); }
+  100% { box-shadow: 0 10px 25px rgba(0, 51, 153, 0.3),  0 0 20px rgba(56, 189, 248, 0.5); }
+}
+
+/* Bloqueadas: só um leve movimento, sem brilho */
+.badge-item.locked:hover {
+  transform: translateY(-4px);
 }
 
 .sidebar-footer {
@@ -528,4 +595,81 @@ body.dark-mode .nav-item.active span {
     flex-wrap: wrap;
     justify-content: center;
   }
+}
+
+.badge-item {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.badge-item:hover .badge-icon {
+  transform: translateY(-3px);
+}
+
+body.dark-mode .badge-icon {
+  color: #0b132b;
+}
+
+/* --- SEQUÊNCIA: círculo do dia com foguinho --- */
+.day-item.completed .day-circle,
+body.dark-mode .day-item.completed .day-circle {
+  background: linear-gradient(135deg, #fff4e0, #ffd9a8);
+  color: inherit;
+}
+
+body.dark-mode .day-item.completed .day-circle {
+  background: rgba(255, 150, 40, 0.2);
+}
+
+.day-item.completed span {
+  color: #f08a24;
+}
+
+/* Marca o dia de hoje */
+.day-item.today .day-circle {
+  outline: 2px dashed var(--primary-blue);
+  outline-offset: 3px;
+}
+
+/* --- FOGUINHOS QUEIMANDO NO HOVER --- */
+.flame-icon,
+.day-flame {
+  display: inline-block;
+  font-style: normal;
+  transform-origin: 50% 90%;
+  cursor: pointer;
+  filter: drop-shadow(0 0 2px rgba(255, 140, 0, 0.5));
+}
+
+.flame-icon.apagada {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+@keyframes queimando {
+  0%, 100% {
+    transform: scale(1) rotate(0deg) skewX(0deg);
+    filter: drop-shadow(0 0 3px rgba(255, 140, 0, 0.6)) brightness(1);
+  }
+  20% {
+    transform: scale(1.1, 1.22) rotate(-6deg) skewX(4deg);
+    filter: drop-shadow(0 0 8px rgba(255, 90, 0, 0.9)) brightness(1.2);
+  }
+  40% {
+    transform: scale(0.95, 1.1) rotate(5deg) skewX(-5deg);
+    filter: drop-shadow(0 0 6px rgba(255, 170, 0, 0.8)) brightness(1.1);
+  }
+  60% {
+    transform: scale(1.12, 1.28) rotate(-4deg) skewX(3deg);
+    filter: drop-shadow(0 0 10px rgba(255, 70, 0, 0.9)) brightness(1.25);
+  }
+  80% {
+    transform: scale(1, 1.12) rotate(4deg) skewX(-3deg);
+    filter: drop-shadow(0 0 6px rgba(255, 150, 0, 0.8)) brightness(1.1);
+  }
+}
+
+.flame-icon:not(.apagada):hover,
+.day-item.completed:hover .day-flame {
+  animation: queimando 0.6s infinite ease-in-out;
 }

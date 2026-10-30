@@ -1,0 +1,98 @@
+/* =========================================================
+   NOTEWAVE — ONDA DE PASSAGEM
+   Várias camadas de água sobem, cobrem a tela e saem por cima.
+   Cada camada tem uma crista que ondula sem parar.
+   Usado nas páginas de Clave de Sol e Clave de Fá.
+   ========================================================= */
+
+   .nw-onda {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Cada camada é um bloco de água do tamanho da tela */
+.nw-onda__camada {
+    position: absolute;
+    left: 0;
+    top: 100%;
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    animation: nw-onda-varrer var(--nw-dur, 2.4s) both;
+    animation-delay: var(--nw-delay, 0s);
+}
+
+/* Corpo da água, com um brilho suave por dentro */
+.nw-onda__corpo {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, var(--nw-cor) 0%, var(--nw-cor2) 100%);
+}
+
+.nw-onda__corpo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 18% 28%, rgba(255, 255, 255, 0.20), transparent 42%),
+        radial-gradient(ellipse at 82% 62%, rgba(255, 255, 255, 0.14), transparent 46%),
+        radial-gradient(ellipse at 50% 90%, rgba(255, 255, 255, 0.10), transparent 40%);
+}
+
+/* Crista (borda de cima) e borda de saída (borda de baixo) */
+.nw-onda__crista,
+.nw-onda__borda {
+    position: absolute;
+    left: 0;
+    width: 200%;
+    min-width: 2400px;
+    display: block;
+    will-change: transform;
+    animation: nw-onda-ondular 5s linear infinite;
+}
+
+.nw-onda__crista {
+    bottom: calc(100% - 1px);
+}
+
+.nw-onda__borda {
+    top: calc(100% - 1px);
+}
+
+/* A camada da frente tem espuma brilhando na crista */
+.nw-onda__camada--espuma .nw-onda__crista {
+    filter: drop-shadow(0 -5px 7px rgba(255, 255, 255, 0.65));
+}
+
+/* Movimento horizontal contínuo das cristas */
+@keyframes nw-onda-ondular {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+/* Sobe (devagar no final), segura um instante e sai por cima */
+@keyframes nw-onda-varrer {
+    0% {
+        transform: translateY(260px);
+        animation-timing-function: cubic-bezier(0.22, 0.7, 0.25, 1);
+    }
+    42% {
+        transform: translateY(-100%);
+    }
+    58% {
+        transform: translateY(-100%);
+        animation-timing-function: cubic-bezier(0.55, 0.05, 0.7, 0.35);
+    }
+    100% {
+        transform: translateY(calc(-200% - 280px));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nw-onda {
+        display: none;
+    }
+}
