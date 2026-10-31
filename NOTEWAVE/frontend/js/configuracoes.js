@@ -1,29 +1,5 @@
-// === 1. LEITURA E APLICAÇÃO IMEDIATA DO TEMA ===
-// Lê o estado do LocalStorage de forma direta (retorna true se for igual a 'true')
-const isDarkMode = localStorage.getItem('darkMode') === 'true';
-
-// Aplica ou remove a classe utilizando a propriedade condicional do toggle (Evita IF/ELSE)
-document.body.classList.toggle('dark-mode', isDarkMode);
-
-// === 2. CONTROLE DO SWITCH (INTERRUPTOR) ===
-document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('theme-toggle');
-
-    // Cláusula de segurança (Early Return): Se o elemento não existir na página, encerra a execução
-    if (!themeToggle) return;
-
-    // Alinha a posição visual do switch com o tema recuperado do banco local
-    themeToggle.checked = isDarkMode;
-
-    // Ouve quando o usuário interage com o switch
-    themeToggle.addEventListener('change', () => {
-        const shouldEnableDark = themeToggle.checked;
-        
-        // Atualiza a classe no body e salva o estado de forma simplificada
-        document.body.classList.toggle('dark-mode', shouldEnableDark);
-        localStorage.setItem('darkMode', shouldEnableDark);
-    });
-});
+// O modo escuro agora é controlado só pelo tema.js (carregado no <head>).
+// O interruptor de Configurações chama NoteWaveTema.definir(...) direto no HTML.
 
 // --- LÓGICA DA PÁGINA TIRAR DÚVIDAS ---
 document.addEventListener('DOMContentLoaded', () => {
@@ -33,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Executa apenas se o campo de busca existir na página atual
     if (searchInput && searchBtn) {
-        
+
         // Função para disparar a busca
         const executarBusca = (termo) => {
             const query = termo.trim();
@@ -66,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// === 5. BOTÃO REFAZER TOUR GUIADO ===
+// === BOTÃO REFAZER TOUR GUIADO ===
 document.addEventListener('DOMContentLoaded', () => {
     const restartTourBtn = document.getElementById('btn-restart-tour');
 

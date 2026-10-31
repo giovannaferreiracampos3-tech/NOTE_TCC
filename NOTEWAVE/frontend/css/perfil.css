@@ -59,11 +59,11 @@ font-size: 28px;
 color: var(--primary-blue, #003399);
 }
 
-body.dark-mode .sidebar-header {
+.dark-mode .sidebar-header {
 color: var(--text-main, #f8fafc);
 }
 
-body.dark-mode .sidebar-header i {
+.dark-mode .sidebar-header i {
 color: var(--primary-blue, #38bdf8);
 }
 
@@ -191,7 +191,7 @@ color: #c53030;
  SUPORTE AO MODO ESCURO (DARK MODE) - PERFIL
  ========================================================================== */
 
- body.dark-mode {
+ .dark-mode {
   --primary-blue: #38bdf8;
   --primary-dark: #f8fafc;
   --bg-color: #0b132b;
@@ -204,52 +204,52 @@ color: #c53030;
 }
 
 /* Ajustes específicos de componentes no modo escuro */
-body.dark-mode .profile-card,
-body.dark-mode .stat-card,
-body.dark-mode .badges-section {
+.dark-mode .profile-card,
+.dark-mode .stat-card,
+.dark-mode .badges-section {
   background-color: var(--card-bg);
   border-color: var(--border-light);
 }
 
-body.dark-mode .day-circle {
+.dark-mode .day-circle {
   background-color: var(--disabled-gray);
   color: transparent;
 }
 
-body.dark-mode .day-item.completed .day-circle {
+.dark-mode .day-item.completed .day-circle {
   background-color: var(--primary-blue);
   color: #0b132b;
 }
 
-body.dark-mode .day-item.completed span {
+.dark-mode .day-item.completed span {
   color: var(--primary-blue);
 }
 
-body.dark-mode .badge-item.locked .badge-icon {
+.dark-mode .badge-item.locked .badge-icon {
   background-color: #1e293b;
   color: var(--disabled-icon);
   border-color: #2e3a59;
 }
 
-body.dark-mode .modal-content {
+.dark-mode .modal-content {
   background: var(--card-bg);
   color: var(--text-main);
   border: 1px solid var(--border-light);
 }
 
-body.dark-mode .btn-secondary {
+.dark-mode .btn-secondary {
   background: #2e3a59;
   color: var(--text-main);
 }
 
 /* Correção para o item ativo do menu lateral no perfil */
-body.dark-mode .nav-item.active {
+.dark-mode .nav-item.active {
   background-color: var(--primary-blue);
   color: #0b132b !important;
 }
 
-body.dark-mode .nav-item.active i,
-body.dark-mode .nav-item.active span {
+.dark-mode .nav-item.active i,
+.dark-mode .nav-item.active span {
   color: #0b132b !important;
 }
 
@@ -606,18 +606,18 @@ body.dark-mode .nav-item.active span {
   transform: translateY(-3px);
 }
 
-body.dark-mode .badge-icon {
+.dark-mode .badge-icon {
   color: #0b132b;
 }
 
 /* --- SEQUÊNCIA: círculo do dia com foguinho --- */
 .day-item.completed .day-circle,
-body.dark-mode .day-item.completed .day-circle {
+.dark-mode .day-item.completed .day-circle {
   background: linear-gradient(135deg, #fff4e0, #ffd9a8);
   color: inherit;
 }
 
-body.dark-mode .day-item.completed .day-circle {
+.dark-mode .day-item.completed .day-circle {
   background: rgba(255, 150, 40, 0.2);
 }
 

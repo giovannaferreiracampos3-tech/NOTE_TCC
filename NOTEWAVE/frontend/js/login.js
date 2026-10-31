@@ -174,3 +174,50 @@ document.getElementById("forgotForm").addEventListener("submit", async function(
         alert("Não foi possível conectar ao servidor.");
     }
 });
+
+// ================================
+// LOGIN COM GOOGLE
+// ================================
+const GOOGLE_CLIENT_ID = "872496584799-ki78h8mmt18uavfc2vp2b03u2584l9qi.apps.googleusercontent.com";
+
+function initGoogle() {
+    google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredential
+    });
+
+    ["googleBtnLogin", "googleBtnRegister"].forEach(id => {
+        google.accounts.id.renderButton(document.getElementById(id), {
+            theme: "outline",
+            size: "large",
+            text: id === "googleBtnLogin" ? "signin_with" : "signup_with",
+            shape: "rectangular",
+            width: 320,
+            locale: "pt-BR"
+        });
+    });
+}
+
+async function handleGoogleCredential(googleResponse) {
+    try {
+        const response = await fetch("http://localhost:5000/api/google-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ credential: googleResponse.credential })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.message || data.error);
+            return;
+        }
+
+        localStorage.setItem("noteWave_user", data.username || data.user?.username);
+        window.location.href = "perfil.html";
+
+    } catch (error) {
+        console.error(error);
+        alert("Não foi possível conectar ao servidor.");
+    }
+}

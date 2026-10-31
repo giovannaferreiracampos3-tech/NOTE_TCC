@@ -25,8 +25,8 @@
   --timeline-line: #003399;
 }
 
-/* --- MODO ESCURO (ATIVADO AO ADICIONAR A CLASSE .dark-mode NO BODY) --- */
-body.dark-mode {
+/* --- MODO ESCURO (ATIVADO AO ADICIONAR A CLASSE .dark-mode ) --- */
+.dark-mode {
   --primary-blue: #38bdf8;
   --primary-dark: #f8fafc;
   --bg-color: #0b132b;
@@ -82,7 +82,7 @@ body {
   color: var(--primary-blue);
 }
 
-body.dark-mode .sidebar-header {
+.dark-mode .sidebar-header {
   color: var(--text-main);
 }
 
@@ -120,13 +120,13 @@ body.dark-mode .sidebar-header {
   color: #ffffff !important;
 }
 
-body.dark-mode .nav-item.active {
+.dark-mode .nav-item.active {
   background-color: var(--primary-blue);
   color: #0b132b !important;
 }
 
-body.dark-mode .nav-item.active i,
-body.dark-mode .nav-item.active span {
+.dark-mode .nav-item.active i,
+.dark-mode .nav-item.active span {
   color: #0b132b !important;
 }
 
@@ -239,7 +239,7 @@ body.dark-mode .nav-item.active span {
   font-size: 12px;
 }
 
-body.dark-mode .check-icon {
+.dark-mode .check-icon {
   color: #0b132b;
 }
 
@@ -256,7 +256,7 @@ body.dark-mode .check-icon {
   font-size: 15px;
 }
 
-body.dark-mode .step-number {
+.dark-mode .step-number {
   color: #0b132b;
 }
 
@@ -433,7 +433,7 @@ body.dark-mode .step-number {
   }
   
   /* --- MODO ESCURO (ATIVADO AO ADICIONAR A CLASSE .dark-mode NO BODY) --- */
-  body.dark-mode {
+  .dark-mode {
     --primary-blue: #38bdf8;
     --primary-dark: #f8fafc;
     --bg-color: #0b132b;
@@ -489,7 +489,7 @@ body.dark-mode .step-number {
     color: var(--primary-blue);
   }
   
-  body.dark-mode .sidebar-header {
+  .dark-mode .sidebar-header {
     color: var(--text-main);
   }
   
@@ -527,13 +527,13 @@ body.dark-mode .step-number {
     color: #ffffff !important;
   }
   
-  body.dark-mode .nav-item.active {
+  .dark-mode .nav-item.active {
     background-color: var(--primary-blue);
     color: #0b132b !important;
   }
   
-  body.dark-mode .nav-item.active i,
-  body.dark-mode .nav-item.active span {
+  .dark-mode .nav-item.active i,
+  .dark-mode .nav-item.active span {
     color: #0b132b !important;
   }
   
@@ -646,7 +646,7 @@ body.dark-mode .step-number {
     font-size: 12px;
   }
   
-  body.dark-mode .check-icon {
+  .dark-mode .check-icon {
     color: #0b132b;
   }
   
@@ -663,7 +663,7 @@ body.dark-mode .step-number {
     font-size: 15px;
   }
   
-  body.dark-mode .step-number {
+  .dark-mode .step-number {
     color: #0b132b;
   }
   

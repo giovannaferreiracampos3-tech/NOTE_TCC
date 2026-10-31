@@ -241,3 +241,134 @@ body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;
 .card.trash:hover{transform:none;box-shadow:none}
 .trash-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
 .clear-btn:hover{background:#fbe1e6;color:var(--danger)}
+
+/* ==========================================================================
+   NoteWave - CADERNO EM MODO ESCURO  ("noite no mar")
+   Cole este bloco NO FINAL do caderno.css (precisa vir depois de tudo).
+   Ideia: mar à noite (azul-marinho profundo), páginas de papel azul-tinta,
+   texto em luz de lua e UM acento quente (dourado) como lampião.
+   ========================================================================== */
+
+   html:has(.dark-mode){color-scheme:dark}
+
+   .dark-mode{
+     color-scheme:dark;
+     --bg:#0a1330; --bg2:#0e1a40;
+     --navy:#eaf1ff; --ink:#dfe8fb; --muted:#93a9d6;
+     --blue:#336fd1; --blue-soft:#1f315f; --sky:#7db4f5;
+     --paper:#17264f; --frame:#101b3f; --line:#2a3c6e;
+     --sun:#2b2a3a; --lilac:#26254f; --mint:#14363a; --rose:#3a2236;
+     --danger:#ff8fa3;
+     --gold:#ffd98a;
+     background:
+       radial-gradient(900px 520px at 15% -8%, #17296a 0%, transparent 62%),
+       radial-gradient(700px 480px at 100% 100%, #0f2a5c 0%, transparent 60%),
+       #0a1330;
+   }
+   .dark-mode ::selection{background:#ffd98a;color:#0a1330}
+   .dark-mode #root{background:transparent}
+   
+   /* botões */
+   .dark-mode .btn:hover{background:#2a4180}
+   .dark-mode .btn.primary{background:#336fd1;color:#fff;box-shadow:0 8px 18px -8px rgba(51,111,209,.9)}
+   .dark-mode .btn.primary:hover{background:#4380e3}
+   .dark-mode .btn.danger{background:rgba(255,143,163,.14);color:#ff9fb0}
+   
+   /* barra superior */
+   .dark-mode .bar{background:rgba(16,27,63,.9);border-bottom:1px solid #22356b;backdrop-filter:blur(6px)}
+   .dark-mode .search{background:#0a1330;border-color:#2a3c6e;color:#eaf1ff}
+   .dark-mode .search:focus-within{box-shadow:0 0 0 3px rgba(125,180,245,.45)}
+   .dark-mode .search input::placeholder{color:#7f95c4}
+   .dark-mode .search svg *,
+   .dark-mode .icon-btn svg *{stroke:#a9cdf7}
+   .dark-mode .icon-btn:hover{background:#1f315f}
+   
+   /* painel e abas */
+   .dark-mode .panel{background:var(--frame);border-color:#22356b;box-shadow:0 18px 40px -20px rgba(0,0,0,.8)}
+   .dark-mode .tab:hover{background:#2a4180}
+   .dark-mode .tab[aria-selected="true"]{background:#336fd1;color:#fff;box-shadow:inset 0 -3px 0 var(--gold)}
+   
+   /* caderno: encadernação, espiral, páginas */
+   .dark-mode .book{background:#070e24;box-shadow:0 18px 36px -16px rgba(0,0,0,.9),0 0 0 1px #22356b}
+   .dark-mode .spine{background:linear-gradient(90deg,#0c1735,#1c2c5c 50%,#0c1735)}
+   .dark-mode .book.single .spine{background:linear-gradient(90deg,#0c1735,#1c2c5c)}
+   .dark-mode .ring{background:linear-gradient(180deg,#e8eefb,#8ea3c6 55%,#4b6192);border-color:#0a1330}
+   .dark-mode .page{--line:#2a3c6e!important}
+   .dark-mode .page.l{background:linear-gradient(to left,rgba(0,0,0,.4),transparent 34px),var(--paper)}
+   .dark-mode .page.r{background:linear-gradient(to right,rgba(0,0,0,.4),transparent 34px),var(--paper)}
+   .dark-mode .book.single .page{background:var(--paper)}
+   
+   /* etiquetas coloridas continuam pastel (mantêm o código de cores), com texto escuro */
+   .dark-mode .tag,
+   .dark-mode .tag select{color:#0c2a6b}
+   .dark-mode .pg-date{color:#93a9d6}
+   .dark-mode .ex-chip{background:rgba(255,217,138,.14);color:var(--gold)}
+   
+   /* título e texto */
+   .dark-mode .pg-title{color:#fff;border-bottom-color:rgba(255,217,138,.7)}
+   .dark-mode .pg-title::placeholder,
+   .dark-mode .lined::placeholder,
+   .dark-mode .box textarea::placeholder{color:#6f86b8}
+   .dark-mode .lined{color:#e6eefc;caret-color:var(--gold)}
+   .dark-mode .pg-title,
+   .dark-mode .lined,
+   .dark-mode .box textarea{caret-color:var(--gold)}
+   
+   /* caixas Dificuldades / Aprendi hoje */
+   .dark-mode .box.hard{background:rgba(168,140,255,.13);border-color:#7a66c8}
+   .dark-mode .box.learned{background:rgba(100,170,255,.13);border-color:#4d7fc4}
+   .dark-mode .box textarea{color:#e6eefc}
+   .dark-mode .box.hard svg path{stroke:#cdbdff}
+   .dark-mode .box.hard svg circle{fill:#cdbdff}
+   .dark-mode .box.learned svg path{fill:#a8d0ff}
+   
+   /* rodapé da página: mar noturno */
+   .dark-mode .pg-foot>svg.deco{filter:brightness(.55) saturate(1.35)}
+   .dark-mode .pg-num{background:#17264f;border-color:#3a4f88;color:#eaf1ff}
+   .dark-mode .clear-btn:hover{background:rgba(255,143,163,.14);color:#ff9fb0}
+   .dark-mode .clear-btn.armed{background:rgba(255,143,163,.2);color:#ff9fb0}
+   
+   /* o Wave (mascote azul-marinho) precisa de um contorno de luz para aparecer no escuro */
+   .dark-mode .cameo svg,
+   .dark-mode .empty svg,
+   .dark-mode .nw-ico svg,
+   .dark-mode .cs-head svg{filter:drop-shadow(0 0 1.5px #9fcbff) drop-shadow(0 0 10px rgba(125,180,245,.35))}
+   .dark-mode .bubble{background:#22366e;border-color:#4d7fc4;color:#eaf1ff}
+   
+   /* paginação */
+   .dark-mode .pager .mid{color:#dfe8fb}
+   .dark-mode .pager input,
+   .dark-mode .field input{background:#0a1330;border-color:#2a3c6e;color:#eaf1ff}
+   .dark-mode .btn[disabled]{opacity:.35}
+   
+   /* listas, filtros, cartões */
+   .dark-mode .chip button{background:#0a1330;color:#eaf1ff}
+   .dark-mode .banner{background:rgba(255,217,138,.1);color:var(--gold);border:1px solid rgba(255,217,138,.25)}
+   .dark-mode .card{background:#17264f;border-color:#2a3c6e}
+   .dark-mode .card:hover{box-shadow:0 12px 22px -12px rgba(0,0,0,.9);border-color:#4d7fc4}
+   .dark-mode .card p{color:#a9bde6}
+   .dark-mode .pill{background:#22366e;color:#eaf1ff}
+   .dark-mode .pill[style]{color:#0c2a6b}      /* pílulas com cor da atividade ficam pastel */
+   .dark-mode .empty{background:#17264f;border-color:#3a4f88}
+   
+   /* lateral */
+   .dark-mode .widget{background:#101b3f;border-color:#22356b}
+   .dark-mode .cat,
+   .dark-mode .last{border-bottom-color:#22356b}
+   .dark-mode .cat:hover,
+   .dark-mode .last:hover{background:#1a2b5c}
+   .dark-mode .cat[aria-pressed="true"]{background:#244083;box-shadow:inset 3px 0 0 var(--gold)}
+   /* post-it: o único brilho quente, como luz de lampião */
+   .dark-mode .sticky{background:#f6dd9f;color:#24408a;box-shadow:0 10px 22px -8px rgba(255,217,138,.28),0 8px 14px -8px rgba(0,0,0,.7)}
+   .dark-mode .foot-in{color:#9fb6e0}
+   
+   /* capas (tela de escolha) */
+   .dark-mode .cv-opt{background:rgba(255,255,255,.04)}
+   .dark-mode .cv-opt:hover{background:rgba(255,255,255,.09)}
+   .dark-mode .cv-opt.on{background:rgba(125,180,245,.12);border-color:#7db4f5}
+   
+   /* avisos e confirmações */
+   .dark-mode .toast{background:#eaf1ff;color:#0c2a6b}
+   .dark-mode .nw-card{background:#17264f;border-color:#2a3c6e;box-shadow:0 24px 50px rgba(0,0,0,.6)}
+   .dark-mode .nw-card h2{color:#fff}
+   .dark-mode .nw-btn.danger{background:rgba(255,143,163,.14);color:#ff9fb0;box-shadow:0 4px 0 rgba(255,143,163,.25)}

@@ -1,0 +1,178 @@
+/* ==========================================================================
+   NOTEWAVE - MODO ESCURO DAS ATIVIDADES  ("noite no mar")
+   Vale para: atividade-texto.html, atividades-texto-sol.html,
+              atividades-nota.html e atividades_sol.html
+   Salve em css/modo-escuro-atividades.css e linke DEPOIS de todos os outros CSS.
+   Só age quando o <html> (e o <body>) têm a classe .dark-mode, aplicada pelo tema.js antes da página aparecer.
+   ========================================================================== */
+
+
+   .dark-mode{
+    color-scheme:dark;
+  
+    /* variáveis do style.css / style-sol.css */
+    --bg-color:#0a1330; --bg-main:#0e1a40; --card-bg:#14224b;
+    --text-primary:#e6eefc; --text-secondary:#9fb3dc;
+    --text-dark:#e6eefc; --text-muted:#9fb3dc;
+    --border-color:#2a3c6e; --border-dark:#2a3c6e;
+    --success-light:rgba(47,168,90,.14);
+  
+    /* variáveis do style-texto.css */
+    --card-surface:#14224b; --border-soft:#2a3c6e;
+    --primary-blue-dark:#7dd3fc;
+  
+    background:
+      radial-gradient(900px 520px at 12% -8%, #17296a 0%, transparent 62%),
+      radial-gradient(700px 480px at 100% 100%, #0f2a5c 0%, transparent 60%),
+      #0a1330;
+    color:#e6eefc;
+  }
+  .dark-mode ::selection{background:#ffd98a;color:#0a1330}
+  
+  /* ---------- moldura do app e cabeçalho ---------- */
+  .dark-mode .app-container{background:#14224b;border-color:#2a3c6e;box-shadow:0 18px 40px -20px rgba(0,0,0,.8)}
+  .dark-mode .btn-back,
+  .dark-mode .btn-help{color:#7dd3fc}
+  .dark-mode .btn-back:hover,
+  .dark-mode .btn-help:hover{color:#bae6fd}
+  .dark-mode .badge-reading{background:rgba(56,189,248,.12);color:#bae6fd;border-color:rgba(56,189,248,.3)}
+  .dark-mode .lesson-number{background:#087db5;color:#fff}
+  .dark-mode .title{color:#f1f6ff}
+  .dark-mode .instruction{background:#1c2d5e;color:#b4c6ea}
+  
+  /* ---------- pentagrama dos exercícios ---------- */
+  .dark-mode .line{background:#aebfe0}
+  .dark-mode .clef{color:#e6eefc}
+  .dark-mode .note{background:#7dd3fc}
+  .dark-mode .note::after{background:#aebfe0}
+  
+  /* ---------- player de áudio ---------- */
+  .dark-mode .audio-player{background:#101b3f;border-color:#2a3c6e;box-shadow:none}
+  .dark-mode .play-btn{background:#087db5}
+  .dark-mode .audio-wave{background:#2a3c6e}
+  .dark-mode .wave-line{background:#38b6e8}
+  .dark-mode .audio-time{color:#9fb3dc}
+  
+  /* ---------- alternativas de resposta ---------- */
+  .dark-mode .option-btn{background:#1a2a5a;color:#e6eefc;border-color:#2a3c6e}
+  .dark-mode .option-btn:hover{background:#223570;border-color:#4d7fc4}
+  .dark-mode .option-btn:disabled{opacity:.45}
+  .dark-mode #correct-choice{background:rgba(46,204,113,.18);border-color:#2ecc71;color:#7ef0ad}
+  .dark-mode #wrong-choice{background:rgba(255,143,163,.14);border-color:#ff8fa3;color:#ffb3c0}
+  
+  /* ---------- feedback ---------- */
+  .dark-mode .feedback-panel.success{background:rgba(47,168,90,.14);border-color:rgba(47,168,90,.4)}
+  .dark-mode .feedback-panel.danger{background:rgba(255,143,163,.12);border-color:rgba(255,143,163,.35)}
+  .dark-mode .feedback-text strong{color:#f1f6ff}
+  .dark-mode .feedback-text p{color:#b4c6ea}
+  .dark-mode .next-btn{background:#087db5}
+  
+  /* ---------- desempenho ---------- */
+  .dark-mode .performance-section{border-color:#2a3c6e}
+  .dark-mode .perf-title{color:#e6eefc}
+  .dark-mode .progress-ring{background:conic-gradient(var(--success-green) calc(var(--percent) * 1%), #2a3c6e 0)}
+  .dark-mode .progress-inner{background:#14224b}
+  .dark-mode .percentage-value{color:#e6eefc}
+  .dark-mode #resetBtn{background:linear-gradient(135deg,#0a5a8c,#087db5);box-shadow:0 5px 15px rgba(0,0,0,.4)}
+  
+  /* ---------- dica ---------- */
+  .dark-mode .help-box{background:rgba(56,189,248,.1);border-color:rgba(56,189,248,.3);border-left-color:#38bdf8;color:#bae6fd;box-shadow:none}
+  .dark-mode .help-box strong{color:#7dd3fc}
+  
+  /* ==========================================================================
+     PÁGINAS DE TEXTO (teoria)
+     ========================================================================== */
+  .dark-mode .info-card{background:#14224b;border-color:#2a3c6e;box-shadow:0 12px 30px -18px rgba(0,0,0,.8)}
+  .dark-mode .info-card:hover{box-shadow:0 16px 34px -16px rgba(0,0,0,.9);border-color:#3d5aa0}
+  .dark-mode .info-card h3{color:#7dd3fc}
+  .dark-mode .info-card p{color:#dbe6fb}
+  .dark-mode .info-card strong{color:#fff}
+  
+  .dark-mode .photo-slot{background:linear-gradient(135deg,#1a2a5a,#16244f);border-color:#3d8fc4;box-shadow:none}
+  .dark-mode .photo-slot:hover{background:linear-gradient(135deg,#22366e,#1a2a5a)}
+  .dark-mode .photo-placeholder-text{color:#9fd8f5}
+  
+  .dark-mode .escala-sequencia-box{background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.35);color:#7dd3fc}
+  
+  .dark-mode .pauta-subtext{color:#9fb3dc}
+  .dark-mode .nota-selector{background:#1a2a5a;color:#e6eefc;border-color:#2a3c6e;box-shadow:none}
+  .dark-mode .nota-selector:hover{background:#223570;border-color:#4d9fd8;box-shadow:0 6px 12px -6px rgba(0,0,0,.7)}
+  /* o botão ativo continua colorido pelo JS (uma cor por nota) */
+  
+  /* pauta interativa (SVG com cores fixas nos atributos) */
+  .dark-mode .nw-pauta-box{background:#0e1a40;border-color:#2a3c6e;box-shadow:none}
+  .dark-mode .nw-pauta-svg g[stroke="#334155"]{stroke:#9fb3dc}
+  .dark-mode .nw-pauta-svg #nwLedger{stroke:#9fb3dc}
+  .dark-mode .nw-pauta-svg g[stroke="#075784"]{stroke:#7dd3fc}
+  .dark-mode .nw-pauta-svg g[stroke="#075784"] circle{fill:#7dd3fc}
+  
+  .dark-mode .split-card{background:rgba(56,189,248,.07);border-color:#2a3c6e;border-left-color:#38bdf8}
+  .dark-mode .split-card h4{color:#7dd3fc}
+  .dark-mode .split-card p{color:#b4c6ea}
+  
+  .dark-mode .highlight-card{background:rgba(249,178,30,.09);border-color:rgba(253,230,138,.35)}
+  .dark-mode .highlight-card h3{color:#fcd34d}
+  
+  /* ---------- tela de carregamento ---------- */
+  .dark-mode .wave-loader-screen{background:linear-gradient(160deg,#0a1330 0%,#0e1f4a 100%)}
+  .dark-mode .bg-wave-decoration{background:rgba(56,189,248,.08)}
+  .dark-mode .bg-wave-decoration-2{background:rgba(56,189,248,.05)}
+  .dark-mode .animated-clef{color:#7dd3fc;text-shadow:0 8px 28px rgba(56,189,248,.35)}
+  .dark-mode .loader-headline{color:#bae6fd}
+  .dark-mode .wave-bar-container{background:#1f315f;box-shadow:inset 0 2px 4px rgba(0,0,0,.4)}
+  
+  /* ==========================================================================
+     TELAS FINAIS E DE RECOMPENSA (fim da trilha, estrelas, medalha)
+     Escurece a foto do barco e troca os cartões brancos por azul-noite.
+     ========================================================================== */
+  .dark-mode #finalOcean,
+  .dark-mode .duo-tela{
+    background-image:linear-gradient(rgba(5,10,30,.62),rgba(5,10,30,.62)),url("../imagem/barco.jpeg");
+    background-size:cover;background-position:center;background-repeat:no-repeat;
+  }
+  .dark-mode .ocean-result,
+  .dark-mode .duo-card-recompensa{
+    background:linear-gradient(145deg,rgba(20,34,75,.97),rgba(14,26,64,.97));
+    border-color:rgba(125,180,245,.28);
+    box-shadow:0 24px 70px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .dark-mode .duo-card-recompensa::before{background:linear-gradient(90deg,transparent,#38bdf8,#bae6fd,#38bdf8,transparent);box-shadow:0 0 14px rgba(56,189,248,.45)}
+  
+  .dark-mode #oceanResultTitle,
+  .dark-mode .ocean-result h2{color:#f1f6ff}
+  .dark-mode #oceanResultMessage,
+  .dark-mode #starResultMessage,
+  .dark-mode .ocean-result > p:not(#oceanResultMessage):not(#starResultMessage){color:#b4c6ea}
+  .dark-mode .ocean-result #finalPercentage{color:#7dd3fc}
+  .dark-mode .result-percentage{background:#1a2a5a;border-color:#38bdf8;color:#7dd3fc}
+  
+  .dark-mode .duo-tela .duo-titulo,
+  .dark-mode .duo-tela .duo-titulo-medalha,
+  .dark-mode .duo-tela .duo-mensagem-destaque,
+  .dark-mode .duo-titulo,
+  .dark-mode .duo-titulo-medalha,
+  .dark-mode .duo-mensagem-destaque{
+    color:#bae6fd !important;
+    -webkit-text-stroke:0 !important;
+    text-shadow:0 2px 14px rgba(56,189,248,.35) !important;
+  }
+  .dark-mode .duo-tela .duo-mensagem,
+  .dark-mode .duo-mensagem{
+    color:#b4c6ea !important;
+    -webkit-text-stroke:0 !important;
+    text-shadow:none !important;
+  }
+  
+  .dark-mode .ocean-button--secondary{background:#1a2a5a;color:#bae6fd;box-shadow:0 5px 0 #0e1a40}
+  .dark-mode .ocean-button--secondary:hover{box-shadow:0 7px 0 #0e1a40}
+  .dark-mode #receiveMedalBtn{background:transparent;color:#e6eefc;border-color:#7dd3fc}
+  .dark-mode #receiveMedalBtn:hover{background:#7dd3fc;color:#0a1330}
+  .dark-mode .skip-confirmation{background:rgba(249,178,30,.1);border-color:rgba(253,230,138,.35);color:#fcd34d}
+  .dark-mode .skip-confirmation strong{color:#fde68a}
+  .dark-mode .result-star{color:#3a4f88}
+  .dark-mode .result-star.is-earned,
+  .dark-mode #resultStars .result-star.is-earned{color:#ffc94a}
+  
+  /* estrelas não conquistadas: o seletor com #resultStars é mais forte que o geral */
+  .dark-mode #resultStars .result-star{color:#3a4f88}
+  .dark-mode #resultStars .result-star.is-earned{color:#ffc94a}

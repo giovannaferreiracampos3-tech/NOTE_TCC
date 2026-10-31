@@ -1,6 +1,6 @@
 // === 1. LEITURA E APLICAÇÃO IMEDIATA DO TEMA ===
 // Lê o estado do LocalStorage e aplica ou remove a classe utilizando a propriedade condicional do toggle (Idêntico ao configuracoes.js)
-const isDarkMode = localStorage.getItem('darkMode') === 'true';
+const isDarkMode = localStorage.getItem('darkMode') === 'true' || localStorage.getItem('theme') === 'dark';
 document.body.classList.toggle('dark-mode', isDarkMode);
 
 // === 2. CONTROLE DA BARRA LATERAL (SIDEBAR) ===

@@ -322,3 +322,25 @@ body {
     margin-bottom: 10px;
   }
 }
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--placeholder-color);
+  font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.google-btn-wrapper {
+  display: flex;
+  justify-content: center;
+}

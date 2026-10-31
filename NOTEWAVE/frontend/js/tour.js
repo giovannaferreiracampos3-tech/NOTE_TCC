@@ -2,7 +2,7 @@
 // NOTEWAVE — TOUR GUIADO (multipágina)
 //
 // Ordem do tour:
-//   Perfil -> Medalhas -> Trilha de Aulas -> Configurações
+//   Perfil -> Medalhas -> Trilha de Aulas -> Caderno -> Configurações
 //
 // COMO FUNCIONA:
 // - Cada página tem uma lista de passos em "tourRoutes".
@@ -10,6 +10,8 @@
 //   para a próxima página, e o tour continua lá sozinho.
 // - Se um elemento (target) não existir na tela, o passo é
 //   pulado automaticamente, então nada quebra.
+// - Enquanto um passo é explicado, o resto da tela fica
+//   desfocado e só o elemento destacado aparece nítido.
 //
 // DICA: nas páginas Perfil, Medalhas e Trilha, o jeito mais
 // seguro de apontar o tour é colocar um atributo data-tour
@@ -70,7 +72,7 @@ const tourRoutes = {
         {
             target: '.sidebar',
             title: 'Menu Lateral',
-            description: 'Use o menu para navegar entre Perfil, Trilha de Aulas, Medalhas e Configurações a qualquer momento.',
+            description: 'Use o menu para navegar entre Perfil, Trilha de Aulas, Caderno, Medalhas e Configurações a qualquer momento.',
             imagem: '../imagem/explicacao.png'
         }
     ],
@@ -161,7 +163,69 @@ const tourRoutes = {
     ],
 
     // ---------------------------------------------
-    // 4. CONFIGURAÇÕES
+    // 4. CADERNO
+    // (os passos do caderno por dentro só aparecem depois que
+    // a capa foi escolhida; antes disso só o primeiro passo fala)
+    // ---------------------------------------------
+    caderno: [
+        {
+            target: '.cover-screen .cv-grid',
+            title: 'Escolha a capa do seu caderno',
+            description: 'Cada aluno tem um caderno de 100 páginas. Escolha a capa que mais gostar, escreva seu nome nela e clique em "Abrir caderno". Depois, em Configurações, você pode refazer este tour para conhecer o caderno por dentro.',
+            imagem: '../imagem/oi.png'
+        },
+        {
+            target: '.panel-head',
+            title: 'Seu Caderno de Anotações',
+            description: 'Aqui você registra o que aprende, o que ainda é difícil e as ideias que aparecem pelo caminho. Tudo fica guardado e só sai se você apagar.',
+            imagem: '../imagem/oi.png'
+        },
+        {
+            target: '#newNote',
+            title: 'Nova anotação',
+            description: 'Clique aqui para ir direto para a primeira página em branco. O que você escrever é salvo automaticamente, sem precisar apertar nenhum botão.',
+            imagem: '../imagem/mao.png'
+        },
+        {
+            target: '.book',
+            title: 'As páginas do caderno',
+            description: 'Cada página tem título, atividade, assunto, um espaço para escrever e as caixinhas "Dificuldades" e "Aprendi hoje". Use os botões de baixo para virar a página ou digite o número para ir direto.',
+            imagem: '../imagem/explicacao.png'
+        },
+        {
+            target: '#tabs',
+            title: 'Abas de organização',
+            description: 'Veja todas as páginas, só as que você já escreveu, ou agrupe tudo por atividade e por assunto para achar o que precisa mais rápido.',
+            imagem: '../imagem/lamp.png'
+        },
+        {
+            target: '.page .clear-btn',
+            title: 'Apagar uma página',
+            description: 'Antes de apagar, o caderno pede a sua confirmação. E a página não some de vez: ela vai para a Lixeira.',
+            imagem: '../imagem/distraido.png'
+        },
+        {
+            target: '[data-tab="lixeira"]',
+            title: 'Lixeira',
+            description: 'Aqui ficam as páginas apagadas. Você pode recuperar uma anotação quando quiser, ou excluir de vez se tiver certeza.',
+            imagem: '../imagem/feliz.png'
+        },
+        {
+            target: '.search',
+            title: 'Busca',
+            description: 'Digite uma palavra para encontrar suas anotações pelo título ou pelo texto. Os resultados aparecem na aba "Minhas anotações".',
+            imagem: '../imagem/lamp.png'
+        },
+        {
+            target: '#side',
+            title: 'Categorias e últimas anotações',
+            description: 'Clique em uma categoria para filtrar suas anotações e use a lista de últimas anotações para voltar rapidinho ao que escreveu por último.',
+            imagem: '../imagem/explicacao.png'
+        }
+    ],
+
+    // ---------------------------------------------
+    // 5. CONFIGURAÇÕES
     // ---------------------------------------------
     configuracoes: [
         {
@@ -209,12 +273,13 @@ const IMAGEM_BOAS_VINDAS = '../imagem/oi.png';
 
 
 // Ordem das páginas do tour e arquivo de cada uma
-const ordemTour = ['perfil', 'medalhas', 'trilha', 'configuracoes'];
+const ordemTour = ['perfil', 'medalhas', 'trilha', 'caderno', 'configuracoes'];
 
 const paginasTour = {
     perfil:        { arquivo: 'perfil.html',          nome: 'Perfil' },
     medalhas:      { arquivo: 'medalhas.html',        nome: 'Medalhas' },
     trilha:        { arquivo: 'trilha_de_aulas.html', nome: 'Trilha de Aulas' },
+    caderno:       { arquivo: 'caderno.html',         nome: 'Caderno' },
     configuracoes: { arquivo: 'configuracoes.html',   nome: 'Configurações' }
 };
 
@@ -223,6 +288,7 @@ const tourPaginas = {
     perfil: 'perfil',
     trilha_de_aulas: 'trilha',
     medalhas: 'medalhas',
+    caderno: 'caderno',
     configuracoes: 'configuracoes'
 };
 
@@ -298,6 +364,134 @@ function irParaProximaPagina(pageKey) {
 }
 
 // =====================================================
+// FUNDO DESFOCADO (só o elemento explicado fica nítido)
+//
+// Uma camada fixa com desfoque cobre a tela inteira, com um
+// "buraco" recortado em volta do elemento destacado. Outra
+// camada transparente, por baixo do balão, impede cliques
+// no resto da página enquanto o tour está aberto.
+// =====================================================
+
+const VEU_FOLGA = 10; // respiro em volta do elemento, em px
+
+let veuEl = null;
+let travaEl = null;
+let veuAlvos = [];
+let veuUltimo = '';
+let veuRaf = 0;
+
+function injetarEstiloDoVeu() {
+    if (document.getElementById('nw-tour-veu-estilo')) return;
+
+    const estilo = document.createElement('style');
+    estilo.id = 'nw-tour-veu-estilo';
+    estilo.textContent = `
+        .nw-tour-veu {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+            background: rgba(7, 55, 99, 0.28);
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+            animation: nwVeuEntra 0.3s ease-out both;
+        }
+        .nw-tour-trava {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: transparent;
+        }
+        @keyframes nwVeuEntra {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .nw-tour-veu { background: rgba(7, 55, 99, 0.6); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .nw-tour-veu { animation: none; }
+        }
+    `;
+    document.head.appendChild(estilo);
+}
+
+function mostrarVeu() {
+    if (veuEl) return;
+    injetarEstiloDoVeu();
+
+    veuEl = document.createElement('div');
+    veuEl.className = 'nw-tour-veu';
+    veuEl.setAttribute('aria-hidden', 'true');
+
+    travaEl = document.createElement('div');
+    travaEl.className = 'nw-tour-trava';
+    travaEl.setAttribute('aria-hidden', 'true');
+
+    document.body.appendChild(veuEl);
+    document.body.appendChild(travaEl);
+
+    veuUltimo = '';
+    acompanharVeu();
+}
+
+function definirAlvosDoVeu(alvos) {
+    veuAlvos = alvos || [];
+    veuUltimo = '';
+}
+
+function removerVeu() {
+    cancelAnimationFrame(veuRaf);
+    if (veuEl) veuEl.remove();
+    if (travaEl) travaEl.remove();
+    veuEl = null;
+    travaEl = null;
+    veuAlvos = [];
+    veuUltimo = '';
+}
+
+// Redesenha o buraco a cada quadro, para acompanhar o scroll suave
+function acompanharVeu() {
+    if (!veuEl) return;
+    desenharVeu();
+    veuRaf = requestAnimationFrame(acompanharVeu);
+}
+
+function desenharVeu() {
+    const L = document.documentElement.clientWidth;
+    const A = document.documentElement.clientHeight;
+    const n = (v) => Math.round(v * 10) / 10;
+
+    let d = `M0 0H${L}V${A}H0Z`;
+
+    veuAlvos.forEach(el => {
+        if (!el || !el.isConnected) return;
+
+        const r = el.getBoundingClientRect();
+        if (r.width < 1 || r.height < 1) return;
+        if (r.bottom < 0 || r.top > A || r.right < 0 || r.left > L) return;
+
+        const x = n(r.left - VEU_FOLGA);
+        const y = n(r.top - VEU_FOLGA);
+        const w = n(r.width + VEU_FOLGA * 2);
+        const h = n(r.height + VEU_FOLGA * 2);
+        const k = n(Math.min(18, w / 2, h / 2));
+
+        d += `M${n(x + k)} ${y}H${n(x + w - k)}A${k} ${k} 0 0 1 ${n(x + w)} ${n(y + k)}`
+           + `V${n(y + h - k)}A${k} ${k} 0 0 1 ${n(x + w - k)} ${n(y + h)}`
+           + `H${n(x + k)}A${k} ${k} 0 0 1 ${x} ${n(y + h - k)}`
+           + `V${n(y + k)}A${k} ${k} 0 0 1 ${n(x + k)} ${y}Z`;
+    });
+
+    if (d === veuUltimo) return;
+    veuUltimo = d;
+
+    const valor = `path(evenodd, "${d}")`;
+    veuEl.style.clipPath = valor;
+    veuEl.style.webkitClipPath = valor;
+}
+
+// =====================================================
 // PEÇAS REUTILIZÁVEIS
 // =====================================================
 
@@ -336,7 +530,7 @@ function exibirBannerBoasVindas(pageKey) {
                 ${montarFoto(IMAGEM_BOAS_VINDAS, 'NoteWave')}
                 <div class="nw-tour-balao">
                     <h3 id="nw-welcome-titulo">Bem-vindo ao NoteWave!</h3>
-                    <p>Quer fazer um tour pela plataforma? Vou te mostrar o Perfil, as Medalhas, a Trilha de Aulas e as Configurações.</p>
+                    <p>Quer fazer um tour pela plataforma? Vou te mostrar o Perfil, as Medalhas, a Trilha de Aulas, o Caderno e as Configurações.</p>
                     <div class="nw-tour-rodape">
                         <div class="nw-tour-acoes">
                             <button id="btn-skip-tour" class="nw-tour-btn nw-tour-btn--claro">Agora não</button>
@@ -360,11 +554,6 @@ function exibirBannerBoasVindas(pageKey) {
         localStorage.setItem('notewave_tour_choice', 'accepted');
         removerModalWelcome();
         comecarTourCompleto(pageKey);
-    });
-
-    document.getElementById('btn-skip-tour').addEventListener('click', () => {
-        localStorage.setItem('notewave_tour_choice', 'declined');
-        removerModalWelcome();
     });
 }
 
@@ -517,6 +706,7 @@ function iniciarPassosDoTour(pageKey, fazParteDoTour) {
     function encerrar() {
         limparDestaques();
         removerBalaoPasso();
+        removerVeu();
         sessionStorage.removeItem(CHAVE_TOUR_ATIVO);
         document.removeEventListener('keydown', aoPressionarTecla);
     }
@@ -531,6 +721,7 @@ function iniciarPassosDoTour(pageKey, fazParteDoTour) {
 
         if (index >= steps.length) {
             document.removeEventListener('keydown', aoPressionarTecla);
+            removerVeu();
 
             // Continua o tour na próxima página (ou termina na última)
             if (fazParteDoTour && proxima) {
@@ -545,7 +736,11 @@ function iniciarPassosDoTour(pageKey, fazParteDoTour) {
         const alvos = acharAlvos(step);
         const alvo = alvos[0] || null;
 
-        // Se não achar o elemento, o balão ainda fala (só não destaca nada)
+        // Desfoca o resto da tela; só os elementos do passo ficam nítidos
+        mostrarVeu();
+        definirAlvosDoVeu(alvos);
+
+        // Se não achar o elemento, o balão ainda fala (a tela inteira fica desfocada)
         if (alvo) {
             alvos.forEach(el => el.classList.add('nw-tour-alvo'));
             alvo.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -624,14 +819,11 @@ function iniciarPassosDoTour(pageKey, fazParteDoTour) {
         return;
     }
 
-    // CASO 1: É o primeiro acesso absoluto do usuário na plataforma
-    if (!tourEscolhido) {
-        // Marcamos logo para evitar duplicações caso recarregue rápido
-        localStorage.setItem('notewave_tour_choice', 'pendente_modal'); 
-        
-        // Exibe o modal de boas-vindas apenas na página inicial (ex: perfil)
-        if (chave === 'perfil') {
-            exibirBannerBoasVindas(chave);
-        }
+    // CASO 1: É o primeiro acesso absoluto do usuário na plataforma.
+    // O convite só aparece no Perfil; só marcamos "pendente" lá, para que
+    // abrir outra página (como o Caderno) antes não faça o convite sumir.
+    if (!tourEscolhido && chave === 'perfil') {
+        localStorage.setItem('notewave_tour_choice', 'pendente_modal');
+        exibirBannerBoasVindas(chave);
     }
 })();

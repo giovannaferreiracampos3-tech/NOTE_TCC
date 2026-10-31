@@ -23,8 +23,8 @@
     --input-bg: #ffffff;
   }
   
-  /* --- MODO ESCURO (ATIVADO AO ADICIONAR A CLASSE .dark-mode NO BODY) --- */
-  body.dark-mode {
+  /* --- MODO ESCURO (ATIVADO AO ADICIONAR A CLASSE .dark-mode ) --- */
+  .dark-mode {
     --primary-blue: #38bdf8;
     --primary-dark: #f8fafc;
     --bg-color: #0b132b;
@@ -112,7 +112,7 @@
     color: #ffffff !important;
   }
   
-  body.dark-mode .nav-item.active {
+  .dark-mode .nav-item.active {
     background-color: var(--primary-blue);
     color: #0b132b !important;
   }
@@ -293,7 +293,7 @@
     transition: opacity 0.2s ease;
   }
   
-  body.dark-mode .btn-primary {
+  .dark-mode .btn-primary {
     color: #0b132b;
   }
   
@@ -379,7 +379,7 @@
     color: #ffffff;
   }
   
-  body.dark-mode .btn-suporte:hover {
+  .dark-mode .btn-suporte:hover {
     color: #0b132b;
   }
   

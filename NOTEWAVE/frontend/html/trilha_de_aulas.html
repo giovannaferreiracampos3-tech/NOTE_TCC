@@ -196,13 +196,15 @@
 
     <!-- SCRIPT DE CONFIGURAÇÃO DE TEMA -->
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
+       if (localStorage.getItem('theme') === 'dark' || localStorage.getItem('darkMode') === 'true') {
+  document.body.classList.add('dark-mode');
+}
     </script>
 
     <script src="../js/trilha_de_aulas.js"></script>
     <script src="../js/tour.js"></script>
+    <script src="../js/tema.js"></script>
+    <meta charset="UTF-8">
     <a href="../html/caderno.html" class="nav-item">
         <i class="ph ph-notebook"></i>
         <span>Caderno</span>
