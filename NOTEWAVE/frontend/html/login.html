@@ -9,24 +9,38 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../css/login.css">
 </head>
 
 <body>
 
+    <a href="home.html" class="back-link"><i class="ph ph-arrow-left"></i> Voltar</a>
+
     <main class="container">
 
+        <!-- LADO ESQUERDO: MARCA -->
         <section class="brand-section">
             <div class="logo-image-wrapper">
                 <img src="../imagem/nota.png" alt="Logo NoteWave" class="brand-logo-img">
                 <h1 class="brand-title">NoteWave</h1>
                 <p class="brand-subtitle">Aprenda. Pratique. Evolua.</p>
+
+                <div class="brand-stage">
+                    <div class="balao">Bora praticar hoje? 🎵</div>
+                    <img src="../imagem/nota.png" alt="" class="mascote">
+                    <i class="ph-fill ph-music-note nota n1" aria-hidden="true"></i>
+                    <i class="ph-fill ph-music-notes nota n2" aria-hidden="true"></i>
+                </div>
             </div>
         </section>
 
+        <!-- LADO DIREITO: FORMULÁRIOS -->
         <section class="auth-card">
+
+            <h2 class="auth-title">Bem-vindo! 👋</h2>
+            <p class="auth-sub">Entre ou crie sua conta para continuar sua jornada musical.</p>
 
             <div class="tabs">
                 <button type="button" class="tab-btn active" onclick="switchTab('login')">Entrar</button>
@@ -62,7 +76,7 @@
 
                     <button type="submit" class="btn-submit">Entrar</button>
                     <div class="divider"><span>ou</span></div>
-<div id="googleBtnLogin" class="google-btn-wrapper"></div>
+                    <div id="googleBtnLogin" class="google-btn-wrapper"></div>
                 </form>
             </div>
 
@@ -93,22 +107,29 @@
                         </div>
                     </div>
 
-                    <div class="form-options" style="margin-top: 10px; margin-bottom: 15px;">
-                        <label class="remember-me" style="font-size: 13px;">
+                    <div class="form-options terms">
+                        <label class="remember-me">
                             <input type="checkbox" id="regTerms" required>
-                            <span>Li e aceito os <a href="#" style="color: #4361ee; text-decoration: underline;">Termos de Uso</a> e a <a href="#" style="color: #4361ee; text-decoration: underline;">Política de Privacidade</a>.</span>
+                            <span>Li e aceito os <a href="#" class="terms-link">Termos de Uso</a> e a <a href="#" class="terms-link">Política de Privacidade</a>.</span>
                         </label>
                     </div>
 
                     <button type="submit" class="btn-submit">Criar conta</button>
                     <div class="divider"><span>ou</span></div>
-<div id="googleBtnRegister" class="google-btn-wrapper"></div>
+                    <div id="googleBtnRegister" class="google-btn-wrapper"></div>
                 </form>
             </div>
 
         </section>
 
     </main>
+
+    <!-- ondas animadas no rodapé da página -->
+    <div class="ondas" aria-hidden="true">
+        <svg class="onda fundo" viewBox="0 0 2880 140" preserveAspectRatio="none"><path d="M0,70 C240,20 480,120 720,70 C960,20 1200,120 1440,70 C1680,20 1920,120 2160,70 C2400,20 2640,120 2880,70 L2880,140 L0,140 Z"/></svg>
+        <svg class="onda meio" viewBox="0 0 2880 140" preserveAspectRatio="none"><path d="M0,80 C240,30 480,130 720,80 C960,30 1200,130 1440,80 C1680,30 1920,130 2160,80 C2400,30 2640,130 2880,80 L2880,140 L0,140 Z"/></svg>
+        <svg class="onda" viewBox="0 0 2880 140" preserveAspectRatio="none"><path d="M0,95 C240,50 480,130 720,95 C960,50 1200,130 1440,95 C1680,50 1920,130 2160,95 C2400,50 2640,130 2880,95 L2880,140 L0,140 Z"/></svg>
+    </div>
 
     <div id="forgotModal" class="forgot-modal">
         <div class="forgot-content">

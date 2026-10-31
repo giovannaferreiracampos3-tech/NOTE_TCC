@@ -9,60 +9,131 @@
 </head>
 <body>
 
-  <div class="main-container">
-    
-    <header class="navbar">
-      <div class="logo-area">
-        <img src="../imagem/nota.png" alt="NoteWave Logo" class="nav-logo">
-        <span class="nav-title">NoteWave</span>
-      </div>
+  <!-- ================= HERO ================= -->
+  <section class="hero">
 
-      <div class="nav-buttons">
-        <a href="login.html" class="btn-primary">Começar</a>
-      </div>
+    <header class="navbar">
+      <a href="home.html" class="logo-area">
+        <img src="../imagem/nota.png" alt="" class="nav-logo">
+        <span class="nav-title">NoteWave</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Principal">
+        <a href="#recursos">Recursos</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="login.html" class="btn btn-gold btn-sm">Começar</a>
+      </nav>
     </header>
 
-    <main class="hero-card">
-      <div class="hero-left">
+    <div class="hero-inner">
+      <div class="hero-text">
         <span class="badge"><i class="ph ph-sparkle"></i> Pleno Aprendizado Musical</span>
-        <h1 class="hero-title">Sua jornada musical começa aqui.</h1>
-        <p class="hero-subtitle">Aprenda teoria, pratique leitura de partituras e acompanhe seu progresso de forma simples e intuitiva.</p>
-        
-        <div class="hero-action">
-          <a href="login.html" class="btn-primary btn-large">
-            Começar Agora <i class="ph ph-arrow-right"></i>
-          </a>
+        <h1>Sua jornada musical começa aqui.</h1>
+        <p class="hero-sub">Aprenda teoria, pratique leitura de partituras e acompanhe seu progresso de forma simples e intuitiva.</p>
+
+        <div class="hero-actions">
+          <a href="login.html" class="btn btn-gold">Começar Agora <i class="ph ph-arrow-right"></i></a>
+          <a href="#como-funciona" class="btn btn-ghost">Ver como funciona</a>
         </div>
+
+        <ul class="chips">
+          <li><i class="ph-fill ph-check-circle"></i> Gratuito para começar</li>
+          <li><i class="ph-fill ph-check-circle"></i> No seu ritmo</li>
+          <li><i class="ph-fill ph-check-circle"></i> Modo escuro</li>
+        </ul>
       </div>
 
-      <div class="hero-right">
-        <div class="logo-card-glow">
-          <img src="../imagem/nota.png" alt="NoteWave Logo" class="big-logo">
-        </div>
+      <div class="stage">
+        <div class="balao">Vamos aprender música juntos? 🎵</div>
+        <img src="../imagem/nota.png" alt="Mascote do NoteWave flutuando" class="mascote">
+        <i class="ph-fill ph-music-note nota n1" aria-hidden="true"></i>
+        <i class="ph-fill ph-music-notes nota n2" aria-hidden="true"></i>
+        <i class="ph-fill ph-music-note nota n3" aria-hidden="true"></i>
       </div>
-    </main>
+    </div>
 
-    <section class="features-grid">
-      <div class="feature-card">
-        <div class="icon-box"><i class="ph ph-music-notes"></i></div>
-        <h3>Aulas Práticas</h3>
-        <p>Aprenda notas e ritmos no seu próprio tempo.</p>
-      </div>
+    <!-- ondas animadas -->
+    <div class="ondas" aria-hidden="true">
+      <svg class="onda fundo" viewBox="0 0 2880 140" preserveAspectRatio="none"><path d="M0,70 C240,20 480,120 720,70 C960,20 1200,120 1440,70 C1680,20 1920,120 2160,70 C2400,20 2640,120 2880,70 L2880,140 L0,140 Z"/></svg>
+      <svg class="onda meio" viewBox="0 0 2880 140" preserveAspectRatio="none"><path d="M0,80 C240,30 480,130 720,80 C960,30 1200,130 1440,80 C1680,30 1920,130 2160,80 C2400,30 2640,130 2880,80 L2880,140 L0,140 Z"/></svg>
+      <svg class="onda" viewBox="0 0 2880 140" preserveAspectRatio="none"><path d="M0,95 C240,50 480,130 720,95 C960,50 1200,130 1440,95 C1680,50 1920,130 2160,95 C2400,50 2640,130 2880,95 L2880,140 L0,140 Z"/></svg>
+    </div>
+  </section>
 
-      <div class="feature-card">
-        <div class="icon-box"><i class="ph ph-fire"></i></div>
-        <h3>Sequência Diária</h3>
-        <p>Mantenha o hábito e evolua todos os dias.</p>
-      </div>
+  <main>
 
-      <div class="feature-card">
-        <div class="icon-box"><i class="ph ph-trophy"></i></div>
-        <h3>Conquistas</h3>
-        <p>Desbloqueie medalhas ao concluir os exercícios.</p>
+    <!-- ================= RECURSOS ================= -->
+    <section class="section" id="recursos">
+      <h2>Tudo para evoluir na música</h2>
+      <p class="lead">Ferramentas simples para você estudar com constância e acompanhar cada conquista.</p>
+
+      <div class="features-grid">
+        <article class="feature-card">
+          <div class="icon-box"><i class="ph ph-music-notes"></i></div>
+          <h3>Aulas Práticas</h3>
+          <p>Aprenda notas e ritmos no seu próprio tempo.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="icon-box"><i class="ph ph-fire"></i></div>
+          <h3>Sequência Diária</h3>
+          <p>Mantenha o hábito e evolua todos os dias.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="icon-box"><i class="ph ph-trophy"></i></div>
+          <h3>Conquistas</h3>
+          <p>Desbloqueie medalhas ao concluir os exercícios.</p>
+        </article>
+
+        <article class="feature-card">
+          <div class="icon-box"><i class="ph ph-chart-line-up"></i></div>
+          <h3>Seu Progresso</h3>
+          <p>Veja sua evolução e saiba o que praticar a seguir.</p>
+        </article>
       </div>
     </section>
 
-  </div>
+    <!-- ================= PASSOS ================= -->
+    <section class="passos-wrap" id="como-funciona">
+      <div class="section">
+        <h2>Como funciona</h2>
+        <p class="lead">Em três passos você já está tocando o primeiro compasso.</p>
+
+        <ol class="passos">
+          <li class="passo">
+            <h3>Crie sua conta</h3>
+            <p>Cadastre-se em poucos segundos e personalize sua jornada.</p>
+          </li>
+          <li class="passo">
+            <h3>Estude e pratique</h3>
+            <p>Siga as aulas de teoria e treine leitura de partituras com exercícios.</p>
+          </li>
+          <li class="passo">
+            <h3>Ganhe conquistas</h3>
+            <p>Mantenha sua sequência diária e desbloqueie medalhas pelo caminho.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ================= CTA FINAL ================= -->
+    <section class="cta-final">
+      <div class="cta-box">
+        <div>
+          <h2>Pronto para entrar na onda?</h2>
+          <p>Comece agora e dê o primeiro passo na sua jornada musical.</p>
+        </div>
+        <a href="login.html" class="btn btn-gold">Começar Agora <i class="ph ph-arrow-right"></i></a>
+        <img src="../imagem/nota.png" alt="" class="cta-mascote">
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="rodape">
+    © 2026 NoteWave — Aprenda. Pratique. Evolua.
+  </footer>
 
 </body>
 </html>
