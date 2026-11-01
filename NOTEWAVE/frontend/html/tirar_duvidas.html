@@ -5,42 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NoteWave - Central de Ajuda</title>
 
-    <!-- Fontes e Ícones Oficiais -->
+    <!-- Fontes e Ícones -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
 
-    <!-- CSS Padronizado -->
+    <!-- CSS -->
     <link rel="stylesheet" href="../css/configuracoes.css">
     <link rel="stylesheet" href="../css/tema.css">
 
-    <script>
-        // Verifica se o modo escuro estava salvo no navegador e aplica imediatamente
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-    </script>
-    
     <style>
-        /* Ajuste exclusivo para a Central de Ajuda sem sidebar */
+        /* Central de Ajuda (sem menu lateral): card centralizado, rodapé embaixo */
         body {
-            background-color: var(--bg-color);
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 40px 20px 0;
         }
 
         .help-main-container {
             width: 100%;
             max-width: 900px;
-            background: var(--card-bg);
+            background: var(--nw-card-solid);
             border-radius: 28px;
             padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 30px rgba(7, 87, 132, 0.10);
+            border: 2px solid var(--nw-line);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
@@ -56,22 +49,23 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: var(--text-muted);
             font-weight: 600;
             font-size: 14px;
-            transition: color 0.2s ease;
-        }
-
-        .btn-voltar:hover {
-            color: var(--primary-blue);
         }
     </style>
 </head>
 <body>
 
+    <script>
+        // Aplica o modo escuro salvo antes de desenhar a página
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+
     <div class="help-main-container">
 
-        <!-- Barra superior com botão de voltar para configurações -->
+        <!-- Botão de voltar para configurações -->
         <div class="help-top-bar">
             <a href="configuracoes.html" class="btn-voltar">
                 <i class="ph ph-arrow-left"></i> Voltar para Configurações
@@ -83,10 +77,9 @@
             <p>Tire suas dúvidas mais frequentes sobre a jornada musical no NoteWave.</p>
         </header>
 
-        <!-- LISTA DE PERGUNTAS FREQUENTES (ACORDEÃO) -->
+        <!-- PERGUNTAS FREQUENTES (ACORDEÃO) -->
         <div class="faq-container">
 
-            <!-- Pergunta 1 -->
             <div class="faq-item">
                 <button class="faq-question">
                     <span>Como resolver problemas de áudio nas aulas?</span>
@@ -97,7 +90,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 2 -->
             <div class="faq-item">
                 <button class="faq-question">
                     <span>Como faço para ganhar medalhas na plataforma?</span>
@@ -108,7 +100,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 3 -->
             <div class="faq-item">
                 <button class="faq-question">
                     <span>Como alterar minha senha de acesso?</span>
@@ -119,7 +110,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 4 -->
             <div class="faq-item">
                 <button class="faq-question">
                     <span>O que é a Clave de Fá e como aprendê-la?</span>
@@ -130,7 +120,6 @@
                 </div>
             </div>
 
-            <!-- Pergunta 5 -->
             <div class="faq-item">
                 <button class="faq-question">
                     <span>Como refazer o tour guiado da plataforma?</span>
@@ -145,19 +134,17 @@
 
     </div>
 
-    <!-- Script de funcionamento do Acordeão (Abrir/Fechar com setinha) -->
+    <!-- Acordeão: abrir/fechar com a setinha -->
     <script>
         document.querySelectorAll('.faq-question').forEach(button => {
             button.addEventListener('click', () => {
                 const faqItem = button.parentElement;
                 const isActive = faqItem.classList.contains('active');
 
-                // Fecha todos os outros itens abertos
                 document.querySelectorAll('.faq-item').forEach(item => {
                     item.classList.remove('active');
                 });
 
-                // Se não estava ativo, abre este
                 if (!isActive) {
                     faqItem.classList.add('active');
                 }
@@ -165,12 +152,8 @@
         });
     </script>
 
-<!-- SCRIPT PARA APLICAR O MODO ESCURO SALVO -->
-<script>
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark-mode');
-    }
-</script>
-
+    <script src="../js/rodape.js"></script>
+    <script src="../js/music.js"></script>
+    <script src="../js/nw-sync.js"></script>
 </body>
 </html>

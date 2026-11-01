@@ -1,0 +1,82 @@
+/* NoteWave Journal – v4: títulos, editor, comunidade e comentários.
+   Carregue DEPOIS do journal.css. */
+   .jr [hidden]{display:none!important}
+
+   /* ===== Títulos ===== */
+   .jr .jr-head h1{font-size:42px;font-weight:800;letter-spacing:-1.2px;line-height:1.05;color:var(--jr-blue)}
+   .jr .jr-head p{font-size:16px;margin-top:10px;max-width:46ch}
+   
+   /* Título de página (Explorar, Comunidade, Favoritos, Escrever) */
+   .jr .jr-titulo{font-size:34px;font-weight:800;letter-spacing:-.8px;line-height:1.1;display:flex;align-items:center;gap:14px}
+   .jr .jr-titulo>i{display:grid;place-items:center;flex:none;width:52px;height:52px;border-radius:16px;font-size:28px;color:var(--jr-on);background:linear-gradient(135deg,var(--jr-blue),#38bdf8);box-shadow:0 8px 20px rgba(0,51,153,.25)}
+   body.dark-mode .jr .jr-titulo>i{color:#0b132b;box-shadow:0 8px 20px rgba(56,189,248,.2)}
+   .jr .jr-sub{font-size:15px;margin:10px 0 0 66px;max-width:60ch}
+   
+   /* Títulos de seção (Em destaque, Categorias, Recentes) */
+   .jr .jr-sec>h2{font-size:24px;font-weight:800;letter-spacing:-.4px}
+   .jr .jr-sec>h2 i{width:42px;height:42px;border-radius:14px;font-size:22px;background:linear-gradient(135deg,var(--jr-blue),#38bdf8);color:var(--jr-on)}
+   body.dark-mode .jr .jr-sec>h2 i{color:#0b132b}
+   .jr .jr-notinha h2,.jr .jr-comunidade h2{font-size:21px;font-weight:800;letter-spacing:-.3px}
+   .jr .jr-rel h2,.jr .jr-com h2{font-size:24px;font-weight:800;letter-spacing:-.4px;display:flex;align-items:center;gap:10px}
+   .jr .jr-artigo h1{font-weight:800;letter-spacing:-1px}
+   .jr .jr-texto h2{font-weight:800;letter-spacing:-.4px;border-bottom:0;padding:0 0 0 14px;border-left:5px solid var(--jr-blue);border-radius:3px;line-height:1.25}
+   .jr .jr-texto h3{font-weight:700}
+   .jr a.jr-comunidade{color:inherit;transition:transform .2s,box-shadow .2s}
+   .jr a.jr-comunidade:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,43,122,.14)}
+   
+   /* ===== Cards: autor e interação ===== */
+   .jr-meta .jr-int{display:inline-flex;align-items:center;gap:4px}
+   .jr-card .jr-meta{margin-top:auto;padding-top:6px}
+   .jr-card .ler{margin-top:0}
+   
+   /* ===== Editor ===== */
+   .jr-form{display:flex;flex-direction:column;gap:20px;background:var(--jr-card);border:1px solid var(--jr-border);border-radius:20px;padding:28px;box-shadow:0 6px 20px rgba(0,43,122,.07)}
+   .jr-campo{display:flex;flex-direction:column;gap:6px}
+   .jr-campo>label,.jr-campo>span{font-weight:700;font-size:14px}
+   .jr-campo small{color:var(--jr-muted);font-size:12px}
+   .jr-form input[type=text],.jr-form textarea,.jr-form select,.jr-comentar textarea{font:inherit;font-size:15px;color:var(--jr-text);background:var(--jr-bg);border:1px solid var(--jr-border);border-radius:12px;padding:11px 14px;width:100%;resize:vertical}
+   .jr-form input:focus,.jr-form textarea:focus,.jr-form select:focus,.jr-comentar textarea:focus{outline:0;border-color:var(--jr-blue);box-shadow:0 0 0 3px rgba(56,132,255,.15)}
+   .jr-titulo-input{font-size:22px!important;font-weight:800}
+   .jr-blocos{display:flex;flex-direction:column;gap:12px}
+   .jr-bloco{border:1px solid var(--jr-border);border-left:5px solid var(--jr-blue);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--jr-bg)}
+   .jr-bloco-topo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px;color:var(--jr-blue)}
+   .jr-bloco-topo .esp{flex:1}
+   .jr-mini{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;border:1px solid var(--jr-border);background:var(--jr-card);color:var(--jr-text);cursor:pointer;font-size:16px}
+   .jr-mini:hover{border-color:var(--jr-blue);color:var(--jr-blue)}
+   .jr-mini:disabled{opacity:.35;cursor:default}
+   .jr-bloco label.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--jr-muted)}
+   .jr-add{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+   .jr-add>span{font-weight:700;font-size:14px;margin-right:4px}
+   .jr-btn[disabled]{opacity:.6;cursor:default;transform:none}
+   .jr-erro{color:#c0392b;font-weight:600;font-size:14px;min-height:20px}
+   body.dark-mode .jr-erro{color:#ff8a80}
+   .jr-form-fim{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+   
+   /* ===== Artigo: autoria e ações ===== */
+   .jr-excluir{color:#c0392b!important}
+   body.dark-mode .jr-excluir{color:#ff8a80!important}
+   
+   /* ===== Comentários ===== */
+   .jr-com{margin-top:44px;display:flex;flex-direction:column;gap:16px}
+   .jr-com-lista{display:flex;flex-direction:column;gap:12px}
+   .jr-coment{display:flex;gap:12px;background:var(--jr-card);border:1px solid var(--jr-border);border-radius:16px;padding:14px 16px}
+   .jr-coment .jr-avatar{width:38px;height:38px;font-size:15px;flex:none}
+   .jr-coment-corpo{flex:1;min-width:0}
+   .jr-coment-topo{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:13px;color:var(--jr-muted)}
+   .jr-coment-topo b{color:var(--jr-text);font-size:14px}
+   .jr-coment p{margin:4px 0 0;font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+   .jr-coment .jr-mini{margin-left:auto;width:28px;height:28px;font-size:14px}
+   .jr-comentar{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+   .jr-comentar textarea{min-height:84px}
+   .jr-aviso{background:var(--jr-soft);border:1px solid var(--jr-border);border-radius:14px;padding:14px 18px;font-size:15px}
+   .jr-aviso a{color:var(--jr-blue);font-weight:700;text-decoration:underline}
+   .jr-vazio a{color:var(--jr-blue);font-weight:700;text-decoration:underline}
+   
+   @media(max-width:600px){
+     .jr .jr-head h1{font-size:32px}.jr .jr-titulo{font-size:26px}.jr .jr-titulo>i{width:44px;height:44px;font-size:24px}.jr .jr-sub{margin-left:0}
+     .jr-form{padding:18px}
+   }
+
+   .jr .jr-reagir{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.jr .jr-reagir .jr-btn{display:inline-flex;align-items:center;gap:6px;height:44px;line-height:1}
+.jr .jr-reagir .jr-fim{margin-left:0}

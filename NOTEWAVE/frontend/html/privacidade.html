@@ -3,35 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoteWave - Políticas de Privacidade & LGPD</title>
+    <title>NoteWave - Políticas de Privacidade &amp; LGPD</title>
 
-    <!-- Fontes e Ícones Oficiais -->
+    <!-- Fontes e Ícones -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
 
-    <!-- CSS Padronizado -->
+    <!-- CSS -->
     <link rel="stylesheet" href="../css/configuracoes.css">
-    
+    <link rel="stylesheet" href="../css/tema.css">
+
     <style>
+        /* Card centralizado, rodapé embaixo */
         body {
-            background-color: var(--bg-color);
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
             min-height: 100vh;
-            padding: 40px 20px;
+            padding: 40px 20px 0;
         }
 
         .help-main-container {
             width: 100%;
             max-width: 900px;
-            background: var(--card-bg);
+            background: var(--nw-card-solid);
             border-radius: 28px;
             padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            border: 1px solid var(--border-light);
+            box-shadow: 0 10px 30px rgba(7, 87, 132, 0.10);
+            border: 2px solid var(--nw-line);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
@@ -47,14 +49,8 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            color: var(--text-muted);
             font-weight: 600;
             font-size: 14px;
-            transition: color 0.2s ease;
-        }
-
-        .btn-voltar:hover {
-            color: var(--primary-blue);
         }
 
         .privacy-section {
@@ -64,31 +60,52 @@
             gap: 20px;
         }
 
+        .privacy-section h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--nw-title);
+            margin-bottom: 4px;
+        }
+
+        .privacy-section h2 i {
+            color: var(--nw-blue);
+            font-size: 22px;
+        }
+
         .privacy-item {
-            background-color: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 20px;
+            background-color: var(--nw-soft);
+            border: 2px solid var(--nw-line);
+            border-radius: 18px;
+            padding: 20px 22px;
         }
 
         .privacy-item h3 {
             font-size: 16px;
-            font-weight: 600;
-            color: var(--primary-blue);
+            font-weight: 700;
+            color: var(--nw-title);
             margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
 
         .privacy-item p {
             font-size: 14px;
-            color: var(--text-muted);
+            color: var(--nw-muted);
             line-height: 1.6;
         }
+
+        .privacy-item p strong { color: var(--nw-title); }
     </style>
 </head>
 <body>
+
+    <script>
+        // Aplica o modo escuro salvo antes de desenhar a página
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
 
     <div class="help-main-container">
 
@@ -100,14 +117,12 @@
         </div>
 
         <header class="page-header">
-            <h1>Políticas de Privacidade & LGPD</h1>
+            <h1>Políticas de Privacidade &amp; LGPD</h1>
             <p>Saiba como protegemos seus dados na plataforma de ensino NoteWave.</p>
         </header>
 
         <div class="privacy-section">
-            <h2 style="font-size: 18px; font-weight: 600; color: var(--text-main); margin-bottom: 10px;">
-                <i class="ph ph-shield-check" style="color: var(--primary-blue);"></i> Como Tratamos Seus Dados
-            </h2>
+            <h2><i class="ph ph-shield-check"></i> Como Tratamos Seus Dados</h2>
 
             <div class="privacy-item">
                 <h3>1. Coleta de Informações</h3>
@@ -121,17 +136,14 @@
 
             <div class="privacy-item">
                 <h3>3. Sistema de Gamificação</h3>
-                <p>Seus pontos, conquistas de medalhes e registros de constância são associados ao seu perfil para exibir seu progresso nas aulas de música.</p>
+                <p>Seus pontos, conquistas de medalhas e registros de constância são associados ao seu perfil para exibir seu progresso nas aulas de música.</p>
             </div>
         </div>
 
     </div>
 
-    <!-- Script do Modo Escuro -->
-    <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-        }
-    </script>
+    <script src="../js/rodape.js"></script>
+    <script src="../js/music.js"></script>
+    <script src="../js/nw-sync.js"></script>
 </body>
 </html>

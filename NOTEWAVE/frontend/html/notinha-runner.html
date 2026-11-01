@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Notinha Runner • NoteWave</title>
+
+  <!-- Fonte arredondada (se a NoteWave já tiver uma fonte própria, troque a variável --nwr-fonte no CSS) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS do módulo (não altera nenhum CSS existente da NoteWave) -->
+  <link rel="stylesheet" href="../css/runner.css">
+</head>
+<body>
+
+<!-- Se quiser, cole aqui o cabeçalho/menu padrão da NoteWave -->
+
+<main id="nw-runner" class="nwr" data-tema="claro" data-sprite="../NOTEWAVE/frontend/imagem/feliz.png">
+
+  <header class="nwr-topo">
+    <h1 class="nwr-topo__titulo">Notinha Runner</h1>
+    <div class="nwr-saldo" title="Seu saldo de moedas">
+      <span class="nwr-moeda" aria-hidden="true"></span>
+      <b id="nwr-saldo">0</b>
+      <span class="nwr-sr">moedas</span>
+    </div>
+  </header>
+
+  <nav class="nwr-abas" role="tablist" aria-label="Seções do Notinha Runner">
+    <button class="nwr-aba is-ativa" role="tab" aria-selected="true"  data-aba="jogar">Jogar</button>
+    <button class="nwr-aba"          role="tab" aria-selected="false" data-aba="desafios">Desafios</button>
+    <button class="nwr-aba"          role="tab" aria-selected="false" data-aba="loja">Loja</button>
+    <button class="nwr-aba"          role="tab" aria-selected="false" data-aba="guarda-roupa">Guarda-roupa</button>
+    <button class="nwr-aba"          role="tab" aria-selected="false" data-aba="cenarios">Cenários</button>
+  </nav>
+
+  <!-- ===================== ABA: JOGAR ===================== -->
+  <section class="nwr-painel" id="aba-jogar" role="tabpanel">
+
+    <p class="nwr-aviso-giro">Dica: gire o celular para jogar na horizontal.</p>
+
+    <div class="nwr-palco" id="nwr-palco">
+      <canvas id="nwr-canvas" aria-label="Área do jogo"></canvas>
+
+      <!-- HUD durante a partida -->
+      <div class="nwr-hud" id="nwr-hud" hidden>
+        <div class="nwr-hud__topo">
+          <div class="nwr-chip nwr-chip--esq">
+            <svg class="nwr-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V12h4v8zm6 0V4h4v16zm6 0v-6h4v6z"/></svg>
+            <span><span class="nwr-chip__rotulo">Rodada </span><b id="hud-rodada">1</b>/<span id="hud-total">10</span></span>
+          </div>
+
+          <div class="nwr-pergunta" id="hud-pergunta" aria-live="polite">
+            <svg class="nwr-pauta" id="hud-pauta" viewBox="0 0 150 90" aria-hidden="true" hidden></svg>
+            <div class="nwr-pergunta__txt">
+              <strong id="hud-titulo"></strong>
+              <span id="hud-sub"></span>
+            </div>
+          </div>
+
+          <div class="nwr-hud__dir">
+            <div class="nwr-chip" title="Classificação atual">
+              <span class="nwr-estrela" aria-hidden="true"></span><span><b id="hud-estrelas">0</b>/3</span>
+            </div>
+            <button class="nwr-btn-icone" id="btn-pausa" aria-label="Pausar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zm6.5 0H17v14h-3.5z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="nwr-hud__base">
+          <div class="nwr-chip"><span><span class="nwr-chip__rotulo">Pontuação: </span><b id="hud-pontos">0</b></span></div>
+          <div class="nwr-chip"><span class="nwr-moeda" aria-hidden="true"></span><b id="hud-moedas">0</b></div>
+        </div>
+
+        <button class="nwr-pulo" id="btn-pulo" aria-label="Pular">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5l8 9h-5v5H9v-5H4z"/></svg>
+        </button>
+      </div>
+
+      <!-- TELA INICIAL -->
+      <div class="nwr-tela nwr-tela--inicio" id="tela-inicio">
+        <div class="nwr-inicio">
+          <div class="nwr-inicio__mascote">
+            <!-- IMAGEM DA TELA INICIAL: troque o endereço em src pelo da sua imagem (PNG/WebP com fundo transparente fica melhor).
+                 Se o arquivo não carregar, aparece o Notinha correndo no lugar. -->
+            <img class="nwr-inicio__img" id="nwr-img-inicio" src="../imagem/runner/notinha-inicio.png" alt="" draggable="false">
+            <div class="nwr-notinha nwr-notinha--corre" id="nwr-inicio-reserva" aria-hidden="true" hidden></div>
+          </div>
+          <div class="nwr-inicio__texto">
+            <h2 class="nwr-logo">Notinha <span>Runner</span></h2>
+            <p>Teste seus conhecimentos musicais e ajude o Notinha a chegar mais longe!</p>
+            <button class="nwr-btn nwr-btn--grande" id="btn-jogar" disabled>Jogar</button>
+            <div class="nwr-inicio__sec">
+              <button class="nwr-btn nwr-btn--suave" id="btn-instrucoes">Instruções</button>
+              <button class="nwr-btn nwr-btn--suave" id="btn-som" aria-pressed="false">Som: ligado</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INSTRUÇÕES -->
+      <div class="nwr-tela nwr-tela--modal" id="tela-instrucoes" hidden>
+        <div class="nwr-cartao">
+          <h2>Como jogar</h2>
+          <ul class="nwr-lista">
+            <li><b>Pular:</b> toque na tela, use o botão de pulo, a tecla <kbd>Espaço</kbd> ou <kbd>↑</kbd>.</li>
+            <li>O pulo tem sempre a mesma altura. Só dá para pular de novo depois de aterrissar.</li>
+            <li>Em cada uma das <b>10 rodadas</b> aparecem duas respostas. Pule para tocar na certa.</li>
+            <li><b>Acertou:</b> +2 pontos. <b>Errou:</b> −2 pontos. Passar sem tocar: 0 ponto.</li>
+            <li>Passe por cima das <b>moedas</b> no chão para coletá-las. Elas vão para a loja.</li>
+            <li>No final você ganha de 0 a 3 estrelas pela pontuação.</li>
+          </ul>
+          <button class="nwr-btn" id="btn-fechar-instrucoes">Entendi</button>
+        </div>
+      </div>
+
+      <!-- PAUSA -->
+      <div class="nwr-tela nwr-tela--modal" id="tela-pausa" hidden>
+        <div class="nwr-cartao nwr-cartao--centro">
+          <h2>Jogo pausado</h2>
+          <button class="nwr-btn nwr-btn--grande" id="btn-continuar">Continuar</button>
+          <button class="nwr-btn nwr-btn--suave" id="btn-sair">Sair da partida</button>
+        </div>
+      </div>
+
+      <!-- RESULTADO -->
+      <div class="nwr-tela nwr-tela--resultado" id="tela-resultado" hidden>
+        <div class="nwr-resultado">
+          <div class="nwr-resultado__mascote">
+            <div class="nwr-notinha nwr-notinha--festa" aria-hidden="true"></div>
+          </div>
+          <div class="nwr-resultado__corpo">
+            <h2 class="nwr-faixa" id="res-titulo">Parabéns!</h2>
+            <div class="nwr-estrelas" id="res-estrelas" aria-label="Classificação">
+              <svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z"/></svg>
+            </div>
+            <p class="nwr-pontos"><b id="res-pontos">0</b> pontos</p>
+            <div class="nwr-res-linhas">
+              <div class="nwr-res-linha"><span class="nwr-moeda" aria-hidden="true"></span>Moedas coletadas: <b id="res-moedas">0</b></div>
+              <div class="nwr-res-linha">Respostas certas: <b id="res-acertos">0</b></div>
+              <div class="nwr-res-linha">Respostas erradas: <b id="res-erros">0</b></div>
+            </div>
+            <p class="nwr-res-status" id="res-status" role="status"></p>
+            <div class="nwr-res-botoes">
+              <button class="nwr-btn" id="btn-de-novo">Jogar de novo</button>
+              <button class="nwr-btn nwr-btn--suave" id="btn-inicio">Continuar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== OUTRAS ABAS (chegam nas próximas etapas) ===================== -->
+  <section class="nwr-painel" id="aba-desafios" role="tabpanel" hidden>
+    <div class="nwr-em-breve"><h2>Desafios diários</h2><p>Chega na Etapa 6, junto com a integração com a frequência da NoteWave.</p></div>
+  </section>
+  <!-- Loja, Guarda-roupa e Cenários: montados por js/loja-ui.js -->
+  <section class="nwr-painel" id="aba-loja" role="tabpanel" hidden></section>
+  <section class="nwr-painel" id="aba-guarda-roupa" role="tabpanel" hidden></section>
+  <section class="nwr-painel" id="aba-cenarios" role="tabpanel" hidden></section>
+
+</main>
+
+<!-- Ordem importa: dados → serviços → jogo → interface -->
+<script src="../js/perguntas.js"></script>
+<script src="../js/loja.js"></script>
+<script src="../js/api.js"></script>
+<script src="../js/runner-tema.js"></script>
+<script src="../js/sprite-data.js"></script>
+<script src="../js/som.js"></script>
+<script src="../js/engine.js"></script>
+<script src="../js/loja-ui.js"></script>
+<script src="../js/app.js"></script>
+</body>
+</html>

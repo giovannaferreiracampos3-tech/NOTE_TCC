@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jornal – NoteWave</title>
+  <script src="../js/tema.js"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/perfil.css">
+  <link rel="stylesheet" href="../css/tema.css">
+  <!-- CSS base + CSS novo (nesta ordem) -->
+  <link rel="stylesheet" href="../css/journal.css">
+  <link rel="stylesheet" href="../css/journal-v4.css">
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="../html/perfil.html" style="text-decoration:none;display:flex;align-items:center;gap:10px;">
+          <img src="../imagem/nota.png" alt="Logo NoteWave" style="width:80px;height:80px;object-fit:contain;">
+          <span class="logo-text" style="font-family:Georgia,'Times New Roman',serif;font-size:20px;font-weight:700;letter-spacing:1px;color:#002b7a;text-transform:uppercase;">NoteWave</span>
+        </a>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="../html/perfil.html" class="nav-item"><i class="ph ph-user"></i><span>Perfil</span></a>
+        <a href="../html/trilha_de_aulas.html" class="nav-item"><i class="ph ph-book-open"></i><span>Trilha de Aulas</span></a>
+        <a href="../html/caderno.html" class="nav-item"><i class="ph ph-book"></i><span>Caderno</span></a>
+        <a href="../html/journal.html" class="nav-item active"><i class="ph ph-newspaper"></i><span>Jornal</span></a>
+        <a href="../html/medalhas.html" class="nav-item"><i class="ph ph-medal"></i><span>Medalhas</span></a>
+        <a href="../html/configuracoes.html" class="nav-item"><i class="ph ph-gear"></i><span>Configurações</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="login.html" class="nav-item logout"><i class="ph ph-sign-out"></i><span>Sair</span></a>
+      </div>
+    </aside>
+    <main class="main-content jr"><div class="jr-wrap">
+      <header class="jr-head">
+        <div><h1>Jornal NoteWave</h1><p>Leituras, descobertas e histórias de quem vive a música.</p></div>
+        <form class="jr-busca" id="jrBusca" role="search"><i class="ph ph-magnifying-glass"></i><input type="search" id="jrQ" placeholder="Buscar por título ou conteúdo" aria-label="Buscar publicações" autocomplete="off"></form>
+      </header>
+      <nav class="jr-acoes" aria-label="Journal">
+        <a class="jr-btn" data-nav="home" href="#/"><i class="ph ph-house"></i>Início</a>
+        <a class="jr-btn" data-nav="explorar" href="#/explorar"><i class="ph ph-compass"></i>Explorar</a>
+        <a class="jr-btn" data-nav="favoritos" href="#/favoritos"><i class="ph ph-bookmark-simple"></i>Meus favoritos<b class="jr-badge" id="jrFavCount"></b></a>
+        <a class="jr-btn" data-nav="comunidade" href="#/comunidade"><i class="ph ph-users-three"></i>Comunidade</a>
+      </nav>
+
+      <div class="jr-view" id="v-home">
+        <section class="jr-sec" aria-label="Em destaque"><h2><i class="ph ph-star"></i>Em destaque</h2><div id="jrDestaque"></div></section>
+        <section class="jr-sec" aria-label="Categorias"><h2><i class="ph ph-tag"></i>Categorias</h2><div class="jr-chips" id="jrCatsHome"></div></section>
+        <section class="jr-sec" aria-label="Publicações recentes"><h2><i class="ph ph-clock"></i>Recentes</h2><div class="jr-grid" id="jrRecentes"></div></section>
+        <section class="jr-duo" aria-label="Cantinho do Notinha">
+          <div class="jr-notinha"><img src="../imagem/nota.png" alt="Notinha, o mascote do NoteWave"><div><h2>Cantinho do Notinha</h2><p id="jrDica"></p><button type="button" class="jr-btn" id="jrOutraDica"><i class="ph ph-arrows-clockwise"></i>Outra dica</button></div></div>
+          <a class="jr-comunidade" href="#/comunidade"><i class="ph ph-users-three"></i><h2>Comunidade</h2><p>Leia os artigos, reaja e comente para trocar ideias com outros estudantes.</p></a>
+        </section>
+      </div>
+
+      <div class="jr-view" id="v-explorar" hidden>
+        <div><h2 class="jr-titulo" id="jrTituloExp"><i class="ph ph-compass"></i><span>Explorar</span></h2><p class="jr-sub" id="jrContagem"></p></div>
+        <div class="jr-chips" id="jrCatsExp" aria-label="Categorias"></div>
+        <div class="jr-acoes" id="jrOrigemBox">
+          <button class="jr-btn" data-origem="" type="button">Todas</button>
+          <button class="jr-btn" data-origem="equipe" type="button"><i class="ph ph-seal-check"></i>Da equipe</button>
+          <button class="jr-btn" data-origem="comunidade" type="button"><i class="ph ph-users-three"></i>Da comunidade</button>
+          <select class="jr-btn" id="jrOrdem" aria-label="Ordenar"><option value="recentes">Mais recentes</option><option value="antigos">Mais antigas</option></select>
+          <button class="jr-btn" id="jrLimpar" type="button" hidden><i class="ph ph-x"></i>Limpar filtros</button>
+        </div>
+        <div class="jr-grid" id="jrResultados" aria-live="polite"></div>
+      </div>
+
+      <div class="jr-view" id="v-artigo" hidden><article class="jr-artigo" id="jrArtigo"></article></div>
+
+      <div class="jr-view" id="v-favoritos" hidden>
+        <div><h2 class="jr-titulo"><i class="ph-fill ph-bookmark-simple"></i><span>Meus artigos favoritos</span></h2><p class="jr-sub" id="jrFavContagem"></p></div>
+        <div class="jr-grid" id="jrFavLista"></div>
+      </div>
+
+    </div></main>
+  </div>
+  <script src="../js/journal.js"></script>
+</body>
+</html>

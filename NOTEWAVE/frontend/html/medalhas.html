@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,263 +18,261 @@
     <link rel="stylesheet" href="../css/tour.css">
     <link rel="stylesheet" href="../css/tema.css">
 </head>
+
 <body>
 
-  <div class="app-container">
-    <!-- Sidebar / Menu Lateral Padronizado -->
-    <aside class="sidebar">
-      <div class="sidebar-header"> 
-        <nav class="sidebar-nav">
-          <a href="../html/perfil.html" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
-            <img src="../imagem/nota.png" alt="Logo NoteWave" style="width: 80px; height: 80px; object-fit: contain;">
-            <span class="logo-text" style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; color: #002b7a; text-transform: uppercase;">NoteWave</span>
-          </a>
-        </nav>
-      </div>
+    <div class="app-container">
+        <!-- Sidebar / Menu Lateral Padronizado -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <nav class="sidebar-nav">
+                    <a href="../html/perfil.html"
+                        style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+                        <img src="../imagem/nota.png" alt="Logo NoteWave"
+                            style="width: 80px; height: 80px; object-fit: contain;">
+                        <span class="logo-text"
+                            style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; color: #002b7a; text-transform: uppercase;">NoteWave</span>
+                    </a>
+                </nav>
+            </div>
 
-      <nav class="sidebar-nav">
-        <a href="../html/perfil.html" class="nav-item">
-          <i class="ph ph-user"></i>
-          <span>Perfil</span>
-        </a>
-        <a href="../html/trilha_de_aulas.html" class="nav-item">
-          <i class="ph ph-book-open"></i>
-          <span>Trilha de Aulas</span>
-        </a>
-        <a href="../html/caderno.html" class="nav-item">
-            <i class="ph ph-book"></i>
-            <span>Caderno</span>
-          </a>
-        <a href="../html/medalhas.html" class="nav-item active">
-          <i class="ph ph-medal"></i>
-          <span>Medalhas</span>
-        </a>
-        <a href="../html/configuracoes.html" class="nav-item">
-          <i class="ph ph-gear"></i>
-          <span>Configurações</span>
-        </a>
-      </nav>
-  
-      <div class="sidebar-footer">
-          <a href="login.html" class="nav-item logout">
-              <i class="ph ph-sign-out"></i>
-              <span>Sair</span>
-          </a>
-      </div>
-    </aside>
+            <nav class="sidebar-nav">
+                <a href="../html/perfil.html" class="nav-item">
+                    <i class="ph ph-user"></i>
+                    <span>Perfil</span>
+                </a>
+                <a href="../html/trilha_de_aulas.html" class="nav-item">
+                    <i class="ph ph-book-open"></i>
+                    <span>Trilha de Aulas</span>
+                </a>
+                <a href="../html/caderno.html" class="nav-item">
+                    <i class="ph ph-book"></i>
+                    <span>Caderno</span>
+                </a>
+                <a href="../html/journal.html" class="nav-item"><i
+                        class="ph ph-newspaper"></i>
+                        <span>Jornal</span>
+                    </a>
+                <a href="../html/medalhas.html" class="nav-item active">
+                    <i class="ph ph-medal"></i>
+                    <span>Medalhas</span>
+                </a>
+                <a href="../html/configuracoes.html" class="nav-item">
+                    <i class="ph ph-gear"></i>
+                    <span>Configurações</span>
+                </a>
+            </nav>
 
-    <!-- Conteúdo Principal -->
-    <main class="main-content">
-      <div class="medalhas-card-base">
-          <header class="page-header"> 
-              <h1>
-                <img src="../imagem/2.png" alt="Ícone de Música" style="height: 2em; vertical-align: middle;"> 
-                Suas Conquistas Musicais
-              </h1> 
-              <p>Acompanhe todas as medalhas conquistadas durante sua jornada no NoteWave.</p> 
-          </header>
-            
-          <div class="grid-medalhas">
+            <div class="sidebar-footer">
+                <a href="login.html" class="nav-item logout">
+                    <i class="ph ph-sign-out"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </aside>
 
-              <!-- Medalha 1 -->
-              <div class="card-medalha"
-                  data-chave-medalha="medalha_clave_sol"
-                  data-modulo="modulo1"
-                  data-status="bloqueado"
-                  data-titulo="Clave de Sol"
-                  data-conquistou="Você dominou a leitura das notas agudas!"
-                  data-aprendeu="Leitura da pauta, identificação das notas e localização da Clave de Sol."
-                  data-incentivo="Continue praticando! Grandes músicos começaram exatamente assim.">
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <div class="medalhas-card-base">
+                <header class="page-header">
+                    <h1>
+                        <img src="../imagem/2.png" alt="Ícone de Música" style="height: 2em; vertical-align: middle;">
+                        Suas Conquistas Musicais
+                    </h1>
+                    <p>Acompanhe todas as medalhas conquistadas durante sua jornada no NoteWave.</p>
+                </header>
 
-                  <div class="icone-medalha">
-                      <svg viewBox="0 0 100 100" style="width: 55px; height: 55px;">
-                          <path fill="currentColor" d="M54.5,9 C50.1,9 46.2,16.5 45.1,25.4 C38.3,29.8 33.2,36.5 33.2,46.1 C33.2,58.3 42.1,65.2 50.5,65.2 C59.2,65.2 65.5,58.1 65.5,48.5 C65.5,41.3 61.2,35.4 55.3,32.3 C53.2,23.1 55.4,12.5 58.1,9.8 C56.8,9.2 55.7,9 54.5,9 Z M51.5,59.5 C46.2,59.5 40.8,55.1 40.8,47.2 C40.8,40.5 45.1,34.9 51.2,32.8 C53.2,41.2 57.1,51.8 59.2,56.8 C57.2,58.7 54.5,59.5 51.5,59.5 Z M53.5,67 C48.5,67 44,70.5 44,75.5 C44,80.5 48.5,84.5 53.5,84.5 C58.5,84.5 62.5,80.5 62.5,75.5 C62.5,70.5 58.5,67 53.5,67 Z"/>
-                      </svg>
-                  </div>
-                  <h3>Clave de Sol</h3>
-                  <span class="status">Bloqueado</span>
-              </div>
+                <div class="grid-medalhas">
 
-              <!-- Medalha 2 -->
-              <div class="card-medalha"
-                  data-chave-medalha="medalha_clave_fa"
-                  data-modulo="modulo2"
-                  data-status="bloqueado"
-                  data-titulo="Clave de Fá"
-                  data-conquistou="Você conquistou a leitura dos sons graves."
-                  data-aprendeu="Reconhecimento das notas da Clave de Fá."
-                  data-incentivo="Seu conhecimento musical está ficando cada vez mais completo!">
+                    <!-- Medalha 1 -->
+                    <div class="card-medalha" data-chave-medalha="medalha_clave_sol" data-modulo="modulo1"
+                        data-status="bloqueado" data-titulo="Clave de Sol"
+                        data-conquistou="Você dominou a leitura das notas agudas!"
+                        data-aprendeu="Leitura da pauta, identificação das notas e localização da Clave de Sol."
+                        data-incentivo="Continue praticando! Grandes músicos começaram exatamente assim.">
 
-                  <div class="icone-medalha">
-                      <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
-                          <path fill="currentColor" d="M35,25 C45,20 62,24 62,42 C62,56 50,66 42,75 L36,75 C44,65 54,55 54,43 C54,34 43,30 36,33 L35,25 Z M70,33 A 4 4 0 1 1 70,32.9 Z M70,47 A 4 4 0 1 1 70,46.9 Z"/>
-                      </svg>
-                  </div>
-                  <h3>Clave de Fá</h3>
-                  <span class="status">Bloqueado</span>
-              </div>
+                        <div class="icone-medalha">
+                            <svg viewBox="0 0 100 100" style="width: 55px; height: 55px;">
+                                <path fill="currentColor"
+                                    d="M54.5,9 C50.1,9 46.2,16.5 45.1,25.4 C38.3,29.8 33.2,36.5 33.2,46.1 C33.2,58.3 42.1,65.2 50.5,65.2 C59.2,65.2 65.5,58.1 65.5,48.5 C65.5,41.3 61.2,35.4 55.3,32.3 C53.2,23.1 55.4,12.5 58.1,9.8 C56.8,9.2 55.7,9 54.5,9 Z M51.5,59.5 C46.2,59.5 40.8,55.1 40.8,47.2 C40.8,40.5 45.1,34.9 51.2,32.8 C53.2,41.2 57.1,51.8 59.2,56.8 C57.2,58.7 54.5,59.5 51.5,59.5 Z M53.5,67 C48.5,67 44,70.5 44,75.5 C44,80.5 48.5,84.5 53.5,84.5 C58.5,84.5 62.5,80.5 62.5,75.5 C62.5,70.5 58.5,67 53.5,67 Z" />
+                            </svg>
+                        </div>
+                        <h3>Clave de Sol</h3>
+                        <span class="status">Bloqueado</span>
+                    </div>
 
-              <!-- Medalha 3 -->
-              <div class="card-medalha"
-                  data-chave-medalha="medalha_nota_por_nota"
-                  data-modulo="modulo3"
-                  data-status="bloqueado"
-                  data-titulo="Nota por Nota"
-                  data-conquistou="Você completou uma atividade sem errar nenhuma nota."
-                  data-aprendeu="Precisão, concentração e leitura musical."
-                  data-incentivo="A prática leva à perfeição. Continue treinando!">
+                    <!-- Medalha 2 -->
+                    <div class="card-medalha" data-chave-medalha="medalha_clave_fa" data-modulo="modulo2"
+                        data-status="bloqueado" data-titulo="Clave de Fá"
+                        data-conquistou="Você conquistou a leitura dos sons graves."
+                        data-aprendeu="Reconhecimento das notas da Clave de Fá."
+                        data-incentivo="Seu conhecimento musical está ficando cada vez mais completo!">
 
-                  <div class="icone-medalha">
-                      <svg viewBox="0 0 100 100" style="width: 52px; height: 52px;">
-                          <path fill="currentColor" d="M35,25 L75,15 L75,55 C70,52 62,52 58,56 C52,62 52,72 58,78 C64,84 74,84 80,78 C83,75 85,70 85,65 L85,25 L45,35 L45,65 C40,62 32,62 28,66 C22,72 22,82 28,88 C34,94 44,94 50,88 C53,85 55,80 55,75 L55,42 L35,47 Z"/>
-                      </svg>
-                  </div>
-                  <h3>Nota por Nota</h3>
-                  <span class="status">Bloqueado</span>
-              </div>
+                        <div class="icone-medalha">
+                            <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
+                                <path fill="currentColor"
+                                    d="M35,25 C45,20 62,24 62,42 C62,56 50,66 42,75 L36,75 C44,65 54,55 54,43 C54,34 43,30 36,33 L35,25 Z M70,33 A 4 4 0 1 1 70,32.9 Z M70,47 A 4 4 0 1 1 70,46.9 Z" />
+                            </svg>
+                        </div>
+                        <h3>Clave de Fá</h3>
+                        <span class="status">Bloqueado</span>
+                    </div>
 
-              <!-- Medalha 4 -->
-              <div class="card-medalha"
-                  data-chave-medalha="medalha_ritmo"
-                  data-modulo="modulo4"
-                  data-status="bloqueado"
-                  data-titulo="Ritmo e Pulsação"
-                  data-conquistou="Você dominou a pulsação de tempo de forma regular!"
-                  data-aprendeu="Padrões de compassos simples e figuras de andamento."
-                  data-incentivo="Seu metrônomo interno está regulado perfeitamente!">
+                    <!-- Medalha 3 -->
+                    <div class="card-medalha" data-chave-medalha="medalha_nota_por_nota" data-modulo="modulo3"
+                        data-status="bloqueado" data-titulo="Nota por Nota"
+                        data-conquistou="Você completou uma atividade sem errar nenhuma nota."
+                        data-aprendeu="Precisão, concentração e leitura musical."
+                        data-incentivo="A prática leva à perfeição. Continue treinando!">
 
-                  <div class="icone-medalha">
-                      <svg viewBox="0 0 100 100" style="width: 48px; height: 48px;">
-                          <path fill="currentColor" d="M50,15 L22,78 L78,78 Z M50,28 L68,70 L32,70 Z M47,42 L53,42 L51,62 L47,62 Z M50,67 A 2.5 2.5 0 1 1 50,66.9 Z"/>
-                      </svg>
-                  </div>
-                  <h3>Ritmo e Pulsação</h3>
-                  <span class="status">Bloqueado</span>
-              </div>
+                        <div class="icone-medalha">
+                            <svg viewBox="0 0 100 100" style="width: 52px; height: 52px;">
+                                <path fill="currentColor"
+                                    d="M35,25 L75,15 L75,55 C70,52 62,52 58,56 C52,62 52,72 58,78 C64,84 74,84 80,78 C83,75 85,70 85,65 L85,25 L45,35 L45,65 C40,62 32,62 28,66 C22,72 22,82 28,88 C34,94 44,94 50,88 C53,85 55,80 55,75 L55,42 L35,47 Z" />
+                            </svg>
+                        </div>
+                        <h3>Nota por Nota</h3>
+                        <span class="status">Bloqueado</span>
+                    </div>
 
-              <!-- Medalha 5 -->
-              <div class="card-medalha"
-                  data-chave-medalha="medalha_avancada"
-                  data-modulo="modulo5"
-                  data-status="bloqueado"
-                  data-titulo="Leitura Avançada"
-                  data-conquistou="Você completou com êxito os exercícios mais difíceis da trilha."
-                  data-aprendeu="Linhas suplementares complexas e velocidade melódica."
-                  data-incentivo="Partituras complexas não são mais um mistério para você!">
+                    <!-- Medalha 4 -->
+                    <div class="card-medalha" data-chave-medalha="medalha_ritmo" data-modulo="modulo4"
+                        data-status="bloqueado" data-titulo="Ritmo e Pulsação"
+                        data-conquistou="Você dominou a pulsação de tempo de forma regular!"
+                        data-aprendeu="Padrões de compassos simples e figuras de andamento."
+                        data-incentivo="Seu metrônomo interno está regulado perfeitamente!">
 
-                  <div class="icone-medalha">
-                      <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
-                          <path fill="currentColor" d="M25,20 L25,75 C25,83 35,83 35,75 L35,35 L75,35 L75,65 C75,73 85,73 85,65 L85,20 Z M35,45 L75,45 L75,49 L35,49 Z M35,57 L75,57 L75,61 L35,61 Z"/>
-                      </svg>
-                  </div>
-                  <h3>Leitura Avançada</h3>
-                  <span class="status">Bloqueado</span>
-              </div>
+                        <div class="icone-medalha">
+                            <svg viewBox="0 0 100 100" style="width: 48px; height: 48px;">
+                                <path fill="currentColor"
+                                    d="M50,15 L22,78 L78,78 Z M50,28 L68,70 L32,70 Z M47,42 L53,42 L51,62 L47,62 Z M50,67 A 2.5 2.5 0 1 1 50,66.9 Z" />
+                            </svg>
+                        </div>
+                        <h3>Ritmo e Pulsação</h3>
+                        <span class="status">Bloqueado</span>
+                    </div>
 
-          </div>
-      </div>
-    </main>
-  </div>
+                    <!-- Medalha 5 -->
+                    <div class="card-medalha" data-chave-medalha="medalha_avancada" data-modulo="modulo5"
+                        data-status="bloqueado" data-titulo="Leitura Avançada"
+                        data-conquistou="Você completou com êxito os exercícios mais difíceis da trilha."
+                        data-aprendeu="Linhas suplementares complexas e velocidade melódica."
+                        data-incentivo="Partituras complexas não são mais um mistério para você!">
 
-  <!-- Modal Overlay -->
-  <div class="modal-overlay" id="modalConquista">
-      <div class="modal-balao">
-          <button id="btnFecharModal" class="btn-fechar">&times;</button>
-          <div id="conteudoModal"></div>
-      </div>
-  </div>
+                        <div class="icone-medalha">
+                            <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
+                                <path fill="currentColor"
+                                    d="M25,20 L25,75 C25,83 35,83 35,75 L35,35 L75,35 L75,65 C75,73 85,73 85,65 L85,20 Z M35,45 L75,45 L75,49 L35,49 Z M35,57 L75,57 L75,61 L35,61 Z" />
+                            </svg>
+                        </div>
+                        <h3>Leitura Avançada</h3>
+                        <span class="status">Bloqueado</span>
+                    </div>
 
-  <script>
-      // Aplica o Modo Escuro automaticamente ao carregar
-      if (localStorage.getItem('theme') === 'dark') {
-          document.body.classList.add('dark-mode');
-      }
+                </div>
+            </div>
+        </main>
+    </div>
 
-      // Função para atualizar o status das medalhas com base no localStorage
-      function atualizarMedalhasPeloProgresso() {
-          const cards = document.querySelectorAll('.card-medalha');
-          const dadosProgresso = JSON.parse(localStorage.getItem('progressoModulos')) || {};
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalConquista">
+        <div class="modal-balao">
+            <button id="btnFecharModal" class="btn-fechar">&times;</button>
+            <div id="conteudoModal"></div>
+        </div>
+    </div>
 
-          cards.forEach(card => {
-              const chave = card.dataset.chaveMedalha;
-              const modulo = card.dataset.modulo;
-              const statusTexto = card.querySelector('.status');
-              
-              const medalhaConcluida = localStorage.getItem(chave) === 'true';
-              const moduloConcluido = dadosProgresso[modulo] === 100;
-              
-              if (medalhaConcluida || moduloConcluido) {
-                  card.classList.remove('bloqueada');
-                  card.classList.add('ativa');
-                  card.dataset.status = "desbloqueado";
-                  if (statusTexto) statusTexto.textContent = 'Desbloqueado';
-              } else {
-                  card.classList.remove('ativa');
-                  card.classList.add('bloqueada');
-                  card.dataset.status = "bloqueado";
-                  if (statusTexto) statusTexto.textContent = 'Bloqueado';
-              }
-          });
-      }
+    <script>
+        // Aplica o Modo Escuro automaticamente ao carregar
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
 
-      // Função para criar a explosão de notas e confetes cobrindo a tela toda
-      function dispararExplosaoConquista(cardElement) {
-          const rect = cardElement.getBoundingClientRect();
-          const origemX = rect.left + rect.width / 2;
-          const origemY = rect.top + rect.height / 2;
+        // Função para atualizar o status das medalhas com base no localStorage
+        function atualizarMedalhasPeloProgresso() {
+            const cards = document.querySelectorAll('.card-medalha');
+            const dadosProgresso = JSON.parse(localStorage.getItem('progressoModulos')) || {};
 
-          const alturaTela = window.innerHeight;
-          const elementos = ['🎵', '🎶', '⭐', '💙', '✨', '🔵', '🎵'];
-          const quantidade = 50;
+            cards.forEach(card => {
+                const chave = card.dataset.chaveMedalha;
+                const modulo = card.dataset.modulo;
+                const statusTexto = card.querySelector('.status');
 
-          for (let i = 0; i < quantidade; i++) {
-              const particula = document.createElement('div');
-              particula.classList.add('particula-explosao');
-              
-              particula.innerText = elementos[Math.floor(Math.random() * elementos.length)];
-              
-              particula.style.left = `${origemX}px`;
-              particula.style.top = `${origemY}px`;
+                const medalhaConcluida = localStorage.getItem(chave) === 'true';
+                const moduloConcluido = dadosProgresso[modulo] === 100;
 
-              const angulo = Math.random() * Math.PI * 2;
-              const distanciaExplosao = 120 + Math.random() * 250;
-              
-              const txMeio = Math.cos(angulo) * distanciaExplosao;
-              const tyMeio = Math.sin(angulo) * distanciaExplosao - 120;
+                if (medalhaConcluida || moduloConcluido) {
+                    card.classList.remove('bloqueada');
+                    card.classList.add('ativa');
+                    card.dataset.status = "desbloqueado";
+                    if (statusTexto) statusTexto.textContent = 'Desbloqueado';
+                } else {
+                    card.classList.remove('ativa');
+                    card.classList.add('bloqueada');
+                    card.dataset.status = "bloqueado";
+                    if (statusTexto) statusTexto.textContent = 'Bloqueado';
+                }
+            });
+        }
 
-              const txFim = txMeio + (Math.random() * 200 - 100);
-              const tyFim = alturaTela - origemY + 80;
+        // Função para criar a explosão de notas e confetes cobrindo a tela toda
+        function dispararExplosaoConquista(cardElement) {
+            const rect = cardElement.getBoundingClientRect();
+            const origemX = rect.left + rect.width / 2;
+            const origemY = rect.top + rect.height / 2;
 
-              particula.style.setProperty('--tx-meio', `${txMeio}px`);
-              particula.style.setProperty('--ty-meio', `${tyMeio}px`);
-              particula.style.setProperty('--tx-fim', `${txFim}px`);
-              particula.style.setProperty('--ty-fim', `${tyFim}px`);
-              
-              particula.style.fontSize = `${16 + Math.random() * 18}px`;
+            const alturaTela = window.innerHeight;
+            const elementos = ['🎵', '🎶', '⭐', '💙', '✨', '🔵', '🎵'];
+            const quantidade = 50;
 
-              document.body.appendChild(particula);
+            for (let i = 0; i < quantidade; i++) {
+                const particula = document.createElement('div');
+                particula.classList.add('particula-explosao');
 
-              setTimeout(() => {
-                  particula.remove();
-              }, 1500);
-          }
-      }
+                particula.innerText = elementos[Math.floor(Math.random() * elementos.length)];
 
-      const cards = document.querySelectorAll(".card-medalha");
-      const modal = document.getElementById("modalConquista");
-      const conteudoModal = document.getElementById("conteudoModal");
-      const btnFechar = document.getElementById("btnFecharModal");
-      
-      // Gerenciamento dos cliques nos cards
-      cards.forEach(card => {
-          card.addEventListener("click", () => {
-              const status = card.dataset.status;
-              const titulo = card.dataset.titulo;
-      
-              if (status === "desbloqueado") {
-                  dispararExplosaoConquista(card);
+                particula.style.left = `${origemX}px`;
+                particula.style.top = `${origemY}px`;
 
-                  conteudoModal.innerHTML = `
+                const angulo = Math.random() * Math.PI * 2;
+                const distanciaExplosao = 120 + Math.random() * 250;
+
+                const txMeio = Math.cos(angulo) * distanciaExplosao;
+                const tyMeio = Math.sin(angulo) * distanciaExplosao - 120;
+
+                const txFim = txMeio + (Math.random() * 200 - 100);
+                const tyFim = alturaTela - origemY + 80;
+
+                particula.style.setProperty('--tx-meio', `${txMeio}px`);
+                particula.style.setProperty('--ty-meio', `${tyMeio}px`);
+                particula.style.setProperty('--tx-fim', `${txFim}px`);
+                particula.style.setProperty('--ty-fim', `${tyFim}px`);
+
+                particula.style.fontSize = `${16 + Math.random() * 18}px`;
+
+                document.body.appendChild(particula);
+
+                setTimeout(() => {
+                    particula.remove();
+                }, 1500);
+            }
+        }
+
+        const cards = document.querySelectorAll(".card-medalha");
+        const modal = document.getElementById("modalConquista");
+        const conteudoModal = document.getElementById("conteudoModal");
+        const btnFechar = document.getElementById("btnFecharModal");
+
+        // Gerenciamento dos cliques nos cards
+        cards.forEach(card => {
+            card.addEventListener("click", () => {
+                const status = card.dataset.status;
+                const titulo = card.dataset.titulo;
+
+                if (status === "desbloqueado") {
+                    dispararExplosaoConquista(card);
+
+                    conteudoModal.innerHTML = `
                       <div class="modal-header">
                           <span class="tag-sucesso">Conquista Desbloqueada</span>
                           <h2>${titulo}</h2>
@@ -291,8 +290,8 @@
                           <p><strong>${card.dataset.incentivo || ''}</strong></p>
                       </div>
                   `;
-              } else {
-                  conteudoModal.innerHTML = `
+                } else {
+                    conteudoModal.innerHTML = `
                       <div class="modal-header">
                           <span class="tag-bloqueado">🔒 Medalha Bloqueada</span>
                           <h2>${titulo}</h2>
@@ -303,42 +302,46 @@
                           <p>Finalize a lição correspondente na trilha com aproveitamento superior a 50% para desbloqueá-la.</p>
                       </div>
                   `;
-              }
-              modal.classList.add("visivel");
-          });
-      });
-      
-      btnFechar.addEventListener("click", () => modal.classList.remove("visivel"));
-      modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("visivel"); });
-      document.addEventListener("keydown", (e) => { if (e.key === "Escape") modal.classList.remove("visivel"); });
-      
-      document.addEventListener('DOMContentLoaded', () => {
-          atualizarMedalhasPeloProgresso();
+                }
+                modal.classList.add("visivel");
+            });
+        });
 
-          const params = new URLSearchParams(window.location.search);
-          if (params.get('recompensa') === 'true' || params.get('destaque') === 'fa') {
-              const tituloMedalha = params.get('titulo') || 'Clave de Fá';
-              const cardPremiado = Array.from(document.querySelectorAll('.card-medalha')).find(c => c.dataset.titulo === tituloMedalha);
-              
-              if (cardPremiado) {
-                  cardPremiado.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  cardPremiado.style.transition = "all 0.5s ease";
-                  cardPremiado.style.borderColor = "#ffd43b";
-                  cardPremiado.style.boxShadow = "0 0 30px #ffd43b, 0 0 60px rgba(255,212,59,0.4)";
-                  
-                  setTimeout(() => {
-                      cardPremiado.click();
-                  }, 1000);
-              }
-          }
-      });
-  </script>
-  <script src="../js/tour.js"></script>
-  <a href="../html/caderno.html" class="nav-item">
+        btnFechar.addEventListener("click", () => modal.classList.remove("visivel"));
+        modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("visivel"); });
+        document.addEventListener("keydown", (e) => { if (e.key === "Escape") modal.classList.remove("visivel"); });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            atualizarMedalhasPeloProgresso();
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('recompensa') === 'true' || params.get('destaque') === 'fa') {
+                const tituloMedalha = params.get('titulo') || 'Clave de Fá';
+                const cardPremiado = Array.from(document.querySelectorAll('.card-medalha')).find(c => c.dataset.titulo === tituloMedalha);
+
+                if (cardPremiado) {
+                    cardPremiado.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    cardPremiado.style.transition = "all 0.5s ease";
+                    cardPremiado.style.borderColor = "#ffd43b";
+                    cardPremiado.style.boxShadow = "0 0 30px #ffd43b, 0 0 60px rgba(255,212,59,0.4)";
+
+                    setTimeout(() => {
+                        cardPremiado.click();
+                    }, 1000);
+                }
+            }
+        });
+    </script>
+    <script src="../js/tour.js"></script>
     <script src="../js/tema.js"></script>
+    <script src="../js/nw-sync.js"></script>
     <meta charset="UTF-8">
-    <i class="ph ph-notebook"></i>
-    <span>Caderno</span>
-  </a>
 </body>
+
+<script src="../js/music.js"></script>
+<script src="../js/rodape.js"></script>
+</body>
+
+</html>
+
 </html>

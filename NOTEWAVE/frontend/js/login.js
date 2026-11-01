@@ -1,4 +1,37 @@
 // ================================
+// SESSÃO: abrir a tela de login = sair da conta anterior
+// (envia o que faltava para o servidor e limpa o progresso daquele usuário do navegador)
+// ================================
+const saindoDaConta = window.NWSync ? window.NWSync.sair() : Promise.resolve();
+
+// ================================
+// INICIAR SESSÃO: guarda o token e baixa o progresso DESTA conta (lições, medalhas, caderno...)
+// ================================
+async function iniciarSessao(data, username) {
+    await saindoDaConta;
+
+    const token = data && (data.token || data.accessToken || data.jwt);
+    if (token) {
+        localStorage.setItem("token", token);
+    } else {
+        localStorage.removeItem("token");
+        console.warn("[NoteWave] O servidor não devolveu um token no login. Sem ele, o Jornal e o progresso na conta não funcionam: o server.js precisa enviar { token }.");
+    }
+    localStorage.setItem("noteWave_user", username);
+
+    if (!window.NWSync) {
+        console.warn("[NoteWave] nw-sync.js não foi carregado no login.html: o progresso não será salvo na conta.");
+        return;
+    }
+    try {
+        await window.NWSync.entrar();
+    } catch (erro) {
+        console.error(erro);
+        alert("Você entrou, mas não foi possível carregar seu progresso agora. Tente entrar de novo em instantes.");
+    }
+}
+
+// ================================
 // TROCAR ENTRE LOGIN E CADASTRO
 // ================================
 function switchTab(tabName) {
@@ -88,8 +121,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             return;
         }
 
-       // Dentro da função de cadastro do login.js:
-       localStorage.setItem("noteWave_user", username);
+       await iniciarSessao(data, username);
         alert("Conta criada com sucesso!");
         
         // Vai direto para o perfil
@@ -133,7 +165,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             localStorage.removeItem("remember_pass");
         }
 
-        localStorage.setItem("noteWave_user", data.username || data.user?.username);
+        await iniciarSessao(data, data.username || data.user?.username);
 
         alert("Login realizado com sucesso!");
         window.location.href = "perfil.html";
@@ -213,7 +245,7 @@ async function handleGoogleCredential(googleResponse) {
             return;
         }
 
-        localStorage.setItem("noteWave_user", data.username || data.user?.username);
+        await iniciarSessao(data, data.username || data.user?.username);
         window.location.href = "perfil.html";
 
     } catch (error) {

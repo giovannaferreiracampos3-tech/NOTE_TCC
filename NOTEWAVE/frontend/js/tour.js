@@ -689,6 +689,21 @@ function posicionarCena(cena, alvo) {
     }
 }
 
+// Espera a página montar seus elementos antes de começar o tour
+function aguardarPagina(pageKey, depois) {
+    const todos = tourRoutes[pageKey] || [];
+    const limite = Date.now() + 4000;
+
+    (function tentar() {
+        const pronto = todos.some(s => !s.semprefalar && acharAlvos(s).length);
+        if (pronto || Date.now() > limite) {
+            setTimeout(depois, 300); // folga para o resto terminar de montar
+            return;
+        }
+        setTimeout(tentar, 200);
+    })();
+}
+
 function iniciarPassosDoTour(pageKey, fazParteDoTour) {
     const todos = tourRoutes[pageKey] || [];
 
