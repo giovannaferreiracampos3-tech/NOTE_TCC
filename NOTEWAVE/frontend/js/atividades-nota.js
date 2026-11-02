@@ -33,6 +33,17 @@ let tentativasErradasNestaLicao = 0;
 let estrelasFinais = 0;
 let podeReceberMedalha = false;
 
+// Executa a troca de tela com a onda cobrindo
+// (ou direto, se a onda não carregou)
+function comOnda(aoCobrirTela) {
+    if (typeof NoteWaveOnda === "undefined") {
+        console.error("NoteWaveOnda não carregou. Confira o caminho de onda-transicao.js");
+        aoCobrirTela();
+        return;
+    }
+    NoteWaveOnda.passar(aoCobrirTela);
+}
+
 // =====================================================
 // 2. EXECUÇÃO INICIAL
 // =====================================================
@@ -183,7 +194,8 @@ function computarEscolha(botaoClicado, respostaSelecionada) {
             if (proximaExiste) {
                 window.location.href = `atividades-nota.html?id=${proximoId}`;
             } else {
-                NoteWaveOnda.passar(() => abrirConclusaoFinal());
+                // Última lição → onda → Fim da Trilha
+                comOnda(abrirConclusaoFinal);
             }
         };
 
@@ -357,12 +369,16 @@ document.getElementById("skipLessonBtn")?.addEventListener("click", () => {
 });
 
 // =====================================================
-// 7. FIM DA LIÇÃO — ESTRELAS-DO-MAR (idênticas às de Sol)
+// 7. FIM DA TRILHA → ESTRELAS-DO-MAR (com onda)
 // =====================================================
 
 document.getElementById("receiveMedalBtn")?.addEventListener("click", () => {
     if (!podeReceberMedalha) return;
 
+    comOnda(abrirTelaEstrelas);
+});
+
+function abrirTelaEstrelas() {
     const finalOcean = document.getElementById("finalOcean");
     const containerEstrelas = document.getElementById("duoEstrelasAnimadas");
     const telaEstrelas = document.getElementById("telaEstrelas");
@@ -496,10 +512,10 @@ document.getElementById("receiveMedalBtn")?.addEventListener("click", () => {
     }
 
     telaEstrelas.style.display = "flex";
-});
+}
 
 // =====================================================
-// 8. TRANSIÇÃO DA ONDA (estrelas → medalha)
+// 8. ESTRELAS → MEDALHA (com onda)
 // =====================================================
 
 document.getElementById("btnProximoEstrelas")?.addEventListener("click", () => {
@@ -511,27 +527,31 @@ document.getElementById("btnProximoEstrelas")?.addEventListener("click", () => {
         return;
     }
 
-    NoteWaveOnda.passar(() => {
+    comOnda(() => {
         telaEstrelas.style.display = "none";
         telaMedalha.style.display = "flex";
     });
 });
 
 // =====================================================
-// 9. NOVA CONQUISTA — SALVAR E ABRIR MEDALHAS
+// 9. MEDALHA → PÁGINA DE MEDALHAS (com onda)
 // =====================================================
 
 document.getElementById("btnIrParaMedalhas")?.addEventListener("click", () => {
     // Sem o aproveitamento mínimo, a medalha não é gravada
     if (!podeReceberMedalha) {
-        window.location.href = "../html/perfil.html";
+        comOnda(() => {
+            window.location.href = "../html/perfil.html";
+        });
         return;
     }
 
     localStorage.setItem("medalha_clave_fa", "true");
 
-    window.location.href =
-        "../html/medalhas.html?recompensa=true&titulo=Clave%20de%20F%C3%A1&destaque=fa";
+    comOnda(() => {
+        window.location.href =
+            "../html/medalhas.html?recompensa=true&titulo=Clave%20de%20F%C3%A1&destaque=fa";
+    });
 });
 
 // =====================================================

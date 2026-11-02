@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="../css/trilha_de_aulas.css">
     <link rel="stylesheet" href="../css/tour.css">
     <link rel="stylesheet" href="../css/tema.css">
+
+    <!-- Progresso salvo na conta (precisa vir antes dos outros scripts) -->
+    <script src="../js/nw-sync.js"></script>
 </head>
 <body>
 
@@ -59,6 +62,11 @@
                 class="ph ph-newspaper"></i>
                 <span>Jornal</span>
             </a>
+            <a href="../html/doacao.html" class="nav-item"><i class="ph ph-hand-heart"></i><span>Doações</span></a>
+            <a href="../html/notinha-runner.html" class="nav-item">
+                <i class="ph ph-game-controller"></i>
+                <span>Notinha Runner</span>
+              </a>
             <a href="../html/medalhas.html" class="nav-item">
                 <i class="ph ph-medal"></i>
                 <span>Medalhas</span>
@@ -89,8 +97,10 @@
                 <!-- Lista da Timeline de Aulas -->
                 <section class="lessons-timeline">
 
-                    <!-- Item 1: Concluído (Com o evento para abrir o modal de boas-vindas) -->
-                    <div class="timeline-item completed" id="welcomeItem" style="cursor: pointer;">
+                    <!-- Estado de cada etapa (concluída / aberta / bloqueada) é definido em trilha_de_aulas.js -->
+
+                    <!-- Item 1: Boas-vindas (abre o modal de boas-vindas) -->
+                    <div class="timeline-item" id="welcomeItem" style="cursor: pointer;">
                         <div class="status-indicator">
                             <div class="check-icon"><i class="ph ph-check"></i></div>
                             <div class="step-number">1</div>
@@ -104,8 +114,8 @@
                         </div>
                     </div>
 
-                    <!-- Item 2: Concluído / Link Atividade Texto -->
-                    <div class="timeline-item completed" onclick="window.location.href='../atividades/atividade-texto.html'">
+                    <!-- Item 2: A Clave de Fá (../atividades/atividade-texto.html) -->
+                    <div class="timeline-item locked">
                         <div class="status-indicator">
                             <div class="check-icon"><i class="ph ph-check"></i></div>
                             <div class="step-number">2</div>
@@ -119,8 +129,8 @@
                         </div>
                     </div>
 
-                    <!-- Item 3: Concluído / Link Atividade Nota -->
-                    <div class="timeline-item completed" onclick="window.location.href='../atividades/atividades-nota.html'">
+                    <!-- Item 3: Notas na Clave de Fá (../atividades/atividades-nota.html) -->
+                    <div class="timeline-item locked">
                         <div class="status-indicator">
                             <div class="check-icon"><i class="ph ph-check"></i></div>
                             <div class="step-number">3</div>
@@ -134,8 +144,8 @@
                         </div>
                     </div>
 
-                    <!-- Item 4: Concluído / Link Texto Clave de Sol -->
-                    <div class="timeline-item completed" onclick="window.location.href='../atividades/atividades-texto-sol.html'">
+                    <!-- Item 4: A Clave de Sol (../atividades/atividades-texto-sol.html) -->
+                    <div class="timeline-item locked">
                         <div class="status-indicator">
                             <div class="check-icon"><i class="ph ph-check"></i></div>
                             <div class="step-number">4</div>
@@ -149,8 +159,8 @@
                         </div>
                     </div>
 
-                    <!-- Item 5: Concluído / Link Texto Clave de Sol -->
-                    <div class="timeline-item completed" onclick="window.location.href='../atividades/atividades_sol.html'">
+                    <!-- Item 5: Notas na Clave de Sol (../atividades/atividades_sol.html) -->
+                    <div class="timeline-item locked">
                         <div class="status-indicator">
                             <div class="check-icon"><i class="ph ph-check"></i></div>
                             <div class="step-number">5</div>
@@ -209,12 +219,7 @@
     <script src="../js/trilha_de_aulas.js"></script>
     <script src="../js/tour.js"></script>
     <script src="../js/tema.js"></script>
-    <meta charset="UTF-8">
+    <script src="../js/music.js"></script>
+    <script src="../js/rodape.js"></script>
 </body>
-
-  <script src="../js/music.js"></script>
-  <script src="../js/rodape.js"></script>
-  <script src="../js/nw-sync.js"></script>
-</body>
-</html>
 </html>

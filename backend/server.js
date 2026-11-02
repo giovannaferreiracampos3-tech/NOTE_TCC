@@ -6,13 +6,14 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const path = require('path');
 const jwt = require('jsonwebtoken');
 const { OAuth2Client } = require('google-auth-library');
 
 const GOOGLE_CLIENT_ID = '872496584799-ki78h8mmt18uavfc2vp2b03u2584l9qi.apps.googleusercontent.com';
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-// Segredo do token de login. Precisa ser o MESMO no journalApi.js (já está igual por padrão).
+// Segredo do token de login. Precisa ser o MESMO no journalApi.js e no doacaoApi.js (já está igual por padrão).
 const JWT_SECRET = process.env.JWT_SECRET || 'troque-este-segredo';
 const gerarToken = (usuario) => jwt.sign({ id_usuario: usuario.id_usuario, nome: usuario.nome }, JWT_SECRET, { expiresIn: '7d' });
 
@@ -20,9 +21,13 @@ const app = express();
 const PORT = 5000;
 
 app.use(cors());
-app.use(express.json({ limit: '2mb' })); // 2mb: a foto de perfil salva na conta é grande
+app.use(express.json({ limit: '4mb' })); // 4mb: foto de perfil salva na conta e imagens de capa do Journal
+
+// Imagens publicadas (pastas uploads/journal e uploads/doacao)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Conexão com o MySQL (pool: reconecta sozinho se a conexão cair)
+// IMPORTANTE: o db precisa ser criado ANTES das rotas que o usam
 const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
@@ -43,6 +48,11 @@ db.getConnection((err, conn) => {
 // JOURNAL (publicações, comunidade, comentários)
 // ================================
 app.use('/api/journal', require('./journalApi')(db.promise()));
+
+// ================================
+// DOAÇÕES (instrumentos, interesse, comentários, denúncias)
+// ================================
+app.use('/api', require('./doacaoApi')(db.promise()));
 
 // ================================
 // PROGRESSO DE CADA USUÁRIO (lições, medalhas, caderno, sequência, foto)
@@ -180,6 +190,20 @@ app.post('/api/google-login', async (req, res) => {
         console.error('ERRO GOOGLE:', error.message);
         return res.status(401).json({ message: 'Token do Google inválido.' });
     }
+});
+
+// ================================
+// ERROS GERAIS (JSON malformado, corpo grande demais etc.)
+// Fica DEPOIS de todas as rotas
+// ================================
+app.use((err, req, res, next) => {
+    console.error('ERRO NÃO TRATADO:', err.message);
+    if (res.headersSent) return next(err);
+    const status = err.status || err.statusCode || 500;
+    res.status(status).json({
+        message: status === 413 ? 'O arquivo enviado é grande demais.' : 'Requisição inválida ou erro no servidor.',
+        erro: status === 413 ? 'O arquivo enviado é grande demais.' : 'Requisição inválida ou erro no servidor.'
+    });
 });
 
 // ================================

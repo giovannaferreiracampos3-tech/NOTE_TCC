@@ -127,6 +127,7 @@ if (botaoOriginal) {
                 }
                 setTimeout(() => window.location.href = "./atividades-nota.html", 400);
                 localStorage.setItem("status_leitura_fá_concluida", "true");
+                localStorage.setItem("status_leitura_fa_concluida", "true"); // mesma chave que o perfil lê (sem acento)
             }
         }, 25);
     });

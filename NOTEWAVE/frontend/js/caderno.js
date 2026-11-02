@@ -134,9 +134,13 @@
 
     /* ---------- estado ---------- */
     var S=null;
+    /* nome informado no cadastro (o login grava em noteWave_user); cabe na capa (18 letras) */
+    function nomeDaConta(){
+      try{return (localStorage.getItem("noteWave_user")||"").trim().slice(0,18)}catch(e){return ""}
+    }
     function seed(){
       function ts(d){return Date.parse(d+"T12:00:00")}
-      return {cover:null,name:"Giovanna",pages:{
+      return {cover:null,name:nomeDaConta(),pages:{
         "1":{title:"Acordes básicos",activity:"aula",category:"harmonia",date:"2026-10-18",updated:ts("2026-10-18"),example:true,
           body:"Acorde é a combinação de 3 ou mais notas tocadas juntas.\nTríade maior: 1ª nota + 3ª maior + 5ª.\nExemplo: Dó maior = Dó, Mi, Sol.\nTríade menor: a 3ª fica meio tom mais baixa (Dó menor = Dó, Mi bemol, Sol).",
           hard:"Trocar de acorde sem parar o ritmo.",learned:"A fundamental dá o nome ao acorde."},
@@ -170,6 +174,8 @@
 
     S=load()||seed();
     S.trash=S.trash||[];
+    /* enquanto a pessoa não escolheu um nome na capa, vale o nome do cadastro dela */
+    if(!S.nameSet&&(!S.name||S.name==="Giovanna")){S.name=nomeDaConta()}
 
     var mq=window.matchMedia("(max-width: 819px)");
     var ui={view:S.cover?"book":"cover",tab:"todas",cur:3,q:"",cat:null,pick:S.cover||"mare",dir:"n"};
@@ -424,7 +430,7 @@
       var el=e.target;
       if(el.dataset&&el.dataset.f){onField(el);return}
       if(el.id==="ownerName"){
-        S.name=el.value;queueSave();
+        S.name=el.value;S.nameSet=true;queueSave();
         $$(".cv-name").forEach(function(t){t.textContent=el.value});
         return;
       }

@@ -957,29 +957,6 @@ body {
     text-transform: uppercase;
 }
 
-/* Transição de Onda */
-.onda-transicao {
-    position: fixed;
-    top: 100%;
-    left: -10%;
-    z-index: 10005;
-    width: 120%;
-    height: 120vh;
-    border-radius: 0 0 50% 50% / 0 0 80px 80px;
-    background: #0077b6;
-    pointer-events: none;
-}
-
-.onda-transicao.animar {
-    animation: varreduraOndaFluida 1.6s cubic-bezier(0.45, 0.05, 0.55, 0.95) forwards;
-}
-
-@keyframes varreduraOndaFluida {
-    0% { top: 100%; transform: translateX(3%); }
-    45%, 55% { top: -10%; transform: translateX(-3%); }
-    100% { top: -150%; transform: translateX(3%); }
-}
-
 @keyframes popGelatina {
     0% { transform: scale(0) rotate(-10deg); }
     60% { transform: scale(1.15) rotate(5deg); }

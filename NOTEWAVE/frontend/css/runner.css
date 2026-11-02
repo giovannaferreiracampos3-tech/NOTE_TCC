@@ -387,3 +387,343 @@ kbd { font: inherit; font-weight: 700; padding: 0 .4em; border-radius: .35em; bo
 @media (prefers-reduced-motion: reduce) {
   .nwr-prev__anim, .nwr-prev__fx span, .nwr-prev__boneco.fx-aura::before { animation: none; }
 }
+
+/* Notinha Runner — melhorias (carregue DEPOIS de runner.css).
+ * Corrige contraste, alvos de toque, foco, telas com notch e o painel de ajuste,
+ * sem mexer no runner.css. Quando quiser, é só colar este conteúdo dentro dele.
+ */
+
+/* ===== cores de texto/link com contraste suficiente (o ciano #12a4e6 dava ~2,9:1 sobre branco) ===== */
+.nwr[data-tema='claro']  { --nwr-link: #0a5f99; }
+.nwr[data-tema='escuro'] { --nwr-link: #7fdcff; }
+.nwr-link,
+.nwr-detalhe__msg,
+.nwr-prev__legenda.is-prova { color: var(--nwr-link); }
+
+/* ===== telas com notch (celular deitado) ===== */
+.nwr {
+  padding-left:  max(clamp(10px, 3vw, 28px), env(safe-area-inset-left));
+  padding-right: max(clamp(10px, 3vw, 28px), env(safe-area-inset-right));
+  padding-bottom: max(32px, env(safe-area-inset-bottom));
+}
+.nwr-topo__titulo, .nwr-faixa, .nwr-logo { text-wrap: balance; }
+
+/* ===== abas ===== */
+.nwr-aba { min-height: 44px; transition: background-color .15s, border-color .15s; }
+.nwr-aba:not(.is-ativa):hover { border-color: var(--nwr-ciano-esc); }
+.nwr-link:focus-visible,
+.nwr-card:focus-visible,
+.nwr-chipcat:focus-visible,
+.nwr-ajuste input:focus-visible,
+.nwr-ajuste textarea:focus-visible {
+  outline: 3px solid #ffffff; outline-offset: 2px; box-shadow: 0 0 0 6px var(--nwr-ciano-esc);
+}
+.nwr[data-tema='claro'] .nwr-aba:focus-visible,
+.nwr[data-tema='claro'] .nwr-btn:focus-visible,
+.nwr[data-tema='claro'] .nwr-card:focus-visible { outline-color: var(--nwr-marinho); }
+
+/* ===== toque: botões pequenos demais no palco de celular ===== */
+@media (pointer: coarse) {
+  .nwr-btn-icone { min-width: 44px; min-height: 44px; }
+  .nwr-chipcat { min-height: 44px; }
+  .nwr-btn--mini { min-height: 40px; }
+}
+@media (hover: none) { .nwr-card:hover { transform: none; } }
+
+/* ===== loja ===== */
+.nwr-prev__botoes { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.nwr-prev__boneco { will-change: transform; }
+.nwr-card { min-height: 148px; }
+.nwr-card:active { transform: scale(.97); }
+.nwr-card[aria-pressed='true'] { background: color-mix(in srgb, var(--nwr-ciano) 14%, var(--nwr-btn-suave-fundo)); }
+.nwr-detalhe .nwr-btn:disabled { cursor: not-allowed; }
+.nwr-detalhe__acoes { display: grid; gap: 4px; justify-items: end; }
+.nwr-detalhe__acoes .nwr-link { font-size: 14px; }
+
+/* no celular o botão de comprar/vestir fica sempre à vista */
+@media (max-width: 760px) {
+  .nwr-detalhe {
+    position: sticky; bottom: max(8px, env(safe-area-inset-bottom)); z-index: 3;
+    background: var(--nwr-painel-solido); box-shadow: var(--nwr-sombra);
+  }
+  .nwr-detalhe__acoes { justify-items: stretch; width: 100%; }
+  .nwr-detalhe .nwr-btn { justify-content: center; }
+}
+
+/* ===== painel de ajuste (só aparece com #ajuste no endereço) ===== */
+.nwr-ajuste {
+  display: grid; gap: 8px; padding: 12px 14px; border-radius: 18px;
+  background: var(--nwr-btn-suave-fundo); border: 2px dashed var(--nwr-painel-borda);
+}
+.nwr-ajuste h3 { margin: 0; font-size: 17px; }
+.nwr-ajuste p { margin: 0; font-size: 13px; color: var(--nwr-texto-suave); }
+.nwr-ajuste__linha { display: grid; grid-template-columns: 9.5em 1fr 3.5em; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; }
+.nwr-ajuste__linha input[type='range'] { width: 100%; accent-color: var(--nwr-ciano-esc); }
+.nwr-ajuste__linha output { font-variant-numeric: tabular-nums; text-align: right; }
+.nwr-ajuste__bot { display: flex; gap: 8px; flex-wrap: wrap; }
+.nwr-ajuste__json {
+  width: 100%; font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; resize: vertical;
+  color: var(--nwr-texto); background: var(--nwr-painel-solido); border: 2px solid var(--nwr-painel-borda); border-radius: 12px; padding: 8px;
+}
+@media (max-width: 520px) { .nwr-ajuste__linha { grid-template-columns: 1fr 3em; } .nwr-ajuste__linha span { grid-column: 1 / -1; } }
+
+/* ===== movimento reduzido: cobre também o que o runner.css deixou de fora ===== */
+@media (prefers-reduced-motion: reduce) {
+  .nwr-btn, .nwr-card, .nwr-aba, .nwr-estrelas svg { transition: none; }
+  .nwr-notinha--festa { animation: none; }
+  .nwr-prev__fx { display: none; }
+}
+
+/* ===== modo de alto contraste do sistema ===== */
+@media (forced-colors: active) {
+  .nwr-card.is-sel, .nwr-aba.is-ativa, .nwr-chipcat.is-ativa { outline: 3px solid Highlight; }
+}
+
+/* Notinha Runner — tela "Jogo pausado" com tema MAR • PRAIA • MÚSICA.
+ * Carregue DEPOIS de runner.css e runner-melhorias.css.
+ * Só mexe em #tela-pausa, então não afeta as outras telas.
+ */
+
+/* ===== fundo: mar escurecido com brilho de água subindo de baixo ===== */
+#nw-runner #tela-pausa {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 118%, rgba(63, 224, 214, .5), transparent 70%),
+    linear-gradient(180deg, rgba(6, 36, 84, .6), rgba(8, 88, 128, .52));
+  -webkit-backdrop-filter: blur(4px) saturate(1.15);
+          backdrop-filter: blur(4px) saturate(1.15);
+  overflow: hidden;
+}
+
+/* bolhas subindo pela tela inteira */
+#nw-runner #tela-pausa::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 9% 88%,  rgba(255,255,255,.55) 0 .35em, rgba(255,255,255,.12) .38em .5em, transparent .55em),
+    radial-gradient(circle at 18% 70%, rgba(255,255,255,.4)  0 .22em, rgba(255,255,255,.1)  .25em .36em, transparent .4em),
+    radial-gradient(circle at 31% 94%, rgba(255,255,255,.5)  0 .28em, rgba(255,255,255,.1)  .3em  .42em, transparent .46em),
+    radial-gradient(circle at 70% 90%, rgba(255,255,255,.45) 0 .3em,  rgba(255,255,255,.1)  .33em .45em, transparent .5em),
+    radial-gradient(circle at 84% 74%, rgba(255,255,255,.55) 0 .4em,  rgba(255,255,255,.12) .43em .56em, transparent .6em),
+    radial-gradient(circle at 93% 92%, rgba(255,255,255,.4)  0 .24em, rgba(255,255,255,.1)  .27em .38em, transparent .42em);
+  animation: nwr-pausa-bolhas 7s ease-in-out infinite;
+}
+@keyframes nwr-pausa-bolhas {
+  0%, 100% { transform: translateY(6%);  opacity: .55; }
+  50%      { transform: translateY(-6%); opacity: 1; }
+}
+
+/* ===== cartão: água turquesa com ondinhas que se mexem ===== */
+#nw-runner #tela-pausa .nwr-cartao {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  isolation: isolate;
+  width: min(92%, 27em);
+  padding: 1.5em 1.8em 3em;
+  gap: 1em;
+  color: #0a4a73;
+  border: .16em solid #ffffff;
+  border-radius: 1.8em;
+  box-shadow: 0 .6em 0 rgba(11, 122, 154, .45), 0 1.2em 2.4em rgba(0, 40, 80, .4), 0 0 2em rgba(63, 224, 214, .35);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14'%3E%3Cpath d='M0 7Q15 0 30 7T60 7T90 7T120 7V14H0Z' fill='%23ffffff' fill-opacity='.8'/%3E%3C/svg%3E") 0 100% / 120px 14px repeat-x,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 10'%3E%3Cpath d='M0 5Q11 0 22.5 5T45 5T67.5 5T90 5V10H0Z' fill='%2336d1d6' fill-opacity='.55'/%3E%3C/svg%3E") 0 100% / 90px 10px repeat-x,
+    radial-gradient(circle at 18% 0%, rgba(255,255,255,.9), transparent 55%),
+    linear-gradient(180deg, #eafcff 0%, #bdeef3 100%);
+  animation: nwr-pausa-entra .35s cubic-bezier(.2, 1.3, .4, 1) both, nwr-pausa-onda 9s linear .35s infinite;
+}
+@keyframes nwr-pausa-entra { from { transform: translateY(14%) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes nwr-pausa-onda  { to { background-position: 120px 100%, -90px 100%, 0 0, 0 0; } }
+
+/* notinhas musicais flutuando atrás do conteúdo */
+#nw-runner #tela-pausa .nwr-cartao::before,
+#nw-runner #tela-pausa .nwr-cartao::after {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  font-weight: 700;
+  color: #0e8fb0;
+  opacity: .28;
+  animation: nwr-pausa-nota 4.6s ease-in-out infinite;
+}
+#nw-runner #tela-pausa .nwr-cartao::before { content: '\266B'; right: 9%; top: .35em; font-size: 2.6em; }
+#nw-runner #tela-pausa .nwr-cartao::after  { content: '\266A'; left: 8%;  top: 2.6em; font-size: 1.9em; animation-delay: -2.2s; }
+@keyframes nwr-pausa-nota {
+  0%, 100% { transform: translateY(0) rotate(-8deg); }
+  50%      { transform: translateY(-.35em) rotate(8deg); }
+}
+
+/* ===== título ===== */
+#nw-runner #tela-pausa h2 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .4em;
+  font-size: 1.85em;
+  color: #0a4a73;
+  text-shadow: 0 .06em 0 #ffffff, 0 0 .5em rgba(255, 255, 255, .8);
+}
+#nw-runner #tela-pausa h2::before,
+#nw-runner #tela-pausa h2::after { color: #12a4c8; font-size: .8em; text-shadow: none; }
+#nw-runner #tela-pausa h2::before { content: '\266B'; }
+#nw-runner #tela-pausa h2::after  { content: '\266A'; }
+
+/* frase opcional (se quiser, adicione no HTML: <p class="nwr-pausa__dica">…</p>) */
+#nw-runner #tela-pausa .nwr-pausa__dica { margin: -.4em 0 0; font-weight: 500; font-size: .95em; color: #3d7a99; }
+
+/* ===== botões ===== */
+#nw-runner #tela-pausa .nwr-btn { width: min(100%, 15em); justify-content: center; }
+
+/* Continuar: cor de mar, com ícone de play */
+#nw-runner #tela-pausa #btn-continuar {
+  display: inline-flex;
+  align-items: center;
+  gap: .5em;
+  font-size: 1.35em;
+  color: #043451;
+  background: linear-gradient(180deg, #8bf5ec 0%, #27c3e0 100%);
+  border: .14em solid #ffffff;
+  box-shadow: 0 .3em 0 #0b7a9a, 0 .6em 1.1em rgba(10, 120, 150, .3);
+}
+#nw-runner #tela-pausa #btn-continuar::before {
+  content: '';
+  flex: none;
+  width: 1em;
+  height: 1em;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+#nw-runner #tela-pausa #btn-continuar:active { box-shadow: 0 .12em 0 #0b7a9a; }
+
+/* Sair: cor de areia */
+#nw-runner #tela-pausa #btn-sair {
+  color: #7a4a00;
+  background: linear-gradient(180deg, #fff6dc 0%, #ffe3a8 100%);
+  border: .14em solid #ffffff;
+  box-shadow: 0 .25em 0 #e5b25d, 0 .5em 1em rgba(200, 140, 40, .22);
+}
+#nw-runner #tela-pausa #btn-sair:active { box-shadow: 0 .1em 0 #e5b25d; }
+
+/* ===== tema escuro: mar à noite ===== */
+#nw-runner[data-tema='escuro'] #tela-pausa {
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 118%, rgba(39, 195, 255, .35), transparent 70%),
+    linear-gradient(180deg, rgba(3, 12, 36, .7), rgba(5, 40, 66, .62));
+}
+#nw-runner[data-tema='escuro'] #tela-pausa .nwr-cartao {
+  color: #eaf9ff;
+  border-color: #1b7f9c;
+  box-shadow: 0 .6em 0 rgba(0, 0, 0, .35), 0 1.2em 2.4em rgba(0, 0, 0, .55), 0 0 2em rgba(39, 195, 255, .25);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14'%3E%3Cpath d='M0 7Q15 0 30 7T60 7T90 7T120 7V14H0Z' fill='%2327c3ff' fill-opacity='.3'/%3E%3C/svg%3E") 0 100% / 120px 14px repeat-x,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 10'%3E%3Cpath d='M0 5Q11 0 22.5 5T45 5T67.5 5T90 5V10H0Z' fill='%2336d1d6' fill-opacity='.24'/%3E%3C/svg%3E") 0 100% / 90px 10px repeat-x,
+    radial-gradient(circle at 18% 0%, rgba(127, 233, 255, .18), transparent 55%),
+    linear-gradient(180deg, #0b3a55 0%, #0a4f66 100%);
+}
+#nw-runner[data-tema='escuro'] #tela-pausa .nwr-cartao::before,
+#nw-runner[data-tema='escuro'] #tela-pausa .nwr-cartao::after { color: #7fe9ff; opacity: .32; }
+#nw-runner[data-tema='escuro'] #tela-pausa h2 { color: #eaf9ff; text-shadow: 0 0 .6em rgba(39, 195, 255, .7); }
+#nw-runner[data-tema='escuro'] #tela-pausa h2::before,
+#nw-runner[data-tema='escuro'] #tela-pausa h2::after { color: #7fe9ff; }
+#nw-runner[data-tema='escuro'] #tela-pausa .nwr-pausa__dica { color: #a9d8e8; }
+#nw-runner[data-tema='escuro'] #tela-pausa #btn-sair {
+  color: #ffd866;
+  background: linear-gradient(180deg, rgba(255, 201, 40, .22), rgba(255, 201, 40, .1));
+  border-color: #b88a00;
+  box-shadow: 0 .25em 0 #7a5a00, 0 .5em 1em rgba(0, 0, 0, .35);
+}
+
+/* ===== menos movimento ===== */
+@media (prefers-reduced-motion: reduce) {
+  #nw-runner #tela-pausa::before,
+  #nw-runner #tela-pausa .nwr-cartao,
+  #nw-runner #tela-pausa .nwr-cartao::before,
+  #nw-runner #tela-pausa .nwr-cartao::after { animation: none; }
+}
+
+/* ============================================================
+   NOTINHA ESPECIAL nas telas de início e de resultado
+   .nwr-mar   → mergulhador (Fundo do Mar)
+   .nwr-barco → barquinho (Barquinho de Partitura)
+   O loja-ui.js põe a classe no #nw-runner e define --nwr-merg / --nwr-barco.
+   ============================================================ */
+   #nw-runner .nwr-merg { display: none; }
+
+   #nw-runner.nwr-mar .nwr-inicio__img,
+   #nw-runner.nwr-mar .nwr-notinha,
+   #nw-runner.nwr-barco .nwr-inicio__img,
+   #nw-runner.nwr-barco .nwr-notinha { display: none !important; }
+   
+   #nw-runner.nwr-mar .nwr-merg,
+   #nw-runner.nwr-barco .nwr-merg { display: block; }
+   
+   /* mergulhador: 16 quadros 270x200, ciclo nos quadros 0–14 */
+   #nw-runner.nwr-mar .nwr-merg {
+     aspect-ratio: 270 / 200;
+     background: var(--nwr-merg) 0% 0 / 1600% 100% no-repeat;
+     animation: nwr-merg-nada .9s steps(15) infinite, nwr-merg-bob 2.4s ease-in-out infinite;
+   }
+   /* barquinho: 24 quadros 240x211 (steps(23) percorre os quadros 0–22) */
+   #nw-runner.nwr-barco .nwr-merg {
+     aspect-ratio: 240 / 211;
+     background: var(--nwr-barco) 0% 0 / 2400% 100% no-repeat;
+     animation: nwr-merg-nada 1.6s steps(23) infinite, nwr-merg-bob 2.4s ease-in-out infinite;
+   }
+   
+   #nw-runner.nwr-mar   .nwr-merg--inicio { width: 34cqw; max-width: 100%; }
+   #nw-runner.nwr-mar   .nwr-merg--festa  { width: 28cqw; max-width: 100%; animation-duration: .7s, 1.2s; }
+   #nw-runner.nwr-barco .nwr-merg--inicio { width: 36cqw; max-width: 100%; }
+   #nw-runner.nwr-barco .nwr-merg--festa  { width: 30cqw; max-width: 100%; animation-duration: 1.2s, 1.4s; }
+   
+   #nw-runner[data-tema='escuro'].nwr-mar .nwr-merg,
+   #nw-runner[data-tema='escuro'].nwr-barco .nwr-merg { filter: drop-shadow(0 0 .5em rgba(110, 215, 255, .85)); }
+   
+   @keyframes nwr-merg-nada { from { background-position: 0% 0; } to { background-position: 100% 0; } }
+   @keyframes nwr-merg-bob {
+     0%, 100% { transform: translateY(0) rotate(-2deg); }
+     50%      { transform: translateY(-4%) rotate(2deg); }
+   }
+   
+   @container (max-width: 640px) {
+     #nw-runner.nwr-mar   .nwr-merg--inicio { width: 36cqw; }
+     #nw-runner.nwr-mar   .nwr-merg--festa  { width: 30cqw; }
+     #nw-runner.nwr-barco .nwr-merg--inicio { width: 38cqw; }
+     #nw-runner.nwr-barco .nwr-merg--festa  { width: 32cqw; }
+   }
+   @media (prefers-reduced-motion: reduce) { #nw-runner .nwr-merg { animation: none; } }
+
+   /* ============================================================
+   PRÉVIA no Barquinho: mar com as ondas do rodapé do site
+   (o loja-ui.js põe data-estilo="barco" no palco da prévia)
+   ============================================================ */
+#nw-runner .nwr-prev__palco[data-estilo='barco']::before {
+  left: 0; right: 0; bottom: 8%; height: 40%; opacity: 1;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 140' preserveAspectRatio='none'%3E%3Cpath fill='%23087db5' fill-opacity='.30' d='M0,80 C240,30 480,130 720,80 C960,30 1200,130 1440,80 L1440,140 L0,140 Z'/%3E%3C/svg%3E") 0 100% / 300px 58px repeat-x,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 140' preserveAspectRatio='none'%3E%3Cpath fill='%2352c7eb' fill-opacity='.35' d='M0,70 C240,20 480,120 720,70 C960,20 1200,120 1440,70 L1440,140 L0,140 Z'/%3E%3C/svg%3E") 0 100% / 360px 70px repeat-x,
+    linear-gradient(180deg, rgba(82, 199, 235, 0), rgba(82, 199, 235, .85)) 0 100% / 100% 56px no-repeat;
+  animation: nwr-prev-ondas-a 14s linear infinite;
+}
+#nw-runner .nwr-prev__palco[data-estilo='barco']::after {
+  z-index: 3; height: 60px; border-top: 0; pointer-events: none;     /* onda da frente, por cima do casco */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 140' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2352c7eb'/%3E%3Cstop offset='1' stop-color='%23087db5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' fill-opacity='.9' d='M0,90 C240,45 480,125 720,90 C960,45 1200,125 1440,90 L1440,140 L0,140 Z'/%3E%3C/svg%3E") 0 100% / 250px 60px repeat-x;
+  animation: nwr-prev-ondas-b 6s linear infinite;
+}
+#nw-runner .nwr-prev__palco[data-estilo='barco'] .nwr-prev__boneco { bottom: 7%; width: 86%; }
+
+@keyframes nwr-prev-ondas-a { to { background-position: -600px 100%, -360px 100%, 0 100%; } }
+@keyframes nwr-prev-ondas-b { to { background-position: -250px 100%; } }
+
+/* tema escuro: mesmo escurecimento que o site aplica nas ondas */
+#nw-runner[data-tema='escuro'] .nwr-prev__palco[data-estilo='barco']::before,
+#nw-runner[data-tema='escuro'] .nwr-prev__palco[data-estilo='barco']::after { filter: brightness(.6) saturate(1.2); }
+
+@media (prefers-reduced-motion: reduce) {
+  #nw-runner .nwr-prev__palco[data-estilo='barco']::before,
+  #nw-runner .nwr-prev__palco[data-estilo='barco']::after { animation: none; }
+}
