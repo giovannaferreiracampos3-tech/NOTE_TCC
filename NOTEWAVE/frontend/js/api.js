@@ -1,93 +1,59 @@
-/* Notinha Runner — camada de comunicação com o backend.
- *
- * ATENÇÃO (Etapas 1–3): o backend da NoteWave ainda não foi integrado, então este
- * arquivo usa um armazenamento LOCAL temporário só para o jogo funcionar de ponta a ponta.
- * Na Etapa 4 apenas ESTE arquivo muda: as funções passam a chamar o servidor (fetch),
- * que valida a partida e credita as moedas. O resto do jogo não precisa ser alterado.
- */
+/* Notinha Runner — comunicação com o servidor (progresso salvo na conta). */
 (function (NW) {
   'use strict';
 
-  const MODO = 'local';                    // trocar para 'servidor' na Etapa 4
-  const CHAVE = 'nw_runner_local_v1';      // temporário; some quando o backend entrar
+  const MODO = 'servidor';
+  const BASE = window.NW_API_RUNNER || 'http://localhost:5000/api/runner';
 
-  function padrao() {
-    return { saldo: 0, partidas: [], inventario: [], equipado: { acessorios: {}, efeito: null, cenario: 'castelo' } };
-  }
-  function ler() {
-    const base = padrao();
-    try {
-      const d = JSON.parse(localStorage.getItem(CHAVE)) || {};
-      const eq = d.equipado || {};
-      return {
-        saldo: d.saldo | 0, partidas: d.partidas || [], inventario: d.inventario || [],
-        equipado: { acessorios: eq.acessorios || {}, efeito: eq.efeito || null, cenario: eq.cenario || 'castelo' }
-      };
-    } catch (e) { return base; }
-  }
-  function gravar(d) {
-    try { localStorage.setItem(CHAVE, JSON.stringify(d)); } catch (e) { /* sem espaço/privado */ }
+  async function chamar(metodo, rota, corpo) {
+    const r = await fetch(BASE + rota, {
+      method: metodo,
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + localStorage.getItem('token') },
+      body: corpo ? JSON.stringify(corpo) : undefined
+    });
+    let d = {};
+    try { d = await r.json(); } catch (e) {}
+    if (!r.ok) throw new Error(d.erro || 'http-' + r.status);   // ex.: 'saldo-insuficiente', 'ja-resgatado'
+    return d;
   }
 
-  /** Saldo de moedas do usuário. */
+  // ---------- carteira e partidas ----------
   async function obterCarteira() {
-    return { saldo: ler().saldo };
+    const d = await chamar('GET', '/estado');
+    return { saldo: d.saldo };
   }
-
-  /**
-   * Confirma uma partida terminada e credita as moedas.
-   * partida = { pontos, moedas, acertos, erros, semResposta, estrelas, duracao_ms, respostas[] }
-   * No servidor, o crédito será calculado a partir de "respostas" e dos eventos da partida,
-   * nunca confiando no valor de moedas enviado pelo navegador.
-   */
-  async function confirmarPartida(partida) {
-    const d = ler();
-    const credito = Math.max(0, partida.moedas | 0);   // moedas nunca negativas
-    d.saldo += credito;
-    d.partidas.push(Object.assign({}, partida, { quando: new Date().toISOString() }));
-    if (d.partidas.length > 50) d.partidas = d.partidas.slice(-50);
-    gravar(d);
-    return { saldo: d.saldo, moedasCreditadas: credito };
+  function confirmarPartida(partida) {
+    return chamar('POST', '/partida', partida);
   }
 
   // ---------- loja ----------
-  // No servidor (Etapa 4+), preço e posse dos itens serão sempre conferidos lá.
-  function possui(d, it) { return it.preco === 0 || d.inventario.indexOf(it.id) >= 0; }
+  function obterLoja() { return chamar('GET', '/estado'); }
+  function comprar(id) { return chamar('POST', '/comprar', { id: id }); }
+  function equipar(eq) { return chamar('PUT', '/equipar', { equipado: eq }); }
 
-  /** Saldo, itens comprados e o que está equipado. */
-  async function obterLoja() {
-    const d = ler();
-    return { saldo: d.saldo, inventario: d.inventario.slice(), equipado: d.equipado };
+  // ---------- desafios ----------
+  // As missões musicais rodam no navegador; avisamos o servidor das que já foram feitas hoje.
+  function missoesFeitasHoje() {
+    const ids = [];
+    if (!NW.estudo) return ids;
+    const dia = NW.desafios.chaveDia();
+    NW.desafios.doDia(dia).forEach(function (ch) { if (NW.estudo.feita(dia, ch.id)) ids.push(ch.id); });
+    return ids;
+  }
+  async function obterDesafios() {
+    const ids = missoesFeitasHoje();
+    if (ids.length) return chamar('POST', '/desafios/missoes', { ids: ids });
+    return chamar('GET', '/desafios');
+  }
+  async function resgatarDesafio(id) {
+    const ids = missoesFeitasHoje();
+    if (ids.length) await chamar('POST', '/desafios/missoes', { ids: ids });
+    return chamar('POST', '/desafios/resgatar', { id: id });
   }
 
-  /** Compra um item (o preço vem do catálogo, nunca do navegador). */
-  async function comprar(id) {
-    const it = NW.loja.item(id);
-    if (!it) throw new Error('item-invalido');
-    const d = ler();
-    if (possui(d, it)) throw new Error('ja-possui');
-    if (d.saldo < it.preco) throw new Error('saldo-insuficiente');
-    d.saldo -= it.preco;
-    d.inventario.push(id);
-    gravar(d);
-    return { saldo: d.saldo, inventario: d.inventario.slice() };
-  }
-
-  /** Salva o visual equipado, aceitando só itens que o usuário possui. */
-  async function equipar(eq) {
-    const d = ler(), limpo = { acessorios: {}, efeito: null, cenario: 'castelo' };
-    NW.loja.SLOTS.forEach(function (s) {
-      const it = NW.loja.item((eq.acessorios || {})[s.id]);
-      if (it && it.cat === 'acessorios' && it.slot === s.id && possui(d, it)) limpo.acessorios[s.id] = it.id;
-    });
-    const ef = NW.loja.item(eq.efeito);
-    if (ef && ef.cat === 'efeitos' && possui(d, ef)) limpo.efeito = ef.id;
-    const cen = NW.loja.item(eq.cenario);
-    if (cen && cen.cat === 'cenarios' && possui(d, cen)) limpo.cenario = cen.id;
-    d.equipado = limpo;
-    gravar(d);
-    return { equipado: limpo };
-  }
-
-  NW.api = { obterLoja: obterLoja, comprar: comprar, equipar: equipar, MODO: MODO, obterCarteira: obterCarteira, confirmarPartida: confirmarPartida };
+  NW.api = {
+    obterLoja: obterLoja, comprar: comprar, equipar: equipar, MODO: MODO,
+    obterCarteira: obterCarteira, confirmarPartida: confirmarPartida,
+    obterDesafios: obterDesafios, resgatarDesafio: resgatarDesafio
+  };
 })(window.NWRunner = window.NWRunner || {});

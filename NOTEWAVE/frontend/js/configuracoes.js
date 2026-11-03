@@ -60,3 +60,56 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// === ALTERAR NOME / APELIDO ===
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('formConfiguracoes');
+    const inputNome = document.getElementById('nome');
+    if (!form || !inputNome) return;
+
+    // Mesma chave que o perfil.js usa para mostrar "Olá, ..."
+    let nomeAtual = localStorage.getItem('noteWave_user') || '';
+    inputNome.value = nomeAtual;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // evita recarregar a página
+
+        const novoNome = inputNome.value.trim();
+
+        if (novoNome === '') {
+            alert('O nome não pode ficar vazio.');
+            return;
+        }
+
+        // Só envia se realmente mudou
+        if (novoNome === nomeAtual) return;
+
+        try {
+            const token = localStorage.getItem('token');
+
+            // 1) Salva no banco de dados (backend na porta 5000, com o token do login)
+            const resposta = await fetch('http://localhost:5000/api/usuario/nome', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({ nome: novoNome })
+            });
+
+            if (!resposta.ok) throw new Error('Falha ao salvar no servidor');
+
+            const dados = await resposta.json();
+
+            // 2) Só atualiza o local depois que o banco confirmou
+            localStorage.setItem('token', dados.token);          // token novo, com o nome atualizado
+            localStorage.setItem('noteWave_user', dados.username);
+            nomeAtual = dados.username;
+
+            alert('Nome atualizado com sucesso!');
+        } catch (erro) {
+            console.error(erro);
+            alert('Não foi possível salvar o nome. Tente novamente.');
+        }
+    });
+});

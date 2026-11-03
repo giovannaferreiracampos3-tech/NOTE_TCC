@@ -63,6 +63,8 @@
     });
     $$(".nwr-painel").forEach(function (s) { s.hidden = s.id !== "aba-" + nome; });
     if (NW.lojaUI) NW.lojaUI.aoAbrir(nome);
+    if (NW.lojaUI) NW.lojaUI.aoAbrir(nome);
+    if (NW.desafiosUI) NW.desafiosUI.aoAbrir(nome);
   }
 
   // ---------- pauta (SVG) para perguntas de nota ----------
@@ -113,6 +115,92 @@
     $("#hud-estrelas").textContent = h.estrelas;
   }
 
+    // ---------- moedas voando (ganhar / perder) ----------
+    const reduzMovimento = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+   // moeda igual à do jogo (dourada, com ♪), girando
+  function criarMoedaVoadora(tam) {
+    const m = document.createElement("div");
+    m.style.cssText =
+      "position:fixed;left:0;top:0;z-index:9999;pointer-events:none;opacity:0;will-change:transform,opacity;" +
+      "width:" + tam + "px;height:" + tam + "px;margin:" + (-tam / 2) + "px 0 0 " + (-tam / 2) + "px";
+    const giro = document.createElement("div");
+    giro.style.cssText = "width:100%;height:100%";
+    giro.innerHTML =
+      '<svg viewBox="-20 -20 40 40" width="100%" height="100%" aria-hidden="true">' +
+      '<circle r="16" fill="#ffc928" stroke="#d79a00" stroke-width="2.5"/>' +
+      '<circle r="9.9" fill="#ffe27a"/>' +
+      '<text y="1" text-anchor="middle" dominant-baseline="central" font-size="17.6" font-weight="700" ' +
+      'fill="#e8a800" font-family="Fredoka, \'Baloo 2\', Nunito, \'Segoe UI\', system-ui, sans-serif">\u266A</text>' +
+      "</svg>";
+    m.appendChild(giro);
+    document.body.appendChild(m);
+    // mesmo giro da moeda do chão (achata e volta)
+    giro.animate(
+      [{ transform: "scaleX(1)" }, { transform: "scaleX(.45)" }, { transform: "scaleX(1)" }],
+      { duration: 1050, iterations: Infinity, delay: -Math.random() * 1050, easing: "ease-in-out" }
+    );
+    return m;
+  }
+
+  // converte um ponto do jogo (960x540) para a tela e devolve também a escala
+  function pontoNaTela(x, y) {
+    const r = $("#nwr-canvas").getBoundingClientRect();
+    const k = Math.min(r.width / 960, r.height / 540);
+    return {
+      x: r.left + (r.width - 960 * k) / 2 + x * k,
+      y: r.top + (r.height - 540 * k) / 2 + y * k,
+      k: k
+    };
+  }
+  
+    function pulsarContador() {
+      const chip = $("#hud-moedas").parentElement;
+      if (chip && chip.animate && !reduzMovimento)
+        chip.animate([{ transform: "scale(1)" }, { transform: "scale(1.25)" }, { transform: "scale(1)" }], { duration: 350, easing: "ease-out" });
+    }
+  
+    function aoMoedas(e) {
+      const alvo = $("#hud-moedas").getBoundingClientRect();
+      const cx = alvo.left + alvo.width / 2, cy = alvo.top + alvo.height / 2;
+      const ganhou = e.delta > 0, qtd = Math.min(8, Math.abs(e.delta));
+      const carta = pontoNaTela(e.x, e.y);
+      const tam = Math.max(22, 32 * carta.k);          // 32 = diâmetro da moeda no jogo
+  
+      if (ganhou) setTimeout(function () { NW.somMoedas.dinheiro(); pulsarContador(); }, reduzMovimento ? 0 : 450);
+      else { NW.somMoedas.moedasCaindo(); pulsarContador(); }
+      if (reduzMovimento) return;
+  
+      for (let i = 0; i < qtd; i++) {
+        const m = criarMoedaVoadora(tam);
+        let frames;
+        if (ganhou) {
+          // da carta até o contador, em arco
+          const dx = cx - carta.x, dy = cy - carta.y;
+          frames = [
+            { transform: "translate(" + carta.x + "px," + carta.y + "px) scale(.6)", opacity: 0 },
+            { transform: "translate(" + (carta.x + dx * 0.3 + (i - qtd / 2) * 14) + "px," + (carta.y + dy * 0.2 - 70) + "px) scale(1.1)", opacity: 1, offset: 0.35 },
+            { transform: "translate(" + cx + "px," + cy + "px) scale(.8)", opacity: 1, offset: 0.9 },
+            { transform: "translate(" + cx + "px," + cy + "px) scale(.4)", opacity: 0 }
+          ];
+        } else {
+          // sai do contador, sobe um pouquinho e cai para fora da tela
+          const lado = (Math.random() - 0.5) * 220, chao = window.innerHeight + 40;
+          frames = [
+            { transform: "translate(" + cx + "px," + cy + "px) scale(.8)", opacity: 0 },
+            { transform: "translate(" + (cx + lado * 0.4) + "px," + (cy - 60 - Math.random() * 40) + "px) scale(1.1)", opacity: 1, offset: 0.25 },
+            { transform: "translate(" + (cx + lado) + "px," + chao + "px) scale(1)", opacity: 1, offset: 0.95 },
+            { transform: "translate(" + (cx + lado) + "px," + chao + "px) scale(1)", opacity: 0 }
+          ];
+        }
+        const a = m.animate(frames, {
+          duration: ganhou ? 800 : 950, delay: i * (ganhou ? 70 : 60),
+          easing: ganhou ? "cubic-bezier(.3,.1,.3,1)" : "cubic-bezier(.4,0,.8,.6)", fill: "both"
+        });
+        a.onfinish = function () { m.remove(); };
+      }
+    }
+
   // ---------- fluxo da partida ----------
   function iniciarPartida() {
     NW.som.liberar();
@@ -152,12 +240,14 @@
       const r = await NW.api.confirmarPartida(res);
       atualizarSaldo(r.saldo);
       status.textContent = textoMoedas(r.moedasCreditadas);
+      if (r.desafiosConcluidos && r.desafiosConcluidos.length)
+        status.textContent += " Desafio concluído! Resgate a recompensa na aba Desafios.";
     } catch (e) {
       status.innerHTML = 'Não foi possível salvar. <button type="button" class="nwr-link" id="btn-tentar-salvar">Tentar de novo</button>';
       $("#btn-tentar-salvar").addEventListener("click", function () { salvarPartida(res); });
     }
   }
-
+  
   async function terminarPartida(res) {
     definirJogando(false);
     hud.hidden = true;
@@ -172,12 +262,17 @@
     $("#btn-de-novo").disabled = true;
     $("#btn-inicio").disabled = true;
     mostrar("resultado");
-    await salvarPartida(res);
-    $("#btn-de-novo").disabled = false;
-    $("#btn-inicio").disabled = false;
-    $("#btn-inicio").focus({ preventScroll: true });
+    try {
+      await salvarPartida(res);
+    } catch (e) {
+      console.error("[Notinha Runner] erro ao salvar a partida:", e);
+      $("#res-status").textContent = "Não foi possível salvar a partida.";
+    } finally {
+      $("#btn-de-novo").disabled = false;
+      $("#btn-inicio").disabled = false;
+      $("#btn-inicio").focus({ preventScroll: true });
+    }
   }
-
   // ---------- controles ----------
   function configurarControles() {
     palco.addEventListener("pointerdown", function (e) {
@@ -260,6 +355,7 @@
       tema: NW.tema.atual(),
       aoHud: atualizarHud,
       aoPergunta: mostrarPergunta,
+      aoMoedas: aoMoedas,
       aoFim: terminarPartida,
     });
 
@@ -273,6 +369,24 @@
     } catch (e) {
       console.warn("[Notinha Runner] loja indisponível:", e);
     }
+
+        // loja, guarda-roupa e cenários: o que está equipado vai direto para o jogo
+        try {
+          await NW.lojaUI.iniciar({
+            aoMudar: function (eq) { engine.definirVisual(eq); },
+            atualizarSaldo: atualizarSaldo,
+            irParaAba: irParaAba,
+          });
+        } catch (e) {
+          console.warn("[Notinha Runner] loja indisponível:", e);
+        }
+    
+        // desafios diários
+        try {
+          NW.desafiosUI.iniciar({ atualizarSaldo: atualizarSaldo, irParaAba: irParaAba });
+        } catch (e) {
+          console.warn("[Notinha Runner] desafios indisponíveis:", e);
+        }
 
     // imagem da tela inicial; se faltar ou falhar, mostra o Notinha correndo
     const imgIni = $("#nwr-img-inicio"), reserva = $("#nwr-inicio-reserva");

@@ -92,6 +92,11 @@ const ETAPAS = [
         href: '../atividades/atividades_sol.html',
         feita: () => lerFlag('status_trilha_sol_finalizada') || lerFlag('medalha_clave_sol') ||
                      contarChaves(/^status_sol_concluido_licao_\d+$/) >= TOTAL_LICOES
+    },
+    { // 6. Recife de Atividades: conclui com pelo menos 1 estrela em cada um dos 4 desafios
+        href: '../html/atividades-mar.html',
+        feita: () => ['ouvir', 'pauta', 'sobe', 'teoria']
+            .every(a => (parseInt(localStorage.getItem('status_mar_' + a)) || 0) >= 1)
     }
 ];
 

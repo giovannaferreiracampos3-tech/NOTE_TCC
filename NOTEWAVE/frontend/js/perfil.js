@@ -93,7 +93,14 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   
-    // 4. MEDALHAS REAIS (mesmas chaves e regras da página medalhas.html)
+      // 4. MEDALHAS REAIS (mesmas chaves e regras da página medalhas.html)
+const ATIVIDADES_RECIFE = ['ouvir', 'pauta', 'sobe', 'teoria'];
+
+// Mestre do Recife: 3 estrelas em cada uma das 4 atividades
+function recifeCompleto() {
+  return ATIVIDADES_RECIFE.every(id => Number(localStorage.getItem('status_mar_' + id)) === 3);
+}
+
 const MEDALHAS = [
   {
     chave: 'medalha_clave_sol', modulo: 'modulo1', titulo: 'Clave de Sol', tam: 30,
@@ -104,16 +111,9 @@ const MEDALHAS = [
     svg: '<path fill="currentColor" d="M35,25 C45,20 62,24 62,42 C62,56 50,66 42,75 L36,75 C44,65 54,55 54,43 C54,34 43,30 36,33 L35,25 Z M70,33 A 4 4 0 1 1 70,32.9 Z M70,47 A 4 4 0 1 1 70,46.9 Z"/>'
   },
   {
-    chave: 'medalha_nota_por_nota', modulo: 'modulo3', titulo: 'Nota por Nota', tam: 30,
-    svg: '<path fill="currentColor" d="M35,25 L75,15 L75,55 C70,52 62,52 58,56 C52,62 52,72 58,78 C64,84 74,84 80,78 C83,75 85,70 85,65 L85,25 L45,35 L45,65 C40,62 32,62 28,66 C22,72 22,82 28,88 C34,94 44,94 50,88 C53,85 55,80 55,75 L55,42 L35,47 Z"/>'
-  },
-  {
-    chave: 'medalha_ritmo', modulo: 'modulo4', titulo: 'Ritmo e Pulsação', tam: 28,
-    svg: '<path fill="currentColor" d="M50,15 L22,78 L78,78 Z M50,28 L68,70 L32,70 Z M47,42 L53,42 L51,62 L47,62 Z M50,67 A 2.5 2.5 0 1 1 50,66.9 Z"/>'
-  },
-  {
-    chave: 'medalha_avancada', modulo: 'modulo5', titulo: 'Leitura Avançada', tam: 28,
-    svg: '<path fill="currentColor" d="M25,20 L25,75 C25,83 35,83 35,75 L35,35 L75,35 L75,65 C75,73 85,73 85,65 L85,20 Z M35,45 L75,45 L75,49 L35,49 Z M35,57 L75,57 L75,61 L35,61 Z"/>'
+    chave: 'medalha_recife', modulo: 'recife', titulo: 'Mestre do Recife', tam: 30,
+    regra: recifeCompleto,
+    svg: '<path fill="currentColor" d="M50,10 L61,37 L90,40 L68,60 L75,89 L50,74 L25,89 L32,60 L10,40 L39,37 Z"/>'
   }
 ];
 
@@ -128,7 +128,9 @@ function renderizarMedalhas() {
   grid.innerHTML = '';
 
   MEDALHAS.forEach(m => {
-    const ativa = localStorage.getItem(m.chave) === 'true' || progresso[m.modulo] === 100;
+    const ativa = localStorage.getItem(m.chave) === 'true'
+      || progresso[m.modulo] === 100
+      || (typeof m.regra === 'function' && m.regra());
     if (ativa) desbloqueadas++;
 
     const item = document.createElement('a');
@@ -198,7 +200,7 @@ function atualizarProgressoPerfil() {
 atualizarProgressoPerfil();
 
 // Atualiza ao voltar para a página pelo botão "voltar" do navegador
-window.addEventListener('pageshow', atualizarProgressoPerfil);
+window.addEventListener('pageshow', function () { atualizarProgressoPerfil(); atualizarSequencia(); renderizarMedalhas(); });
 
 function carregarDias() {
   try { return JSON.parse(localStorage.getItem(CHAVE_DIAS)) || []; }

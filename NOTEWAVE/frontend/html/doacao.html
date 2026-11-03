@@ -10,8 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/perfil.css">
   <link rel="stylesheet" href="../css/tema.css">
-  <!-- CSS exclusivo do módulo (tudo dentro de .dc, sem mexer nos estilos globais) -->
   <link rel="stylesheet" href="../css/doacao.css">
+  <link rel="stylesheet" href="../css/tour.css">
 </head>
 
 <body>
@@ -26,13 +26,11 @@
       </div>
       <nav class="sidebar-nav">
         <a href="../html/perfil.html" class="nav-item"><i class="ph ph-user"></i><span>Perfil</span></a>
-        <a href="../html/trilha_de_aulas.html" class="nav-item"><i class="ph ph-book-open"></i><span>Trilha de
-            Aulas</span></a>
+        <a href="../html/trilha_de_aulas.html" class="nav-item"><i class="ph ph-book-open"></i><span>Trilha de Aulas</span></a>
         <a href="../html/caderno.html" class="nav-item"><i class="ph ph-book"></i><span>Caderno</span></a>
         <a href="../html/journal.html" class="nav-item"><i class="ph ph-newspaper"></i><span>Jornal</span></a>
         <a href="../html/doacao.html" class="nav-item active"><i class="ph ph-hand-heart"></i><span>Doações</span></a>
-        <a href="../html/notinha-runner.html" class="nav-item"><i class="ph ph-game-controller"></i><span>Notinha
-            Runner</span></a>
+        <a href="../html/notinha-runner.html" class="nav-item"><i class="ph ph-game-controller"></i><span>Notinha Runner</span></a>
         <a href="../html/medalhas.html" class="nav-item"><i class="ph ph-medal"></i><span>Medalhas</span></a>
         <a href="../html/configuracoes.html" class="nav-item"><i class="ph ph-gear"></i><span>Configurações</span></a>
       </nav>
@@ -45,18 +43,22 @@
       <div class="dc-wrap">
         <nav class="dc-acoes" aria-label="Doações">
           <a class="dc-btn" data-nav="home" href="#/"><i class="ph ph-house"></i>Início</a>
-          <a class="dc-btn" data-nav="minhas" href="#/minhas"><i class="ph ph-gift"></i>Minhas doações<b
-              class="dc-badge" id="dcAvisos"></b></a>
-          <a class="dc-btn primario" data-nav="publicar" href="#/publicar"><i
-              class="ph ph-upload-simple"></i>Publicar uma doação</a>
+          <a class="dc-btn" data-nav="minhas" href="#/minhas"><i class="ph ph-gift"></i>Minhas doações</a>
+          <a class="dc-btn primario" data-nav="publicar" href="#/publicar"><i class="ph ph-upload-simple"></i>Publicar uma doação</a>
+          <div class="dc-sino-wrap" hidden>
+            <button type="button" class="dc-btn dc-sino" id="dcSino" aria-label="Notificações" aria-haspopup="true" aria-expanded="false">
+              <i class="ph ph-bell"></i><b class="dc-badge" id="dcSinoBadge"></b>
+            </button>
+            <div class="dc-sino-painel" id="dcSinoPainel" hidden></div>
+          </div>
         </nav>
-        <!-- Todas as telas (início, publicar, detalhe, minhas) são desenhadas aqui pelo doacao.js -->
         <div id="dcRoot"></div>
       </div>
     </main>
   </div>
   <script src="../js/doacao.js"></script>
   <script src="../js/rodape.js"></script>
+  <script src="../js/tour.js"></script>
 </body>
 
 </html>

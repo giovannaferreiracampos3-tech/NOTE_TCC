@@ -23,7 +23,7 @@
     'use strict';
     const BASE = window.NW_API || 'http://localhost:5000/api';
     const HOST = BASE.replace(/\/api\/?$/, '');
-    const MASCOTE = '../imagem/nota.png';
+    const MASCOTE = '../imagem/viola.png';
     const LIM = { fotos: 6, mb: 5, nome: 80, desc: 1000, descMin: 20, coment: 500 };
   
     const CATS = [
@@ -42,7 +42,7 @@
       'Não estou tentando vender, cobrar ou solicitar qualquer pagamento.',
       'As informações e fotografias correspondem ao instrumento anunciado.',
       'Estou ciente das regras de utilização do NoteWave Doações.',
-      'Compreendo como meus dados pessoais e meu telefone serão utilizados e compartilhados.'];
+      'Marque as quatro primeiras. A quinta é obrigatória só se você informar telefone.'];
     const SEGURANCA = 'Combine entregas em locais públicos e com acompanhamento de um responsável, principalmente quando houver menores de idade. Nunca envie dinheiro.';
   
     const cat = id => CATS.find(c => c.id === id) || CATS[5];
@@ -250,11 +250,48 @@
       desc.placeholder = 'Conte o estado de conservação, se funciona bem, há quanto tempo é usado, o que acompanha e se precisa de reparos.';
       const s3 = bloco('Descrição', null, campo('Descrição *', desc, contador(desc)));
   
-      // 4. Contato
-      const tel = el('input'); tel.type = 'tel'; tel.inputMode = 'numeric'; tel.placeholder = '(19) 91234-5678'; tel.autocomplete = 'tel'; tel.required = !edit;
-      tel.addEventListener('input', () => { const d = tel.value.replace(/\D/g, '').slice(0, 11); tel.value = d.length > 10 ? d.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3') : d.length > 6 ? d.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3') : d.length > 2 ? d.replace(/(\d{2})(\d*)/, '($1) $2') : d; });
-      const av = el('div', 'dc-aviso'); av.append(el('i', 'ph ph-lock-key'), el('p', '', 'Seu telefone é um dado pessoal. Ele não aparece na publicação: só é liberado, com a sua autorização, para a pessoa que você aceitar.'));
-      const s4 = bloco('Telefone para contato', null, campo(edit ? 'Telefone (deixe em branco para manter o atual)' : 'Telefone *', tel), av);
+      // 4. Contato (opcional) + confirmação por SMS
+const tel = el('input'); tel.type = 'tel'; tel.inputMode = 'numeric'; tel.placeholder = '(19) 91234-5678'; tel.autocomplete = 'tel';
+tel.addEventListener('input', () => { const d = tel.value.replace(/\D/g, '').slice(0, 11); tel.value = d.length > 10 ? d.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3') : d.length > 6 ? d.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3') : d.length > 2 ? d.replace(/(\d{2})(\d*)/, '($1) $2') : d; });
+
+let verif = { tel: null, id: null }, enviadoPara = null;
+const codigo = el('input'); codigo.type = 'text'; codigo.inputMode = 'numeric'; codigo.maxLength = 6; codigo.placeholder = 'Código de 6 números'; codigo.autocomplete = 'one-time-code'; codigo.setAttribute('aria-label', 'Código recebido por SMS');
+const enviar = el('button', 'dc-btn peq', 'Enviar código por SMS'); enviar.type = 'button';
+const conferir = el('button', 'dc-btn peq primario', 'Confirmar código'); conferir.type = 'button';
+const stSms = el('div', 'dc-dica'); stSms.setAttribute('role', 'status');
+const linhaCod = el('div', 'dc-linha'); linhaCod.append(codigo, conferir);
+const boxSms = el('div', 'dc-campo'); boxSms.append(enviar, linhaCod, stSms); boxSms.hidden = true;
+
+function sincSms() {
+  const d = digitos(), celular = /^\d{2}9\d{8}$/.test(d);
+  if (verif.tel && verif.tel !== d) verif = { tel: null, id: null };
+  if (enviadoPara && enviadoPara !== d) enviadoPara = null;
+  const ok = !!d && verif.tel === d;
+  boxSms.hidden = !celular; enviar.hidden = ok; linhaCod.hidden = ok || enviadoPara !== d;
+  if (ok) stSms.textContent = '✔ Telefone confirmado por SMS.';
+}
+tel.addEventListener('input', sincSms); // registrado ANTES do listener de atualizar()
+
+enviar.onclick = () => espera(enviar, async () => {
+  stSms.textContent = '';
+  try {
+    await api('/donations/phone/send-code', { method: 'POST', body: { telefone: digitos() } });
+    enviadoPara = digitos(); enviar.textContent = 'Reenviar código'; sincSms(); codigo.focus();
+    stSms.textContent = 'Enviamos um código para o seu celular. Ele vale por 10 minutos.';
+  } catch (er) { stSms.textContent = er.message; }
+});
+conferir.onclick = () => espera(conferir, async () => {
+  const c = codigo.value.replace(/\D/g, '');
+  if (c.length !== 6) { stSms.textContent = 'Digite os 6 números do código.'; return; }
+  try {
+    const r = await api('/donations/phone/verify-code', { method: 'POST', body: { telefone: digitos(), codigo: c } });
+    verif = { tel: digitos(), id: r.verificacaoId }; codigo.value = ''; sincSms(); atualizar();
+  } catch (er) { stSms.textContent = er.message; }
+});
+
+const av = el('div', 'dc-aviso'); av.append(el('i', 'ph ph-lock-key'), el('p', '', 'O telefone é opcional. Se você informar, vamos confirmá-lo por SMS. Ele não aparece na publicação: só é liberado, com a sua autorização, para a pessoa que você aceitar.'));
+const s4 = bloco('Telefone para contato (opcional)', null,
+  campo(edit ? 'Celular (deixe em branco para manter o atual)' : 'Celular com DDD', tel), boxSms, av);
   
       // 5. Confirmações
       const checks = CONFIRMA.map(txt => { const l = el('label', 'dc-check'), c = el('input'); c.type = 'checkbox'; l.append(c, el('span', '', txt)); return { l, c }; });
@@ -267,15 +304,22 @@
       fm.append(s1, s2, s3, s4, s5, erro, env);
   
       // Lateral
-      const lista = el('ul'), reqs = [['n', 'Nome do instrumento'], ['c', 'Categoria'], ['d', 'Descrição (mín. ' + LIM.descMin + ' caracteres)'], ['t', 'Telefone válido'], ['k', 'Todas as confirmações']].map(([k, tx]) => { const li = el('li'); li.dataset.k = k; li.append(el('i', 'ph ph-circle'), document.createTextNode(tx)); lista.appendChild(li); return li; });
+      const reqs = [['n', 'Nome do instrumento'], ['c', 'Categoria'], ['d', 'Descrição (mín. ' + LIM.descMin + ' caracteres)'],
+  ['t', 'Celular válido (se informado)'], ['v', 'Celular confirmado por SMS (se informado)'], ['k', 'Confirmações']]
+  .map(([k, tx]) => { /* ...igual ao original... */ });
       const l1 = el('section', 'dc-lat'); l1.append(el('h3', '', 'Antes de publicar'), lista);
       const l2 = el('section', 'dc-lat'); l2.append(el('h3', '', 'Doação é gratuita'), el('p', 'dc-sub', 'Este espaço não permite venda, cobrança ou pedido de pagamento. Publicações que fogem disso podem ser denunciadas.'));
       lat.append(l1, l2);
       const digitos = () => tel.value.replace(/\D/g, '');
       const trocouTel = () => !edit || digitos().length > 0;
       function estado() {
-        return { n: nome.value.trim().length >= 3, c: !!sel.value, d: desc.value.trim().length >= LIM.descMin,
-          t: edit && !digitos() ? true : (digitos().length === 10 || digitos().length === 11), k: !trocouTel() || checks.every(x => x.c.checked) };
+        const d = digitos(), todas = checks.every(x => x.c.checked), quatro = checks.slice(0, 4).every(x => x.c.checked);
+        return {
+          n: nome.value.trim().length >= 3, c: !!sel.value, d: desc.value.trim().length >= LIM.descMin,
+          t: !d || /^\d{2}9\d{8}$/.test(d),
+          v: !d || verif.tel === d,
+          k: edit ? (!d || todas) : (quatro && (!d || todas))
+        };
       }
       function atualizar() { const v = estado(); reqs.forEach(li => { const ok = v[li.dataset.k]; li.classList.toggle('ok', ok); li.firstChild.className = 'ph ' + (ok ? 'ph-check-circle' : 'ph-circle'); }); }
       [nome, sel, desc, tel, ...checks.map(x => x.c)].forEach(c => { c.addEventListener('input', atualizar); c.addEventListener('change', atualizar); }); atualizar();
@@ -285,11 +329,14 @@
         if (!v.n) { erro.textContent = 'Informe o nome do instrumento (mínimo 3 letras).'; nome.focus(); return; }
         if (!v.c) { erro.textContent = 'Escolha a categoria do instrumento.'; sel.focus(); return; }
         if (!v.d) { erro.textContent = 'A descrição precisa ter pelo menos ' + LIM.descMin + ' caracteres.'; desc.focus(); return; }
-        if (!v.t) { erro.textContent = 'Informe um telefone com DDD, por exemplo (19) 91234-5678.'; tel.focus(); return; }
+        if (!v.t) { erro.textContent = 'Informe um celular com DDD, por exemplo (19) 91234-5678.'; tel.focus(); return; }
+        if (!v.v) { erro.textContent = 'Confirme seu celular pelo código enviado por SMS (ou apague o telefone para publicar sem ele).'; return; }
+        if (!v.k) { erro.textContent = 'Marque todas as confirmações para continuar.'; return; }
+        // ...
+        if (digitos()) { fd.append('telefone', digitos()); fd.append('verificacaoId', verif.id); }
         if (!v.k) { erro.textContent = 'Marque todas as confirmações para continuar.'; return; }
         const fd = new FormData();
         fd.append('nome', nome.value.trim()); fd.append('categoria', sel.value); fd.append('descricao', desc.value.trim()); fd.append('cidade', cidade.value.trim());
-        if (digitos()) fd.append('telefone', digitos());
         fd.append('confirmacoes', JSON.stringify(checks.map(x => x.c.checked)));
         novas.forEach(n => fd.append('imagens', n.file));
         if (edit) fd.append('manter', JSON.stringify(mantidas.map(m => m.id)));
@@ -437,7 +484,7 @@
             }
             if (it.status === 'aceito' && !it.contatoLiberado && d.status !== 'doada')
               botao('Compartilhar meu telefone', 'primario', async () => { if (!confirm('Compartilhar seu telefone com @' + it.usuario + '?\n\nSomente essa pessoa poderá ver o número. Você pode revogar depois.')) throw new Error('Compartilhamento cancelado.'); await api('/donation-interests/' + it.id + '/contact-consent', { method: 'POST', body: { autorizar: true } }); toast('Contato liberado para @' + it.usuario + '.'); });
-            if (it.status === 'aceito' && it.contatoLiberado)
+            if (it.status === 'aceito' && !it.contatoLiberado && d.status !== 'doada' && d.temTelefone)
               botao('Revogar compartilhamento', 'perigo', async () => { if (!confirm('Revogar o acesso de @' + it.usuario + ' ao seu telefone?')) throw new Error('Ação cancelada.'); await api('/donation-interests/' + it.id + '/contact-consent', { method: 'POST', body: { autorizar: false } }); toast('Acesso ao telefone revogado.'); });
             li.appendChild(row);
           });
@@ -479,41 +526,94 @@
       if (manter) m.scrollTop = y;
     }
   
-    // ---------- MINHAS DOAÇÕES ----------
-    async function minhas() {
-      const meu = ++ticket; root.textContent = ''; document.title = 'Minhas doações – NoteWave';
-      const t = el('h2', 'dc-titulo'); t.append(el('i', 'ph ph-gift'), el('span', '', 'Minhas doações'));
-      root.appendChild(t);
-      if (!logado()) { guardarRetorno(); vazio(root, 'Entre na sua conta para ver e gerenciar suas doações.', ['Entrar', 'login.html']); return; }
-      const av = el('section', 'dc-painel'); av.hidden = true; const grid = el('div', 'dc-grid'); root.append(av, grid);
-      api('/donation-notifications').then(r => {
-        if (meu !== ticket || !r.length) return; av.hidden = false; av.appendChild(el('h2', '', 'Avisos'));
-        r.slice(0, 8).forEach(n => { const li = el('div', 'dc-notif' + (n.lida ? '' : ' nova')), tx = el('div'); const a = el('a', '', n.texto); a.href = '#/doacao/' + n.doacaoId; tx.append(a, el('small', '', dataBR(n.data))); li.append(el('i', 'ph ph-bell'), tx); av.appendChild(li); });
-        if (r.some(n => !n.lida)) api('/donation-notifications/lidas', { method: 'PUT' }).then(() => { $('#dcAvisos').textContent = ''; }).catch(() => {});
-      }).catch(() => {});
-      try {
-        const r = await api('/donations?minhas=1&limite=50'); if (meu !== ticket) return;
-        if (!r.itens.length) vazio(grid, 'Você ainda não publicou nenhuma doação. Aquele instrumento parado pode ser o começo de alguém!', ['Publicar uma doação', '#/publicar']);
-        else r.itens.forEach(d => grid.appendChild(card(d, true)));
-      } catch (er) { if (meu === ticket) vazio(grid, er.message); }
-    }
+       // ---------- MINHAS DOAÇÕES ----------
+       async function minhas() {
+        const meu = ++ticket; root.textContent = ''; document.title = 'Minhas doações – NoteWave';
+        const t = el('h2', 'dc-titulo'); t.append(el('i', 'ph ph-gift'), el('span', '', 'Minhas doações'));
+        root.appendChild(t);
+        if (!logado()) { guardarRetorno(); vazio(root, 'Entre na sua conta para ver e gerenciar suas doações.', ['Entrar', 'login.html']); return; }
+        const av = el('section', 'dc-painel'); av.hidden = true; const grid = el('div', 'dc-grid'); root.append(av, grid);
+        api('/donation-notifications').then(r => {
+          if (meu !== ticket || !r.length) return; av.hidden = false; av.appendChild(el('h2', '', 'Avisos'));
+          r.slice(0, 8).forEach(n => { const li = el('div', 'dc-notif' + (n.lida ? '' : ' nova')), tx = el('div'); const a = el('a', '', n.texto); a.href = '#/doacao/' + n.doacaoId; tx.append(a, el('small', '', dataBR(n.data))); li.append(el('i', 'ph ph-bell'), tx); av.appendChild(li); });
+        }).catch(() => {});
+        try {
+          const r = await api('/donations?minhas=1&limite=50'); if (meu !== ticket) return;
+          if (!r.itens.length) vazio(grid, 'Você ainda não publicou nenhuma doação. Aquele instrumento parado pode ser o começo de alguém!', ['Publicar uma doação', '#/publicar']);
+          else r.itens.forEach(d => grid.appendChild(card(d, true)));
+        } catch (er) { if (meu === ticket) vazio(grid, er.message); }
+      }
   
-    // ---------- ROTAS (#/, #/publicar, #/editar/3, #/doacao/3, #/minhas) ----------
-    async function contarAvisos() {
-      if (!logado()) return;
-      try { const r = await api('/donation-notifications'); const n = r.filter(x => !x.lida).length; $('#dcAvisos').textContent = n || ''; } catch (e) { /* opcional */ }
-    }
-    let ultima = '';
-    function rota() {
-      const p = (location.hash || '#/').slice(2).split('/'), v = p[0] || '', n = parseInt(p[1], 10);
-      document.title = 'Doações – NoteWave';
-      const nav = { '': 'home', publicar: 'publicar', editar: 'publicar', minhas: 'minhas' }[v] || 'home';
-      document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('ativo', b.dataset.nav === nav));
-      if (v === 'publicar') telaPublicar(); else if (v === 'editar' && n) telaEditar(n);
-      else if (v === 'doacao' && n) detalhe(n); else if (v === 'minhas') minhas(); else home();
-      const chave = v + '/' + (p[1] || ''); if (chave !== ultima) { ultima = chave; const m = $('.main-content'); if (m) m.scrollTop = 0; window.scrollTo(0, 0); }
-      contarAvisos();
-    }
-    window.addEventListener('hashchange', rota);
-    rota();
-  })();
+      // ---------- SININHO ----------
+      const sino = $('#dcSino'), painel = $('#dcSinoPainel'), selo = $('#dcSinoBadge');
+      const temSino = !!(sino && painel && selo);
+      let avisos = [];
+  
+      function fecharSino() {
+        if (!temSino) return;
+        painel.hidden = true; sino.setAttribute('aria-expanded', 'false');
+      }
+  
+      function desenharSino() {
+        if (!temSino) return;
+        const n = avisos.filter(a => !a.lida).length;
+        selo.textContent = n > 9 ? '9+' : (n || '');
+        painel.textContent = '';
+        const topo = el('div', 'dc-sino-topo'); topo.appendChild(el('b', '', 'Notificações'));
+        if (n) {
+          const b = el('button', 'dc-link', 'Marcar todas como lidas'); b.type = 'button';
+          b.onclick = async () => {
+            try { await api('/donation-notifications/lidas', { method: 'PUT' }); avisos.forEach(a => { a.lida = true; }); desenharSino(); }
+            catch (er) { toast(er.message); }
+          };
+          topo.appendChild(b);
+        }
+        painel.appendChild(topo);
+        if (!avisos.length) { painel.appendChild(el('p', 'dc-sub dc-sino-vazio', 'Você não tem notificações.')); return; }
+        avisos.forEach(a => {
+          const it = el('a', 'dc-notif' + (a.lida ? '' : ' nova')), tx = el('div');
+          it.href = '#/doacao/' + a.doacaoId;
+          tx.append(document.createTextNode(a.texto), el('small', '', dataBR(a.data)));
+          it.append(el('i', 'ph ph-bell'), tx);
+          it.onclick = () => {
+            fecharSino();
+            if (!a.lida) { a.lida = true; api('/donation-notifications/' + a.id + '/lida', { method: 'PUT' }).catch(() => {}); desenharSino(); }
+            if (location.hash === it.getAttribute('href')) rota(); // já está nessa página: recarrega
+          };
+          painel.appendChild(it);
+        });
+      }
+  
+      async function carregarAvisos() {
+        if (!temSino) return;
+        sino.parentElement.hidden = !logado();
+        if (!logado()) return;
+        try { avisos = await api('/donation-notifications'); desenharSino(); } catch (e) { /* opcional */ }
+      }
+  
+      if (temSino) {
+        sino.addEventListener('click', e => {
+          e.stopPropagation();
+          const abrir = painel.hidden; painel.hidden = !abrir; sino.setAttribute('aria-expanded', String(abrir));
+          if (abrir) carregarAvisos();
+        });
+        document.addEventListener('click', e => { if (!painel.contains(e.target)) fecharSino(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') fecharSino(); });
+        setInterval(() => { if (!document.hidden) carregarAvisos(); }, 30000); // atualiza sozinho a cada 30 s
+      }
+  
+      // ---------- ROTAS (#/, #/publicar, #/editar/3, #/doacao/3, #/minhas) ----------
+      let ultima = '';
+      function rota() {
+        const p = (location.hash || '#/').slice(2).split('/'), v = p[0] || '', n = parseInt(p[1], 10);
+        document.title = 'Doações – NoteWave';
+        const nav = { '': 'home', publicar: 'publicar', editar: 'publicar', minhas: 'minhas' }[v] || 'home';
+        document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('ativo', b.dataset.nav === nav));
+        if (v === 'publicar') telaPublicar(); else if (v === 'editar' && n) telaEditar(n);
+        else if (v === 'doacao' && n) detalhe(n); else if (v === 'minhas') minhas(); else home();
+        const chave = v + '/' + (p[1] || ''); if (chave !== ultima) { ultima = chave; const m = $('.main-content'); if (m) m.scrollTop = 0; window.scrollTo(0, 0); }
+        carregarAvisos();
+      }
+      window.addEventListener('hashchange', rota);
+      rota();
+    })();

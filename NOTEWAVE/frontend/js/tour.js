@@ -1,8 +1,9 @@
 // =====================================================
 // NOTEWAVE — TOUR GUIADO (multipágina)
 //
-// Ordem do tour:
-//   Perfil -> Medalhas -> Trilha de Aulas -> Caderno -> Configurações
+// Ordem do tour (segue o menu lateral):
+//   Perfil -> Trilha de Aulas -> Caderno -> Jornal -> Doações
+//   -> Notinha Runner -> Medalhas -> Configurações
 //
 // COMO FUNCIONA:
 // - Cada página tem uma lista de passos em "tourRoutes".
@@ -10,25 +11,25 @@
 //   para a próxima página, e o tour continua lá sozinho.
 // - Se um elemento (target) não existir na tela, o passo é
 //   pulado automaticamente, então nada quebra.
+// - Passos com "espera: true" apontam para elementos que só
+//   aparecem depois que a página carrega dados (API, abas).
+//   O tour espera até 4 s por eles; se não vierem, pula o passo.
 // - Enquanto um passo é explicado, o resto da tela fica
 //   desfocado e só o elemento destacado aparece nítido.
 //
-// DICA: nas páginas Perfil, Medalhas e Trilha, o jeito mais
-// seguro de apontar o tour é colocar um atributo data-tour
-// no elemento, por exemplo:
+// DICA: se algum seletor não bater, coloque um atributo
+// data-tour no elemento, por exemplo:
 //   <div class="..." data-tour="sequencia">
-// Os seletores abaixo já tentam o data-tour primeiro e depois
-// alguns nomes de classe prováveis.
 //
 // FOTOS: preencha o campo "imagem" de cada passo. Se vazio ou
-// se o arquivo não existir, usa o mascote (nota.png) e, por
-// último, um ♫.
+// se o arquivo não existir, usa o mascote (oi.png) e, por
+// último, nada.
 // =====================================================
 
 const tourRoutes = {
 
     // ---------------------------------------------
-    // 1. PERFIL
+    // PERFIL
     // ---------------------------------------------
     perfil: [
         {
@@ -66,65 +67,19 @@ const tourRoutes = {
             texto: ['medalhas'],
             semprefalar: true,
             title: 'Suas Medalhas',
-            description: 'Um resumo das medalhas que você já conquistou. Vamos ver todas elas em detalhe na próxima tela!',
+            description: 'Um resumo das medalhas que você já conquistou. Vamos ver todas elas em detalhe mais adiante no tour!',
             imagem: '../imagem/feliz.png'
         },
         {
             target: '.sidebar',
             title: 'Menu Lateral',
-            description: 'Use o menu para navegar entre Perfil, Trilha de Aulas, Caderno, Medalhas e Configurações a qualquer momento.',
+            description: 'Use o menu para navegar entre Perfil, Trilha de Aulas, Caderno, Jornal, Doações, Notinha Runner, Medalhas e Configurações a qualquer momento.',
             imagem: '../imagem/explicacao.png'
         }
     ],
 
     // ---------------------------------------------
-    // 2. MEDALHAS
-    // ---------------------------------------------
-    medalhas: [
-        {
-            target: '[data-tour="medalhas-grid"], .grid-medalhas, .conquistas, main h1',
-            texto: ['medalhas', 'conquistas'],
-            semprefalar: true,
-            title: 'Sua Coleção de Medalhas',
-            description: 'Cada medalha representa uma conquista na plataforma: completar aulas, manter a sequência de estudos, acertar exercícios e muito mais. Elas se dividem em dois tipos: conquistadas e bloqueadas.',
-            imagem: '../imagem/mao.png'
-        },
-        {
-            target: '[data-tour="medalha-conquistada"], .medalha.conquistada, .medalha.desbloqueada, .badge.earned, .medalha-card:not(.bloqueada):not(.locked)',
-            texto: ['conquistada', 'desbloqueada'],
-            todos: true,
-            alvosFn: () => medalhasPorEstado(false),
-            semprefalar: true,
-            title: 'Medalhas Conquistadas',
-            description: 'As medalhas coloridas já são suas! Cada uma é um sinal de que você chegou lá: elas ficam guardadas aqui para você rever sempre que quiser.',
-            descricaoDinamica: (alvo) => {
-                const nome = tituloDoElemento(alvo);
-                return nome
-                    ? `As medalhas coloridas já são suas! Por exemplo, "${nome}" já foi conquistada. Ela fica guardada aqui para você rever sempre que quiser.`
-                    : null;
-            },
-            imagem: '../imagem/feliz.png'
-        },
-        {
-            target: '[data-tour="medalha-bloqueada"], .medalha.bloqueada, .medalha-bloqueada, .badge.locked, .medalha-card.locked',
-            texto: ['bloqueada', 'a desbloquear'],
-            todos: true,
-            alvosFn: () => medalhasPorEstado(true),
-            semprefalar: true,
-            title: 'Medalhas Bloqueadas',
-            description: 'As medalhas apagadas ainda estão por vir. Elas funcionam como metas: continue estudando, completando aulas e mantendo sua sequência para desbloquear cada uma.',
-            descricaoDinamica: (alvo) => {
-                const nome = tituloDoElemento(alvo);
-                return nome
-                    ? `As medalhas apagadas ainda estão por vir. Por exemplo, "${nome}" é uma meta sua: continue estudando e mantendo a sequência para desbloqueá-la!`
-                    : null;
-            },
-            imagem: '../imagem/explicacao.png'
-        }
-    ],
-
-    // ---------------------------------------------
-    // 3. TRILHA DE AULAS
+    // TRILHA DE AULAS
     // ---------------------------------------------
     trilha: [
         {
@@ -163,7 +118,7 @@ const tourRoutes = {
     ],
 
     // ---------------------------------------------
-    // 4. CADERNO
+    // CADERNO
     // (os passos do caderno por dentro só aparecem depois que
     // a capa foi escolhida; antes disso só o primeiro passo fala)
     // ---------------------------------------------
@@ -225,7 +180,231 @@ const tourRoutes = {
     ],
 
     // ---------------------------------------------
-    // 5. CONFIGURAÇÕES
+    // JORNAL
+    // ---------------------------------------------
+    journal: [
+        {
+            target: '.jr-head',
+            title: 'Jornal NoteWave',
+            description: 'Aqui você encontra leituras, descobertas e histórias de quem vive a música. É um espaço para aprender lendo e também para compartilhar o que você sabe.',
+            imagem: '../imagem/oi.png'
+        },
+        {
+            target: '#jrBusca',
+            title: 'Busca',
+            description: 'Digite uma palavra para encontrar publicações pelo título ou pelo conteúdo.',
+            imagem: '../imagem/lamp.png'
+        },
+        {
+            target: 'nav.jr-acoes',
+            title: 'Navegando pelo Jornal',
+            description: 'Use estes botões para ir ao Início, Explorar, Meus favoritos, Comunidade, Meus posts ou Publicar.',
+            imagem: '../imagem/mao.png'
+        },
+        {
+            target: '#jrDestaque .jr-card',
+            espera: true,
+            title: 'Artigo em destaque',
+            description: 'O artigo em destaque aparece aqui. Clique no card para ler, reagir e deixar um comentário.',
+            imagem: '../imagem/explicacao.png'
+        },
+        {
+            target: '#jrDestaque .jr-fav',
+            espera: true,
+            title: 'Favoritar',
+            description: 'Toque no marcador para salvar o artigo em "Meus favoritos" e reler quando quiser.',
+            imagem: '../imagem/feliz.png'
+        },
+        {
+            target: '#jrCatsHome',
+            title: 'Categorias',
+            description: 'Escolha uma categoria, como Teoria musical, Dicas de estudo ou Curiosidades, para ver só o que interessa.',
+            imagem: '../imagem/lamp.png'
+        },
+        {
+            target: '#jrRecentes',
+            espera: true,
+            title: 'Publicações recentes',
+            description: 'As publicações mais novas da equipe e da comunidade aparecem aqui.',
+            imagem: '../imagem/distraido.png'
+        },
+        {
+            target: '[data-nav="publicar"]',
+            title: 'Publique você também!',
+            description: 'Tem uma dica, uma descoberta ou um relato? Clique em Publicar e escreva o seu texto para ajudar outros estudantes.',
+            imagem: '../imagem/mao.png'
+        },
+        {
+            target: '.jr-notinha',
+            title: 'Cantinho do Notinha',
+            description: 'O Notinha deixa uma dica de estudo para você. Clique em "Outra dica" para ver mais.',
+            imagem: '../imagem/feliz.png'
+        }
+    ],
+
+    // ---------------------------------------------
+    // DOAÇÕES
+    // ---------------------------------------------
+    doacoes: [
+        {
+            target: '.dc-hero',
+            title: 'NoteWave Doações',
+            description: 'Aqui pessoas doam instrumentos musicais, de graça, para estudantes que sonham em aprender. Cada doação é uma nova chance de fazer música.',
+            imagem: '../imagem/oi.png'
+        },
+        {
+            target: '.dc-hero .dc-btn',
+            title: 'Publicar uma doação',
+            description: 'Tem um instrumento parado em casa? Clique aqui, conte como ele está e envie fotos. A doação é sempre gratuita: não é permitido vender nem cobrar.',
+            imagem: '../imagem/mao.png'
+        },
+        {
+            target: '.dc-stats',
+            espera: true,
+            title: 'Números da comunidade',
+            description: 'Veja quantos instrumentos estão disponíveis, quantos estão em processo de doação e quantas doações já foram concluídas.',
+            imagem: '../imagem/explicacao.png'
+        },
+        {
+            target: '.dc-filtros',
+            title: 'Pesquisa e filtros',
+            description: 'Procure pelo nome do instrumento, filtre por município, categoria (cordas, sopro, percussão, teclas...) e pela situação da doação.',
+            imagem: '../imagem/lamp.png'
+        },
+        {
+            target: '.dc-grid .dc-card',
+            espera: true,
+            title: 'Cartão de doação',
+            description: 'Cada cartão mostra a foto, o nome, a categoria e quem publicou. Clique em "Ver publicação" para ver os detalhes, fazer perguntas nos comentários e demonstrar interesse.',
+            imagem: '../imagem/distraido.png'
+        },
+        {
+            target: '[data-nav="minhas"]',
+            espera: true,
+            title: 'Minhas doações',
+            description: 'Aqui você acompanha o que publicou, vê quem tem interesse e escolhe para quem doar. O telefone só é liberado depois que você autorizar.',
+            imagem: '../imagem/explicacao.png'
+        },
+        {
+            target: '#dcSino',
+            espera: true,
+            title: 'Notificações',
+            description: 'O sininho avisa quando alguém comenta ou demonstra interesse, e quando sua solicitação é aceita.',
+            imagem: '../imagem/feliz.png'
+        }
+    ],
+
+    // ---------------------------------------------
+    // NOTINHA RUNNER
+    // ---------------------------------------------
+    runner: [
+        {
+            target: '#nwr-palco',
+            espera: true,
+            title: 'Notinha Runner',
+            description: 'Um jogo de corrida musical! O Notinha corre e você responde perguntas sobre música para ganhar pontos, estrelas e NotaCoins.',
+            imagem: '../imagem/oi.png'
+        },
+        {
+            target: '#btn-jogar',
+            espera: true,
+            title: 'Começar a jogar',
+            description: 'Clique em Jogar para iniciar uma partida. Use a barra de espaço, a seta para cima ou toque na tela para pular e pegar as respostas certas.',
+            imagem: '../imagem/mao.png'
+        },
+        {
+            target: '#btn-instrucoes',
+            espera: true,
+            title: 'Como jogar',
+            description: 'Ficou com dúvida nos controles ou nas regras? As instruções explicam tudo.',
+            imagem: '../imagem/explicacao.png'
+        },
+        {
+            target: '#btn-som',
+            espera: true,
+            title: 'Som',
+            description: 'Ligue ou desligue o som do jogo quando quiser.',
+            imagem: '../imagem/lamp.png'
+        },
+        {
+            target: '#nwr-saldo',
+            espera: true,
+            title: 'Suas NotaCoins',
+            description: 'Este é o seu saldo de NotaCoins. Você ganha moedas jogando e completando desafios, e gasta na loja.',
+            imagem: '../imagem/feliz.png'
+        },
+        {
+            target: '.nwr-aba',
+            todos: true,
+            espera: true,
+            title: 'Abas do jogo',
+            description: 'Use as abas para alternar entre jogar, a loja e os desafios diários.',
+            imagem: '../imagem/mao.png'
+        },
+        {
+            target: '.nwr-aba[data-aba="loja"]',
+            espera: true,
+            title: 'Loja',
+            description: 'Gaste suas NotaCoins em acessórios, efeitos e cenários para deixar o Notinha com o seu estilo.',
+            imagem: '../imagem/feliz.png'
+        },
+        {
+            target: '.nwr-aba[data-aba="desafios"], .nwr-aba[data-aba="desafio"]',
+            espera: true,
+            title: 'Desafios diários',
+            description: 'Todo dia há 3 desafios novos (fácil, médio e difícil), cada um com uma mini-aula. Conclua para resgatar recompensas, aumentar sua sequência de estudos e avançar no progresso geral.',
+            imagem: '../imagem/explicacao.png'
+        }
+    ],
+
+    // ---------------------------------------------
+    // MEDALHAS
+    // ---------------------------------------------
+    medalhas: [
+        {
+            target: '[data-tour="medalhas-grid"], .grid-medalhas, .conquistas, main h1',
+            texto: ['medalhas', 'conquistas'],
+            semprefalar: true,
+            title: 'Sua Coleção de Medalhas',
+            description: 'Cada medalha representa uma conquista na plataforma: completar aulas, manter a sequência de estudos, acertar exercícios e muito mais. Elas se dividem em dois tipos: conquistadas e bloqueadas.',
+            imagem: '../imagem/mao.png'
+        },
+        {
+            target: '[data-tour="medalha-conquistada"], .medalha.conquistada, .medalha.desbloqueada, .badge.earned, .medalha-card:not(.bloqueada):not(.locked)',
+            texto: ['conquistada', 'desbloqueada'],
+            todos: true,
+            alvosFn: () => medalhasPorEstado(false),
+            semprefalar: true,
+            title: 'Medalhas Conquistadas',
+            description: 'As medalhas coloridas já são suas! Cada uma é um sinal de que você chegou lá: elas ficam guardadas aqui para você rever sempre que quiser.',
+            descricaoDinamica: (alvo) => {
+                const nome = tituloDoElemento(alvo);
+                return nome
+                    ? `As medalhas coloridas já são suas! Por exemplo, "${nome}" já foi conquistada. Ela fica guardada aqui para você rever sempre que quiser.`
+                    : null;
+            },
+            imagem: '../imagem/feliz.png'
+        },
+        {
+            target: '[data-tour="medalha-bloqueada"], .medalha.bloqueada, .medalha-bloqueada, .badge.locked, .medalha-card.locked',
+            texto: ['bloqueada', 'a desbloquear'],
+            todos: true,
+            alvosFn: () => medalhasPorEstado(true),
+            semprefalar: true,
+            title: 'Medalhas Bloqueadas',
+            description: 'As medalhas apagadas ainda estão por vir. Elas funcionam como metas: continue estudando, completando aulas e mantendo sua sequência para desbloquear cada uma.',
+            descricaoDinamica: (alvo) => {
+                const nome = tituloDoElemento(alvo);
+                return nome
+                    ? `As medalhas apagadas ainda estão por vir. Por exemplo, "${nome}" é uma meta sua: continue estudando e mantendo a sequência para desbloqueá-la!`
+                    : null;
+            },
+            imagem: '../imagem/explicacao.png'
+        }
+    ],
+
+    // ---------------------------------------------
+    // CONFIGURAÇÕES
     // ---------------------------------------------
     configuracoes: [
         {
@@ -270,16 +449,17 @@ const tourRoutes = {
 // Mascote usado no convite e como imagem reserva
 const IMAGEM_BOAS_VINDAS = '../imagem/oi.png';
 
-
-
 // Ordem das páginas do tour e arquivo de cada uma
-const ordemTour = ['perfil', 'medalhas', 'trilha', 'caderno', 'configuracoes'];
+const ordemTour = ['perfil', 'trilha', 'caderno', 'journal', 'doacoes', 'runner', 'medalhas', 'configuracoes'];
 
 const paginasTour = {
     perfil:        { arquivo: 'perfil.html',          nome: 'Perfil' },
-    medalhas:      { arquivo: 'medalhas.html',        nome: 'Medalhas' },
     trilha:        { arquivo: 'trilha_de_aulas.html', nome: 'Trilha de Aulas' },
     caderno:       { arquivo: 'caderno.html',         nome: 'Caderno' },
+    journal:       { arquivo: 'journal.html',         nome: 'Jornal' },
+    doacoes:       { arquivo: 'doacao.html',          nome: 'Doações' },
+    runner:        { arquivo: 'notinha-runner.html',  nome: 'Notinha Runner' },
+    medalhas:      { arquivo: 'medalhas.html',        nome: 'Medalhas' },
     configuracoes: { arquivo: 'configuracoes.html',   nome: 'Configurações' }
 };
 
@@ -287,8 +467,11 @@ const paginasTour = {
 const tourPaginas = {
     perfil: 'perfil',
     trilha_de_aulas: 'trilha',
-    medalhas: 'medalhas',
     caderno: 'caderno',
+    journal: 'journal',
+    doacao: 'doacoes',
+    'notinha-runner': 'runner',
+    medalhas: 'medalhas',
     configuracoes: 'configuracoes'
 };
 
@@ -306,7 +489,7 @@ function initNoteWaveFlow(pageKey) {
     tourJaConfigurado = true;
 
     const configurar = () => {
-        // OCASIÃO 2: botão "Refazer Tour Guiado" (Configurações)
+        // Botão "Refazer Tour Guiado" (Configurações)
         const btnRestart = document.getElementById('btn-restart-tour');
         if (btnRestart) {
             btnRestart.addEventListener('click', () => comecarTourCompleto(pageKey));
@@ -317,14 +500,14 @@ function initNoteWaveFlow(pageKey) {
         const ativo = sessionStorage.getItem(CHAVE_TOUR_ATIVO);
         if (ativo === pageKey) {
             sessionStorage.removeItem(CHAVE_TOUR_ATIVO);
-            setTimeout(() => iniciarPassosDoTour(pageKey, true), 500);
+            setTimeout(() => aguardarPagina(pageKey, () => iniciarPassosDoTour(pageKey, true)), 500);
             return;
         }
 
         // Marca velha que não pertence a esta página: descarta
         if (ativo) sessionStorage.removeItem(CHAVE_TOUR_ATIVO);
 
-        // OCASIÃO 1: primeiro acesso do usuário. O convite aparece uma única vez.
+        // Primeiro acesso do usuário. O convite aparece uma única vez.
         if (!localStorage.getItem('notewave_tour_choice')) {
             localStorage.setItem('notewave_tour_choice', 'visto');
             exibirBannerBoasVindas(pageKey);
@@ -503,7 +686,7 @@ function montarFoto(src, alt) {
     `;
 }
 
-// Imagem do passo não existe -> tenta o mascote -> se falhar, mostra ♫
+// Imagem do passo não existe -> tenta o mascote -> se falhar, remove
 function tratarImagensQuebradas(container) {
     container.querySelectorAll('.nw-tour-foto img').forEach(img => {
         img.addEventListener('error', () => {
@@ -530,7 +713,7 @@ function exibirBannerBoasVindas(pageKey) {
                 ${montarFoto(IMAGEM_BOAS_VINDAS, 'NoteWave')}
                 <div class="nw-tour-balao">
                     <h3 id="nw-welcome-titulo">Bem-vindo ao NoteWave!</h3>
-                    <p>Quer fazer um tour pela plataforma? Vou te mostrar o Perfil, as Medalhas, a Trilha de Aulas, o Caderno e as Configurações.</p>
+                    <p>Quer fazer um tour pela plataforma? Vou te mostrar o Perfil, a Trilha de Aulas, o Caderno, o Jornal, as Doações, o Notinha Runner, as Medalhas e as Configurações.</p>
                     <div class="nw-tour-rodape">
                         <div class="nw-tour-acoes">
                             <button id="btn-skip-tour" class="nw-tour-btn nw-tour-btn--claro">Agora não</button>
@@ -640,6 +823,12 @@ function medalhasPorEstado(bloqueadas) {
     return cartoes.filter(el => ehBloqueada(el) === bloqueadas).slice(0, 40);
 }
 
+// Elemento realmente visível na tela (tem tamanho)
+function elementoVisivel(el) {
+    const r = el.getBoundingClientRect();
+    return r.width > 0 && r.height > 0;
+}
+
 // Devolve os elementos a destacar neste passo
 function acharAlvos(step) {
     if (step.alvosFn) {
@@ -647,11 +836,18 @@ function acharAlvos(step) {
         if (lista && lista.length) return lista;
     }
 
+    // Passos com "espera: true" só valem se o elemento estiver visível
+    // (conteúdo vindo da API ou dentro de uma aba que ainda abre).
+    const buscar = (seletor) => {
+        const l = Array.from(document.querySelectorAll(seletor));
+        return step.espera ? l.filter(elementoVisivel) : l;
+    };
+
     if (step.todos) {
-        const lista = Array.from(document.querySelectorAll(step.target));
+        const lista = buscar(step.target);
         if (lista.length) return lista;
     } else {
-        const um = document.querySelector(step.target);
+        const um = buscar(step.target)[0];
         if (um) return [um];
     }
 
@@ -689,14 +885,18 @@ function posicionarCena(cena, alvo) {
     }
 }
 
-// Espera a página montar seus elementos antes de começar o tour
+// Espera a página montar seus elementos antes de começar o tour.
+// Se a página tem passos com "espera", aguarda pelo menos um deles aparecer
+// (até 4 s); depois segue e os que não vieram são pulados.
 function aguardarPagina(pageKey, depois) {
     const todos = tourRoutes[pageKey] || [];
     const limite = Date.now() + 4000;
+    const comEspera = todos.filter(s => s.espera);
 
     (function tentar() {
-        const pronto = todos.some(s => !s.semprefalar && acharAlvos(s).length);
-        if (pronto || Date.now() > limite) {
+        const algum = todos.some(s => !s.semprefalar && !s.espera && acharAlvos(s).length);
+        const esperaOk = !comEspera.length || comEspera.some(s => acharAlvos(s).length);
+        if ((algum && esperaOk) || Date.now() > limite) {
             setTimeout(depois, 300); // folga para o resto terminar de montar
             return;
         }
@@ -827,14 +1027,14 @@ function iniciarPassosDoTour(pageKey, fazParteDoTour) {
     const tourEscolhido = localStorage.getItem('notewave_tour_choice');
     const tourAtivoSessao = sessionStorage.getItem(CHAVE_TOUR_ATIVO);
 
-    // CASO 2: O usuário clicou em "Refazer o Tour Guiado" nas configurações
+    // Continuação do tour (primeiro acesso ou "Refazer o Tour")
     if (tourAtivoSessao === chave) {
-        sessionStorage.removeItem(CHAVE_TOUR_ATIVO); // Remove para não repetir em um F5 (refresh)
-        setTimeout(() => iniciarPassosDoTour(chave, true), 500);
+        sessionStorage.removeItem(CHAVE_TOUR_ATIVO); // não repete em um F5
+        setTimeout(() => aguardarPagina(chave, () => iniciarPassosDoTour(chave, true)), 500);
         return;
     }
 
-    // CASO 1: É o primeiro acesso absoluto do usuário na plataforma.
+    // Primeiro acesso absoluto do usuário na plataforma.
     // O convite só aparece no Perfil; só marcamos "pendente" lá, para que
     // abrir outra página (como o Caderno) antes não faça o convite sumir.
     if (!tourEscolhido && chave === 'perfil') {

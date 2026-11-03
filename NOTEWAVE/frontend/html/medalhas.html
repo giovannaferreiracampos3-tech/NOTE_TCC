@@ -49,15 +49,18 @@
                     <i class="ph ph-book"></i>
                     <span>Caderno</span>
                 </a>
-                <a href="../html/journal.html" class="nav-item"><i
-                        class="ph ph-newspaper"></i>
-                        <span>Jornal</span>
-                    </a>
-                    <a href="../html/doacao.html" class="nav-item"><i class="ph ph-hand-heart"></i><span>Doações</span></a>
-                    <a href="../html/notinha-runner.html" class="nav-item">
-                        <i class="ph ph-game-controller"></i>
-                        <span>Notinha Runner</span>
-                      </a>
+                <a href="../html/journal.html" class="nav-item">
+                    <i class="ph ph-newspaper"></i>
+                    <span>Jornal</span>
+                </a>
+                <a href="../html/doacao.html" class="nav-item">
+                    <i class="ph ph-hand-heart"></i>
+                    <span>Doações</span>
+                </a>
+                <a href="../html/notinha-runner.html" class="nav-item">
+                    <i class="ph ph-game-controller"></i>
+                    <span>Notinha Runner</span>
+                </a>
                 <a href="../html/medalhas.html" class="nav-item active">
                     <i class="ph ph-medal"></i>
                     <span>Medalhas</span>
@@ -86,6 +89,12 @@
                     </h1>
                     <p>Acompanhe todas as medalhas conquistadas durante sua jornada no NoteWave.</p>
                 </header>
+
+                <!-- Resumo: quantas medalhas já foram conquistadas -->
+                <div class="medalhas-resumo" aria-live="polite">
+                    <span class="resumo-texto" id="resumoTexto"></span>
+                    <div class="resumo-barra"><i id="resumoBarra"></i></div>
+                </div>
 
                 <div class="grid-medalhas">
 
@@ -124,53 +133,20 @@
                     </div>
 
                     <!-- Medalha 3 -->
-                    <div class="card-medalha" data-chave-medalha="medalha_nota_por_nota" data-modulo="modulo3"
-                        data-status="bloqueado" data-titulo="Nota por Nota"
-                        data-conquistou="Você completou uma atividade sem errar nenhuma nota."
-                        data-aprendeu="Precisão, concentração e leitura musical."
-                        data-incentivo="A prática leva à perfeição. Continue treinando!">
+                    <div class="card-medalha" data-chave-medalha="medalha_recife" data-modulo="recife"
+                        data-status="bloqueado" data-titulo="Mestre do Recife"
+                        data-conquistou="Você conquistou 3 estrelas nas 4 atividades do Recife!"
+                        data-aprendeu="Reconhecer notas de ouvido, localizar na pauta, perceber subidas e descidas e dominar a teoria básica."
+                        data-incentivo="Você explorou o recife inteiro. Que mergulho incrível!"
+                        data-bloqueado="Conquiste 3 estrelas em cada uma das 4 atividades do Recife: Ouça a Onda, Pesque a Nota, Sobe ou Desce? e Maré de Teoria.">
 
                         <div class="icone-medalha">
                             <svg viewBox="0 0 100 100" style="width: 52px; height: 52px;">
                                 <path fill="currentColor"
-                                    d="M35,25 L75,15 L75,55 C70,52 62,52 58,56 C52,62 52,72 58,78 C64,84 74,84 80,78 C83,75 85,70 85,65 L85,25 L45,35 L45,65 C40,62 32,62 28,66 C22,72 22,82 28,88 C34,94 44,94 50,88 C53,85 55,80 55,75 L55,42 L35,47 Z" />
+                                    d="M50,10 L61,37 L90,40 L68,60 L75,89 L50,74 L25,89 L32,60 L10,40 L39,37 Z" />
                             </svg>
                         </div>
-                        <h3>Nota por Nota</h3>
-                        <span class="status">Bloqueado</span>
-                    </div>
-
-                    <!-- Medalha 4 -->
-                    <div class="card-medalha" data-chave-medalha="medalha_ritmo" data-modulo="modulo4"
-                        data-status="bloqueado" data-titulo="Ritmo e Pulsação"
-                        data-conquistou="Você dominou a pulsação de tempo de forma regular!"
-                        data-aprendeu="Padrões de compassos simples e figuras de andamento."
-                        data-incentivo="Seu metrônomo interno está regulado perfeitamente!">
-
-                        <div class="icone-medalha">
-                            <svg viewBox="0 0 100 100" style="width: 48px; height: 48px;">
-                                <path fill="currentColor"
-                                    d="M50,15 L22,78 L78,78 Z M50,28 L68,70 L32,70 Z M47,42 L53,42 L51,62 L47,62 Z M50,67 A 2.5 2.5 0 1 1 50,66.9 Z" />
-                            </svg>
-                        </div>
-                        <h3>Ritmo e Pulsação</h3>
-                        <span class="status">Bloqueado</span>
-                    </div>
-
-                    <!-- Medalha 5 -->
-                    <div class="card-medalha" data-chave-medalha="medalha_avancada" data-modulo="modulo5"
-                        data-status="bloqueado" data-titulo="Leitura Avançada"
-                        data-conquistou="Você completou com êxito os exercícios mais difíceis da trilha."
-                        data-aprendeu="Linhas suplementares complexas e velocidade melódica."
-                        data-incentivo="Partituras complexas não são mais um mistério para você!">
-
-                        <div class="icone-medalha">
-                            <svg viewBox="0 0 100 100" style="width: 50px; height: 50px;">
-                                <path fill="currentColor"
-                                    d="M25,20 L25,75 C25,83 35,83 35,75 L35,35 L75,35 L75,65 C75,73 85,73 85,65 L85,20 Z M35,45 L75,45 L75,49 L35,49 Z M35,57 L75,57 L75,61 L35,61 Z" />
-                            </svg>
-                        </div>
-                        <h3>Leitura Avançada</h3>
+                        <h3>Mestre do Recife</h3>
                         <span class="status">Bloqueado</span>
                     </div>
 
@@ -181,8 +157,8 @@
 
     <!-- Modal Overlay -->
     <div class="modal-overlay" id="modalConquista">
-        <div class="modal-balao">
-            <button id="btnFecharModal" class="btn-fechar">&times;</button>
+        <div class="modal-balao" role="dialog" aria-modal="true" aria-label="Detalhes da medalha">
+            <button id="btnFecharModal" class="btn-fechar" aria-label="Fechar">&times;</button>
             <div id="conteudoModal"></div>
         </div>
     </div>
@@ -193,10 +169,18 @@
             document.body.classList.add('dark-mode');
         }
 
+        // Atividades do Recife que precisam ter 3 estrelas para a medalha
+        const ATIVIDADES_RECIFE = ['ouvir', 'pauta', 'sobe', 'teoria'];
+
+        function estrelasDoRecife() {
+            return ATIVIDADES_RECIFE.filter(id => Number(localStorage.getItem('status_mar_' + id)) === 3).length;
+        }
+
         // Função para atualizar o status das medalhas com base no localStorage
         function atualizarMedalhasPeloProgresso() {
             const cards = document.querySelectorAll('.card-medalha');
             const dadosProgresso = JSON.parse(localStorage.getItem('progressoModulos')) || {};
+            let conquistadas = 0;
 
             cards.forEach(card => {
                 const chave = card.dataset.chaveMedalha;
@@ -204,9 +188,15 @@
                 const statusTexto = card.querySelector('.status');
 
                 const medalhaConcluida = localStorage.getItem(chave) === 'true';
-                const moduloConcluido = dadosProgresso[modulo] === 100;
+                let moduloConcluido = dadosProgresso[modulo] === 100;
+
+                // Mestre do Recife: 3 estrelas em cada uma das 4 atividades
+                if (chave === 'medalha_recife') {
+                    moduloConcluido = estrelasDoRecife() === ATIVIDADES_RECIFE.length;
+                }
 
                 if (medalhaConcluida || moduloConcluido) {
+                    conquistadas++;
                     card.classList.remove('bloqueada');
                     card.classList.add('ativa');
                     card.dataset.status = "desbloqueado";
@@ -218,97 +208,193 @@
                     if (statusTexto) statusTexto.textContent = 'Bloqueado';
                 }
             });
+
+            // Resumo no topo da página
+            const resumoTexto = document.getElementById('resumoTexto');
+            const resumoBarra = document.getElementById('resumoBarra');
+            if (resumoTexto) {
+                resumoTexto.textContent = `🏅 ${conquistadas} de ${cards.length} medalhas conquistadas`;
+            }
+            if (resumoBarra) {
+                resumoBarra.style.width = (cards.length ? conquistadas / cards.length * 100 : 0) + '%';
+            }
         }
 
-        // Função para criar a explosão de notas e confetes cobrindo a tela toda
-        function dispararExplosaoConquista(cardElement) {
-            const rect = cardElement.getBoundingClientRect();
-            const origemX = rect.left + rect.width / 2;
-            const origemY = rect.top + rect.height / 2;
-
+        // Explosão de notas, bolhas e estrelas que SAI DO CARD que abriu (não da medalha)
+        function dispararExplosaoConquista(alvo) {
+            const rect = alvo.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
             const alturaTela = window.innerHeight;
-            const elementos = ['🎵', '🎶', '⭐', '💙', '✨', '🔵', '🎵'];
-            const quantidade = 50;
+
+            const notas = ['♪', '♫', '♬', '♩'];
+            const emojis = ['⭐', '✨', '💙', '🎵', '🎶'];
+            const cores = ['#38bdf8', '#36d1d6', '#ffd43b', '#ffffff', '#7fe9ff', '#ff9ec4', '#a78bfa'];
+            const quantidade = 70;
 
             for (let i = 0; i < quantidade; i++) {
                 const particula = document.createElement('div');
                 particula.classList.add('particula-explosao');
 
-                particula.innerText = elementos[Math.floor(Math.random() * elementos.length)];
+                const sorteio = Math.random();
+                if (sorteio < 0.45) {
+                    particula.textContent = notas[Math.floor(Math.random() * notas.length)];
+                    particula.style.color = cores[Math.floor(Math.random() * cores.length)];
+                    particula.style.fontSize = `${20 + Math.random() * 22}px`;
+                } else if (sorteio < 0.72) {
+                    particula.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    particula.style.fontSize = `${16 + Math.random() * 16}px`;
+                } else {
+                    const tamanho = 8 + Math.random() * 16;
+                    particula.classList.add('bolha');
+                    particula.style.width = `${tamanho}px`;
+                    particula.style.height = `${tamanho}px`;
+                }
+
+                // nasce em um ponto dentro do card, perto das bordas, e segue para fora
+                const angulo = Math.random() * Math.PI * 2;
+                const alcance = 0.55 + Math.random() * 0.45;
+                const origemX = cx + Math.cos(angulo) * (rect.width / 2) * alcance;
+                const origemY = cy + Math.sin(angulo) * (rect.height / 2) * alcance;
+
+                const distancia = 140 + Math.random() * 220;
+                const txMeio = Math.cos(angulo) * distancia;
+                const tyMeio = Math.sin(angulo) * distancia - 90;
+                const txFim = txMeio + (Math.random() * 180 - 90);
+                const tyFim = alturaTela - origemY + 80;
 
                 particula.style.left = `${origemX}px`;
                 particula.style.top = `${origemY}px`;
-
-                const angulo = Math.random() * Math.PI * 2;
-                const distanciaExplosao = 120 + Math.random() * 250;
-
-                const txMeio = Math.cos(angulo) * distanciaExplosao;
-                const tyMeio = Math.sin(angulo) * distanciaExplosao - 120;
-
-                const txFim = txMeio + (Math.random() * 200 - 100);
-                const tyFim = alturaTela - origemY + 80;
-
                 particula.style.setProperty('--tx-meio', `${txMeio}px`);
                 particula.style.setProperty('--ty-meio', `${tyMeio}px`);
                 particula.style.setProperty('--tx-fim', `${txFim}px`);
                 particula.style.setProperty('--ty-fim', `${tyFim}px`);
+                particula.style.setProperty('--rot', `${Math.random() * 720 - 360}deg`);
 
-                particula.style.fontSize = `${16 + Math.random() * 18}px`;
+                const duracao = 1.4 + Math.random() * 0.9;
+                particula.style.animationDuration = `${duracao}s`;
 
                 document.body.appendChild(particula);
-
-                setTimeout(() => {
-                    particula.remove();
-                }, 1500);
+                setTimeout(() => particula.remove(), duracao * 1000 + 100);
             }
+
+            // brilho dourado passando pelo card
+            alvo.classList.remove('mc-flash');
+            void alvo.offsetWidth;
+            alvo.classList.add('mc-flash');
+            setTimeout(() => alvo.classList.remove('mc-flash'), 1000);
+        }
+
+        // Monta o conteúdo do card que abre ao clicar na medalha
+        function estrelasHTML(qtd) {
+            const caminho = 'M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z';
+            const estrela = i => `<svg class="mc-estrela ${i < qtd ? 'on' : 'off'}" style="--i:${i}" viewBox="0 0 24 24" aria-hidden="true"><path d="${caminho}"/></svg>`;
+            return `<div class="mc-estrelas" role="img" aria-label="${qtd} de 3 estrelas">${[0, 1, 2].map(estrela).join('')}</div>`;
+        }
+
+        const NOTAS_FLUTUANTES = `
+            <span class="mc-nota" style="--x:8%;--d:0s" aria-hidden="true">♪</span>
+            <span class="mc-nota" style="--x:24%;--d:1.6s" aria-hidden="true">♫</span>
+            <span class="mc-nota" style="--x:70%;--d:0.8s" aria-hidden="true">♬</span>
+            <span class="mc-nota" style="--x:88%;--d:2.4s" aria-hidden="true">♩</span>
+            <span class="mc-nota" style="--x:48%;--d:3.2s" aria-hidden="true">♪</span>`;
+
+        function montarCardConquistada(card) {
+            const icone = card.querySelector('.icone-medalha').innerHTML;
+            return `
+                <div class="mc-banner">
+                    ${NOTAS_FLUTUANTES}
+                    <div class="mc-medalha">${icone}</div>
+                    <span class="mc-tag">Conquista desbloqueada</span>
+                    <h2>${card.dataset.titulo}</h2>
+                    <div class="mc-onda mc-onda--2"></div>
+                    <div class="mc-onda"></div>
+                </div>
+                <div class="mc-corpo">
+                    ${estrelasHTML(3)}
+                    <div class="mc-secao">
+                        <div class="mc-ico" aria-hidden="true">🏆</div>
+                        <div>
+                            <h3>O que você conquistou?</h3>
+                            <p>${card.dataset.conquistou || ''}</p>
+                        </div>
+                    </div>
+                    <div class="mc-secao">
+                        <div class="mc-ico" aria-hidden="true">🎼</div>
+                        <div>
+                            <h3>O que você aprendeu?</h3>
+                            <p>${card.dataset.aprendeu || ''}</p>
+                        </div>
+                    </div>
+                    <div class="mc-incentivo">
+                        <span class="mc-barco" aria-hidden="true">⛵</span>
+                        <p><strong>${card.dataset.incentivo || ''}</strong></p>
+                    </div>
+                </div>`;
+        }
+
+        function montarCardBloqueada(card) {
+            const icone = card.querySelector('.icone-medalha').innerHTML;
+            const texto = card.dataset.bloqueado || 'Finalize a lição correspondente na trilha com aproveitamento superior a 50% para desbloqueá-la.';
+
+            let progresso = '';
+            if (card.dataset.chaveMedalha === 'medalha_recife') {
+                const feitas = estrelasDoRecife();
+                const total = ATIVIDADES_RECIFE.length;
+                progresso = `
+                    <div class="mc-progresso">
+                        <div class="mc-progresso-topo">
+                            <span>Atividades com 3 estrelas</span>
+                            <span>${feitas} de ${total}</span>
+                        </div>
+                        <div class="mc-progresso-barra"><i style="width:${feitas / total * 100}%"></i></div>
+                    </div>`;
+            }
+
+            return `
+                <div class="mc-banner mc-banner--lock">
+                    ${NOTAS_FLUTUANTES}
+                    <div class="mc-medalha">${icone}<span class="mc-cadeado" aria-hidden="true">🔒</span></div>
+                    <span class="mc-tag">Medalha bloqueada</span>
+                    <h2>${card.dataset.titulo}</h2>
+                    <div class="mc-onda mc-onda--2"></div>
+                    <div class="mc-onda"></div>
+                </div>
+                <div class="mc-corpo">
+                    ${estrelasHTML(0)}
+                    <div class="mc-secao">
+                        <div class="mc-ico" aria-hidden="true">🧭</div>
+                        <div>
+                            <h3>Você ainda não conquistou esta medalha.</h3>
+                            <p>${texto}</p>
+                        </div>
+                    </div>
+                    ${progresso}
+                </div>`;
         }
 
         const cards = document.querySelectorAll(".card-medalha");
         const modal = document.getElementById("modalConquista");
+        const modalBalao = modal.querySelector(".modal-balao");
         const conteudoModal = document.getElementById("conteudoModal");
         const btnFechar = document.getElementById("btnFecharModal");
 
         // Gerenciamento dos cliques nos cards
         cards.forEach(card => {
             card.addEventListener("click", () => {
-                const status = card.dataset.status;
-                const titulo = card.dataset.titulo;
+                const desbloqueado = card.dataset.status === "desbloqueado";
 
-                if (status === "desbloqueado") {
-                    dispararExplosaoConquista(card);
+                conteudoModal.innerHTML = desbloqueado
+                    ? montarCardConquistada(card)
+                    : montarCardBloqueada(card);
 
-                    conteudoModal.innerHTML = `
-                      <div class="modal-header">
-                          <span class="tag-sucesso">Conquista Desbloqueada</span>
-                          <h2>${titulo}</h2>
-                      </div>
-                      <div class="estrelas">⭐ ⭐ ⭐</div>
-                      <div class="modal-secao">
-                          <h3>O que você conquistou?</h3>
-                          <p>${card.dataset.conquistou || ''}</p>
-                      </div>
-                      <div class="modal-secao">
-                        <h3>O que você aprendeu?</h3>
-                        <p>${card.dataset.aprendeu || ''}</p>
-                      </div>
-                      <div class="modal-secao incentivo">
-                          <p><strong>${card.dataset.incentivo || ''}</strong></p>
-                      </div>
-                  `;
-                } else {
-                    conteudoModal.innerHTML = `
-                      <div class="modal-header">
-                          <span class="tag-bloqueado">🔒 Medalha Bloqueada</span>
-                          <h2>${titulo}</h2>
-                      </div>
-                      <div class="estrelas bloqueadas">☆ ☆ ☆</div>
-                      <div class="modal-secao">
-                          <h3>Você ainda não conquistou esta medalha.</h3>
-                          <p>Finalize a lição correspondente na trilha com aproveitamento superior a 50% para desbloqueá-la.</p>
-                      </div>
-                  `;
-                }
+                modalBalao.scrollTop = 0;
                 modal.classList.add("visivel");
+
+                // a explosão sai do card que abriu (espera ele terminar de "pular" na tela)
+                if (desbloqueado) {
+                    setTimeout(() => dispararExplosaoConquista(modalBalao), 180);
+                }
             });
         });
 
@@ -340,13 +426,8 @@
     <script src="../js/tour.js"></script>
     <script src="../js/tema.js"></script>
     <script src="../js/nw-sync.js"></script>
-    <meta charset="UTF-8">
+    <script src="../js/music.js"></script>
+    <script src="../js/rodape.js"></script>
 </body>
-
-<script src="../js/music.js"></script>
-<script src="../js/rodape.js"></script>
-</body>
-
-</html>
 
 </html>

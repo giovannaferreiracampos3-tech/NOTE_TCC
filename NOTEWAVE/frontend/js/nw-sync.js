@@ -14,7 +14,7 @@
   
     // Chaves que pertencem à CONTA (a mesma lista do servidor, em progressoApi.js).
     // Tema, modo escuro e música de fundo ficam de fora: são preferências do aparelho.
-    const DA_CONTA = /^(status_|musical_|medalha_|notewave-caderno|noteWave_diasEstudo$|noteWave_avatar$|noteWave_tour_choice$|progressoModulos$|nw_runner)/;
+    const DA_CONTA = /^(status_|musical_|medalha_|notewave-caderno|noteWave_diasEstudo$|noteWave_missoesFeitas$|noteWave_avatar$|noteWave_tour_choice$|progressoModulos$|nw_runner)/;
   
     const ls = window.localStorage;
     const gravar = Storage.prototype.setItem;     // versões originais, que não disparam envio

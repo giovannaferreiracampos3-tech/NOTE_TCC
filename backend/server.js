@@ -50,6 +50,12 @@ db.getConnection((err, conn) => {
 app.use('/api/journal', require('./journalApi')(db.promise()));
 
 // ================================
+// NOTINHA RUNNER (moedas, loja, desafios por usuário)
+// Fica ANTES da rota '/api' das doações, senão ela intercepta o caminho
+// ================================
+app.use('/api/runner', require('./runnerApi')(db.promise()));
+
+// ================================
 // DOAÇÕES (instrumentos, interesse, comentários, denúncias)
 // ================================
 app.use('/api', require('./doacaoApi')(db.promise()));
@@ -190,6 +196,41 @@ app.post('/api/google-login', async (req, res) => {
         console.error('ERRO GOOGLE:', error.message);
         return res.status(401).json({ message: 'Token do Google inválido.' });
     }
+});
+
+// ================================
+// ROTA 4: ALTERAR NOME / APELIDO
+// ================================
+app.put('/api/usuario/nome', (req, res) => {
+    // Lê o token enviado no cabeçalho Authorization: Bearer <token>
+    const auth = req.headers.authorization || '';
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+    if (!token) return res.status(401).json({ message: 'Não autenticado.' });
+
+    let dados;
+    try {
+        dados = jwt.verify(token, JWT_SECRET);
+    } catch (e) {
+        return res.status(401).json({ message: 'Sessão inválida ou expirada.' });
+    }
+
+    const nome = (req.body.nome || '').trim();
+    if (!nome || nome.length > 30) {
+        return res.status(400).json({ message: 'Nome inválido (1 a 30 caracteres).' });
+    }
+
+    db.query('UPDATE usuarios SET nome = ? WHERE id_usuario = ?', [nome, dados.id_usuario], (err) => {
+        if (err) {
+            console.error('ERRO AO ATUALIZAR NOME:', err);
+            return res.status(500).json({ message: 'Erro no banco de dados.' });
+        }
+        // Token novo, porque o nome também vai dentro dele
+        return res.json({
+            message: 'Nome atualizado!',
+            username: nome,
+            token: gerarToken({ id_usuario: dados.id_usuario, nome })
+        });
+    });
 });
 
 // ================================

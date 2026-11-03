@@ -21,6 +21,9 @@
   <link rel="stylesheet" href="../css/runner.css">
   <link rel="stylesheet" href="../css/runner-melhorias.css">
   <link rel="stylesheet" href="../css/tema.css">
+  <link rel="stylesheet" href="../css/desafios-missoes.css">
+  <link rel="stylesheet" href="../css/tour.css">
+  
 
   <!-- AJUSTE: faz o jogo ocupar toda a área ao lado do menu (fica por último para vencer os outros CSS) -->
   <style>
@@ -388,7 +391,7 @@
                   <li><b>Pular:</b> toque na tela, use o botão de pulo, a tecla <kbd>Espaço</kbd> ou <kbd>↑</kbd>.</li>
                   <li>O pulo tem sempre a mesma altura. Só dá para pular de novo depois de aterrissar.</li>
                   <li>Em cada uma das <b>10 rodadas</b> aparecem duas respostas. Pule para tocar na certa.</li>
-                  <li><b>Acertou:</b> +2 pontos. <b>Errou:</b> −2 pontos. Passar sem tocar: 0 ponto.</li>
+                  <li><b>Acertou:</b> +2 pontos e +5 moedas. <b>Errou</b> ou <b>passou sem responder:</b> −5 moedas (errar também tira 2 pontos).</li>
                   <li>Passe por cima das <b>moedas</b> no chão para coletá-las. Elas vão para a loja.</li>
                   <li>No final você ganha de 0 a 3 estrelas pela pontuação.</li>
                 </ul>
@@ -437,8 +440,7 @@
         </section>
 
         <!-- ===================== OUTRAS ABAS ===================== -->
-        <section class="nwr-painel" id="aba-desafios" role="tabpanel" aria-labelledby="tab-desafios" hidden>
-          <div class="nwr-em-breve"><h2>Desafios diários</h2><p>Chega na Etapa 6, junto com a integração com a frequência da NoteWave.</p></div>
+        <section class="nwr-painel" id="aba-desafios" role="tabpanel" aria-labelledby="tab-desafios" hidden></section>
         </section>
         <!-- Loja, Guarda-roupa e Cenários: montados por js/loja-ui.js -->
         <section class="nwr-painel" id="aba-loja" role="tabpanel" aria-labelledby="tab-loja" hidden></section>
@@ -459,17 +461,23 @@
   <!-- Ordem importa: dados → serviços → jogo → interface -->
   <script src="../js/perguntas.js"></script>
   <script src="../js/loja.js"></script>
+  <script src="../js/desafios.js"></script>
   <script src="../js/api.js"></script>
   <script src="../js/runner-tema.js"></script>
   <script src="../js/sprite-data.js"></script>
   <script src="../js/som.js"></script>
+  <script src="../js/som-moedas.js"></script>
   <script src="../js/engine.js"></script>
   <script src="../js/loja-ui.js"></script>
+  <script src="../js/desafios-missoes.js"></script>
+  <script src="../js/desafios-ui.js"></script>
+  <script src="../js/desafios-ui.js"></script>
   <script src="../js/app.js"></script>
   <script src="../js/abas-teclado.js"></script>
   <script src="../js/rodape.js"></script>
   <script src="../js/nw-sync.js"></script>
   <script src="../js/tema.js"></script>
+  <script src="../js/tour.js"></script>
 
 </body>
 </html>

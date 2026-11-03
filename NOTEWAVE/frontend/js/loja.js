@@ -63,6 +63,26 @@
       } catch (e) { return false; }                            // sem permissão de leitura: segue sem inclinação
     }
 
+       // Cabeça dos Notinhas especiais (pixels do quadro de cada sprite).
+    // x,y = centro da cabeça; R = raio da cabeça.
+    // slots = ajuste fino de cada tipo de peça, em "unidades da cabeça":
+    //   dx (+ direita), dy (+ para baixo), r (giro em graus, + = horário), s (tamanho, 1 = normal)
+    const CABECA_ESP = {
+        mar:   { w: 270, h: 200, x: 138, y: 82, R: 50,
+                 slots: { chapeu:  { dx: 0, dy: 0, r: 20, s: 1 },
+                          pescoco: { dx: 0, dy: 0, r: 0,  s: 1 },
+                          costas:  { dx: 0, dy: 0, r: 0,  s: 1 } } },
+        barco: { w: 240, h: 211, x: 119, y: 95, R: 40,
+                 slots: { chapeu:  { dx: 0, dy: 0,   r: 0, s: 1 },
+                          pescoco: { dx: 0, dy: 0.3, r: 0, s: 1 },
+                          costas:  { dx: 0, dy: 0,   r: 0, s: 1 } } }
+      };
+      function cabecaEspecial(estilo) { return CABECA_ESP[estilo] || null; }
+      function ajusteEsp(estilo, slot) {
+        const c = CABECA_ESP[estilo];
+        return Object.assign({ dx: 0, dy: 0, r: 0, s: 1 }, c && c.slots && c.slots[slot]);
+      }
+
     // ---- ajustes finos (modo #ajuste). Cole aqui o JSON final depois de calibrar. ----
     const AJUSTES_FIXOS = {
       // 'moletom-azul': { dx: 0, dy: 0.02, s: 1, r: 0 },
@@ -434,13 +454,7 @@
 { id: 'brasil', cat: 'cenarios', nome: 'Brasil em Festa', preco: 200, desc: 'Pão de Açúcar, Cristo, palmeiras e bandeirinhas.' },
 { id: 'floresta', cat: 'cenarios', nome: 'Floresta Tropical', preco: 180, desc: 'Árvores gigantes, cipós e vaga-lumes.' },
 { id: 'barquinho', cat: 'cenarios', nome: 'Barquinho de Partitura', preco: 150,
-    desc: 'Navegando no mar com as ondas do site.',
-    icone: '<rect x="-20" y="-5" width="104" height="80" fill="#bfe8ff"/><circle cx="52" cy="12" r="6" fill="#ffd84a"/>' +
-           '<path d="M-20 40C-10 34 2 46 12 40S34 34 44 40S66 46 84 40V70H-20Z" fill="#52c7eb"/>' +
-           '<circle cx="32" cy="27" r="9" fill="#1b3fa8"/><path d="M39 22Q44 14 48 17" fill="none" stroke="#1b3fa8" stroke-width="3" stroke-linecap="round"/>' +
-           '<path d="M27 27H37" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>' +
-           '<path d="M14 34L50 34L44 46L20 46Z" fill="#f5ead3" stroke="#0b2459" stroke-width="2" stroke-linejoin="round"/>' +
-           '<path d="M-20 50C-10 44 2 56 12 50S34 44 44 50S66 56 84 50V70H-20Z" fill="#087db5" opacity=".9"/>' }
+    desc: 'Navegando no mar com as ondas do site.'}
     ]);
 
     // Paletas dos cenários (as chaves seguem as do motor). "castelo" repete o padrão do motor.
@@ -547,7 +561,18 @@
             '<rect x="38" y="30" width="7" height="36" fill="' + P.tronco + '"/><circle cx="41" cy="26" r="17" fill="' + P.perto + '"/><circle cx="30" cy="36" r="11" fill="' + P.perto + '"/><circle cx="52" cy="36" r="11" fill="' + P.perto + '"/>' +
             '<rect y="64" width="120" height="16" fill="' + P.chao + '"/><rect y="62" width="120" height="4" fill="' + P.chaoArco + '"/>' +
             '<circle cx="84" cy="30" r="1.8" fill="#fff6a8"/><circle cx="90" cy="46" r="1.8" fill="#fff6a8"/><circle cx="72" cy="20" r="1.8" fill="#fff6a8"/>';
-        }
+        },
+        barco: function (P) {
+            return '<circle cx="96" cy="18" r="9" fill="' + P.sol + '"/>' +
+              '<rect y="40" width="120" height="40" fill="' + P.mar + '"/>' +
+              '<path d="M0 46Q15 40 30 46T60 46T90 46T120 46" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2"/>' +
+              '<circle cx="58" cy="30" r="10" fill="#1b3fa8"/>' +
+              '<path d="M66 24Q72 14 77 18" fill="none" stroke="#1b3fa8" stroke-width="3.5" stroke-linecap="round"/>' +
+              '<rect x="51" y="29" width="14" height="3" rx="1.5" fill="#fff"/>' +
+              '<path d="M36 42H82L74 58H44Z" fill="#f5ead3" stroke="#0b2459" stroke-width="2" stroke-linejoin="round"/>' +
+              '<path d="M0 58Q15 50 30 58T60 58T90 58T120 58V80H0Z" fill="' + P.mar2 + '"/>' +
+              '<path d="M0 66Q15 60 30 66T60 66T90 66T120 66V80H0Z" fill="' + P.chao + '" opacity=".85"/>';
+          }
       };
 
     /** SVG pronto (como texto) para o ícone do item na loja. */
@@ -596,11 +621,13 @@
     function efeito(id) { const it = item(id); return it && it.cat === 'efeitos' && it.fx ? it.fx : null; }
 
     NW.loja = {
-      ITENS: ITENS, SLOTS: SLOTS, CATEGORIAS: CATEGORIAS, CENARIOS: CENARIOS, VB: VB,
-      item: item, cenario: cenario, centro: centro, fator: fator, efeito: efeito, svgCamada: svgCamada, svgIcone: svgIcone,
-      analisarSprite: analisarSprite,
-      obterAjuste: obterAjuste, definirAjuste: definirAjuste, zerarAjuste: zerarAjuste,
-      obterRecorte: obterRecorte, definirRecorte: definirRecorte, exportarAjustes: exportarAjustes,
-      PADRAO: { acessorios: {}, efeito: null, cenario: 'castelo' }
-    };
+        ITENS: ITENS, SLOTS: SLOTS, CATEGORIAS: CATEGORIAS, CENARIOS: CENARIOS, VB: VB,
+        item: item, cenario: cenario, centro: centro, fator: fator, efeito: efeito, svgCamada: svgCamada, svgIcone: svgIcone,
+        analisarSprite: analisarSprite,
+        cabecaEspecial: cabecaEspecial,
+        ajusteEsp: ajusteEsp,
+        obterAjuste: obterAjuste, definirAjuste: definirAjuste, zerarAjuste: zerarAjuste,
+        obterRecorte: obterRecorte, definirRecorte: definirRecorte, exportarAjustes: exportarAjustes,
+        PADRAO: { acessorios: {}, efeito: null, cenario: 'castelo' }
+      };
   })(window.NWRunner = window.NWRunner || {});

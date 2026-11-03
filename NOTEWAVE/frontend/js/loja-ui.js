@@ -118,6 +118,7 @@
       const eq = copiaEq();
       const it = v.sel && L.item(v.sel);
       if (it && v.modo === 'loja' && !possui(it)) {
+        if (it && v.modo === 'cenarios' && it.cat === 'cenarios') eq.cenario = it.id;
         if (it.slot) eq.acessorios[it.slot] = it.id;
         else if (it.cat === 'efeitos') eq.efeito = it.id;
         else eq.cenario = it.id;
@@ -206,22 +207,38 @@
 
     // ---------- prévia ----------
     // Põe cada peça no lugar certo para o quadro "f": centro da cabeça daquele quadro + inclinação.
-    function posicionar(v, f) {
-      const ce = L.centro(f), tam = L.VB * ce.R;
-      v.sprite.style.backgroundPositionX = (f / ((v.nq || FRAMES_SPRITE) - 1) * 100) + '%';
-      if (!v.sprite.style.backgroundPositionY) v.sprite.style.backgroundPositionY = '0%';
-      v.pecas.forEach(function (p) {
-        const s = p.img.style;
-        s.left = ((ce.x - tam / 2) / FRAME_W * 100) + '%';
-        s.top = ((ce.y - tam / 2) / FRAME_H * 100) + '%';
-        s.width = (tam / FRAME_W * 100) + '%';
-        s.height = (tam / FRAME_H * 100) + '%';
-        s.transform = 'rotate(' + (ce.rot * p.fator) + 'rad)';
-      });
-    }
+       // Centro da cabeça no quadro, em coordenadas do boneco (290x251). Sprites especiais usam CABECA_ESP.
+       function centroPrevia(v, f) {
+        const cab = v.estiloEsp && L.cabecaEspecial(v.estiloEsp);
+        if (!cab) return L.centro(f);
+        const boxH = FRAME_H / FRAME_W;                       // altura da caixa, com largura = 1
+        const fx = cab.x / cab.w;
+        let fy;
+        if (v.estiloEsp === 'mar') {                          // mergulhador: quadro menor, alinhado a 75% na vertical
+          const imgH = cab.h / cab.w, off = (boxH - imgH) * 0.75;
+          fy = (off + (cab.y / cab.h) * imgH) / boxH;
+        } else fy = cab.y / cab.h;                            // barquinho: ocupa a caixa toda
+        return { x: fx * FRAME_W, y: fy * FRAME_H, R: (cab.R / cab.w) * FRAME_W, rot: 0 };
+      }
+  
+      function posicionar(v, f) {
+        const ce = centroPrevia(v, f), tam = L.VB * ce.R;
+        v.sprite.style.backgroundPositionX = (f / ((v.nq || FRAMES_SPRITE) - 1) * 100) + '%';
+        if (!v.sprite.style.backgroundPositionY) v.sprite.style.backgroundPositionY = '0%';
+        v.pecas.forEach(function (p) {
+            const s = p.img.style;
+            const aj = (v.estiloEsp && L.ajusteEsp) ? L.ajusteEsp(v.estiloEsp, p.slot) : { dx: 0, dy: 0, r: 0, s: 1 };
+            const cx = ce.x + aj.dx * ce.R, cy = ce.y + aj.dy * ce.R, t = tam * aj.s;
+            s.left = ((cx - t / 2) / FRAME_W * 100) + '%';
+            s.top = ((cy - t / 2) / FRAME_H * 100) + '%';
+            s.width = (t / FRAME_W * 100) + '%';
+            s.height = (t / FRAME_H * 100) + '%';
+            s.transform = 'rotate(' + (ce.rot * p.fator + aj.r * Math.PI / 180) + 'rad)';
+        });
+    }   // ← fecha a função posicionar
 
-    // Monta as camadas (costas → roupa → pescoço → cabeça) e só troca na tela quando todas estão decodificadas.
-    function montarPecas(v, eq) {
+  // Monta as camadas ...
+  function montarPecas(v, eq) {
       const tok = ++v.tok, lista = [];
       ['tras', 'frente'].forEach(function (nome) {
         L.SLOTS.forEach(function (s) {
@@ -230,7 +247,7 @@
           if (!uri) return;
           const im = new Image();
           im.alt = ''; im.draggable = false; im.className = 'nwr-prev__peca'; im.src = uri;
-          lista.push({ img: im, fator: L.fator(it), atras: nome === 'tras' });
+          lista.push({ img: im, fator: L.fator(it), atras: nome === 'tras', slot: s.id });
         });
       });
       function trocar() {
@@ -280,12 +297,16 @@
       v.palco.style.setProperty('--prev-longe', P.longe);
       v.palco.style.setProperty('--prev-perto', P.perto);
       const esp = especial(P.estilo);              // 'mar' → mergulhador, 'barco' → barquinho
-      aplicarSprite(v, esp ? P.estilo : null);
+      v.estiloEsp = esp ? P.estilo : null;
+      aplicarSprite(v, v.estiloEsp);
       v.palco.dataset.estilo = P.estilo || '';     // o CSS usa isto para pôr as ondas na prévia
-      // com Notinha especial, os acessórios não são desenhados (as posições são do sprite original)
-      montarPecas(v, esp ? Object.assign({}, eq, { acessorios: {} }) : eq);
+      montarPecas(v, eq);
       desenharEfeito(v, eq.efeito);
-      const it = v.sel && L.item(v.sel), prova = it && v.modo === 'loja' && !possui(it);
+      const it = v.sel && L.item(v.sel);
+    const prova = it && ((v.modo === 'loja' && !possui(it)) || (v.modo === 'cenarios' && !equipado(it)));
+    v.legenda.textContent = prova ? (v.modo === 'cenarios' ? 'Pré-visualizando: ' : 'Experimentando: ') + it.nome
+                                : (v.modo === 'cenarios' ? 'Cenário atual' : 'Visual atual');
+    v.legenda.classList.toggle('is-prova', !!prova);
       v.legenda.textContent = prova ? 'Experimentando: ' + it.nome : (v.modo === 'cenarios' ? 'Cenário atual' : 'Visual atual');
       v.legenda.classList.toggle('is-prova', !!prova);
     }
@@ -328,6 +349,7 @@
       // itens
       const itens = listaDaCategoria(v), t = tema();
       if (!v.sel || !itens.some(function (i) { return i.id === v.sel; })) v.sel = itens.length ? itens[0].id : null;
+      v.grade.dataset.modo = v.modo;
       v.grade.innerHTML = '';
       if (!itens.length) {
         v.grade.innerHTML = '<div class="nwr-vazio"><p>Você ainda não tem itens aqui.</p><button type="button" class="nwr-btn nwr-btn--mini" data-ir="loja">Ir para a Loja</button></div>';
