@@ -1,72 +1,84 @@
-// ================================
-// CONFIGURAÇÃO DO SERVIDOR E BANCO
-// ================================
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
-const crypto = require('crypto');
-const path = require('path');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
-
-const GOOGLE_CLIENT_ID = '872496584799-ki78h8mmt18uavfc2vp2b03u2584l9qi.apps.googleusercontent.com';
-const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
-
-// Segredo do token de login. Precisa ser o MESMO no journalApi.js e no doacaoApi.js (já está igual por padrão).
-const JWT_SECRET = process.env.JWT_SECRET || 'troque-este-segredo';
-const gerarToken = (usuario) => jwt.sign({ id_usuario: usuario.id_usuario, nome: usuario.nome }, JWT_SECRET, { expiresIn: '7d' });
 
 const app = express();
 const PORT = 5000;
 
+const JWT_SECRET = process.env.JWT_SECRET;
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+console.log('GOOGLE_CLIENT_ID carregado:', GOOGLE_CLIENT_ID);
+
+if (!JWT_SECRET) {
+    console.error('Defina JWT_SECRET no arquivo .env');
+    process.exit(1);
+}
+
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+
 app.use(cors());
-app.use(express.json({ limit: '4mb' })); // 4mb: foto de perfil salva na conta e imagens de capa do Journal
+app.use(express.json({ limit: '5mb' }));
+const path = require('path');
+const pastaFront = path.join(__dirname, '..', 'frontend');
+console.log('Servindo front de:', pastaFront);
+console.log('Existe?', require('fs').existsSync(pastaFront));
+console.log('Login existe?', require('fs').existsSync(path.join(pastaFront, 'html', 'login.html')));
+app.use(express.static(require('path').join(__dirname, '..', 'frontend')));
 
-// Imagens publicadas (pastas uploads/journal e uploads/doacao)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Conexão com o MySQL (pool: reconecta sozinho se a conexão cair)
-// IMPORTANTE: o db precisa ser criado ANTES das rotas que o usam
+// ================================
+// BANCO DE DADOS
+// ================================
 const db = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '123456',
-  database: 'tcc'
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME || 'tcc',
+    waitForConnections: true,
+    connectionLimit: 10
 });
 
 db.getConnection((err, conn) => {
-  if (err) {
-    console.error('Erro ao conectar no MySQL:', err.message);
-  } else {
-    console.log('Conectado ao MySQL Workbench com sucesso!');
-    conn.release();
-  }
+    if (err) {
+        console.error('Erro ao conectar no MySQL:', err.message);
+    } else {
+        console.log('Conectado ao MySQL com sucesso!');
+        conn.release();
+    }
 });
 
 // ================================
-// JOURNAL (publicações, comunidade, comentários)
+// FUNÇÕES AUXILIARES
 // ================================
-app.use('/api/journal', require('./journalApi')(db.promise()));
+function gerarToken(usuario) {
+    return jwt.sign(
+        { id: usuario.id_usuario ?? usuario.id, email: usuario.email },
+        JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+}
+
+function autenticar(req, res, next) {
+    const header = req.headers.authorization || '';
+    const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+
+    if (!token) return res.status(401).json({ message: 'Token ausente.' });
+
+    try {
+        req.usuario = jwt.verify(token, JWT_SECRET);
+        next();
+    } catch (e) {
+        return res.status(401).json({ message: 'Token inválido ou expirado.' });
+    }
+}
 
 // ================================
-// NOTINHA RUNNER (moedas, loja, desafios por usuário)
-// Fica ANTES da rota '/api' das doações, senão ela intercepta o caminho
-// ================================
-app.use('/api/runner', require('./runnerApi')(db.promise()));
-
-// ================================
-// DOAÇÕES (instrumentos, interesse, comentários, denúncias)
-// ================================
-app.use('/api', require('./doacaoApi')(db.promise()));
-
-// ================================
-// PROGRESSO DE CADA USUÁRIO (lições, medalhas, caderno, sequência, foto)
-// ================================
-app.use('/api/progresso', require('./progressoApi')(db.promise()));
-
-// ================================
-// ROTA 1: CADASTRO DE USUÁRIO (LGPD/BCRYPT)
+// ROTA 1: CADASTRO
 // ================================
 app.post('/api/register', async (req, res) => {
     const { username, email, password } = req.body;
@@ -76,26 +88,36 @@ app.post('/api/register', async (req, res) => {
     }
 
     try {
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        const sql = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
-
-        db.query(sql, [username, email, hashedPassword], (err, result) => {
-            if (err) {
-                console.error('ERRO NO MYSQL AO CADASTRAR:', err);
-
-                if (err.code === 'ER_DUP_ENTRY') {
-                    return res.status(400).json({ message: 'Este e-mail já está cadastrado!' });
-                }
-                return res.status(500).json({ message: 'Erro no banco de dados: ' + err.sqlMessage });
+        db.query('SELECT id_usuario FROM usuarios WHERE email = ?', [email], (errBusca, existentes) => {
+            if (errBusca) {
+                console.error('ERRO NO MYSQL AO CONSULTAR E-MAIL:', errBusca);
+                return res.status(500).json({ message: 'Erro no servidor' });
             }
 
-            console.log('Usuário salvo com sucesso:', username);
-            return res.status(201).json({
-                message: 'Conta criada com sucesso!',
-                username: username,
-                token: gerarToken({ id_usuario: result.insertId, nome: username })
+            if (existentes.length > 0) {
+                return res.status(400).json({ message: 'Este e-mail já está cadastrado!' });
+            }
+
+            const sql = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
+
+            db.query(sql, [username, email, hashedPassword], (err, result) => {
+                if (err) {
+                    console.error('ERRO NO MYSQL AO CADASTRAR:', err);
+                    if (err.code === 'ER_DUP_ENTRY') {
+                        return res.status(400).json({ message: 'Este e-mail já está cadastrado!' });
+                    }
+                    return res.status(500).json({ message: 'Erro no banco de dados: ' + err.sqlMessage });
+                }
+
+                console.log('Usuário salvo com sucesso:', username);
+                const token = gerarToken({ id: result.insertId, email });
+                return res.status(201).json({
+                    message: 'Conta criada com sucesso!',
+                    username,
+                    token
+                });
             });
         });
     } catch (error) {
@@ -105,29 +127,33 @@ app.post('/api/register', async (req, res) => {
 });
 
 // ================================
-// ROTA 2: LOGIN DE USUÁRIO
+// ROTA 2: LOGIN
 // ================================
 app.post('/api/login', (req, res) => {
     const { email, password } = req.body;
 
-    const sql = 'SELECT * FROM usuarios WHERE email = ?';
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Preencha e-mail e senha!' });
+    }
 
-    db.query(sql, [email], async (err, results) => {
-        if (err) return res.status(500).json({ message: 'Erro no servidor' });
+    db.query('SELECT * FROM usuarios WHERE email = ?', [email], async (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Erro no servidor' });
+        }
 
         if (results.length === 0) {
             return res.status(404).json({ message: 'E-mail não encontrado!' });
         }
 
         const usuario = results[0];
-
         const senhaValida = await bcrypt.compare(password, usuario.senha);
 
         if (!senhaValida) {
             return res.status(401).json({ message: 'Senha incorreta!' });
         }
 
-        console.log(' Login realizado por:', usuario.nome);
+        console.log('Login realizado por:', usuario.nome);
         return res.status(200).json({
             message: 'Login realizado com sucesso!',
             username: usuario.nome,
@@ -137,114 +163,241 @@ app.post('/api/login', (req, res) => {
 });
 
 // ================================
-// ROTA 3: LOGIN / CADASTRO COM GOOGLE
+// ROTA 3: LOGIN COM GOOGLE
 // ================================
 app.post('/api/google-login', async (req, res) => {
+    const { credential } = req.body;
+
+    if (!credential) {
+        return res.status(400).json({ message: 'Credencial do Google ausente.' });
+    }
+
     try {
-        const ticket = await googleClient.verifyIdToken({
-            idToken: req.body.credential,
-            audience: GOOGLE_CLIENT_ID
-        });
+        // O próprio Google confere a assinatura e a validade do token
+        const respostaGoogle = await fetch(
+            'https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(credential)
+        );
+        const payload = await respostaGoogle.json();
 
-        const { email, name, email_verified } = ticket.getPayload();
-
-        if (!email_verified) {
+        if (!respostaGoogle.ok) {
+            throw new Error(payload.error_description || 'Token recusado pelo Google');
+        }
+        if (payload.aud !== GOOGLE_CLIENT_ID) {
+            throw new Error('Token emitido para outro cliente');
+        }
+        if (payload.iss !== 'accounts.google.com' && payload.iss !== 'https://accounts.google.com') {
+            throw new Error('Emissor do token inválido');
+        }
+        if (String(payload.email_verified) !== 'true') {
             return res.status(401).json({ message: 'E-mail do Google não verificado.' });
         }
 
-        db.query('SELECT * FROM usuarios WHERE email = ?', [email], async (err, results) => {
-            if (err) return res.status(500).json({ message: 'Erro no servidor' });
+        const email = payload.email;
+        const nome = payload.name || email.split('@')[0];
 
-            // Já tem conta: só entra
+        db.query('SELECT * FROM usuarios WHERE email = ?', [email], async (err, results) => {
+            if (err) {
+                console.error('ERRO AO CONSULTAR USUÁRIO (GOOGLE):', err);
+                return res.status(500).json({ message: 'Erro no servidor' });
+            }
+
+            // Já existe: só entra
             if (results.length > 0) {
-                console.log('Login Google por:', results[0].nome);
+                const usuario = results[0];
+                console.log('Login Google por:', usuario.nome);
                 return res.status(200).json({
-                    message: 'Login realizado com sucesso!',
-                    username: results[0].nome,
-                    token: gerarToken(results[0])
+                    message: 'Login com Google realizado com sucesso!',
+                    username: usuario.nome,
+                    token: gerarToken(usuario)
                 });
             }
 
-            // Não tem conta: cria uma
+            // Não existe: cria a conta com senha aleatória
             try {
-                const nome = name || email.split('@')[0];
-                const senhaAleatoria = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+                const hash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
 
                 db.query(
                     'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)',
-                    [nome, email, senhaAleatoria],
-                    (err2, result2) => {
+                    [nome, email, hash],
+                    (err2, result) => {
                         if (err2) {
-                            console.error('ERRO AO CRIAR USUÁRIO GOOGLE:', err2);
-                            return res.status(500).json({ message: 'Erro no banco de dados: ' + err2.sqlMessage });
+                            console.error('ERRO AO CRIAR CONTA (GOOGLE):', err2);
+                            return res.status(500).json({ message: 'Erro ao criar conta.' });
                         }
-                        console.log('Usuário Google criado:', nome);
+
+                        console.log('Conta criada via Google:', nome);
                         return res.status(201).json({
-                            message: 'Conta criada com sucesso!',
+                            message: 'Conta criada com Google!',
                             username: nome,
-                            token: gerarToken({ id_usuario: result2.insertId, nome })
+                            token: gerarToken({ id: result.insertId, email })
                         });
                     }
                 );
             } catch (e) {
-                console.error(e);
-                return res.status(500).json({ message: 'Erro ao criar a conta.' });
+                console.error('ERRO AO PROCESSAR CONTA (GOOGLE):', e);
+                return res.status(500).json({ message: 'Erro ao processar a conta.' });
             }
         });
-
     } catch (error) {
-        console.error('ERRO GOOGLE:', error.message);
-        return res.status(401).json({ message: 'Token do Google inválido.' });
+        console.error('ERRO NO GOOGLE LOGIN:', error);
+        
     }
 });
 
 // ================================
-// ROTA 4: ALTERAR NOME / APELIDO
+// ROTA 4: RECUPERAR SENHA
 // ================================
-app.put('/api/usuario/nome', (req, res) => {
-    // Lê o token enviado no cabeçalho Authorization: Bearer <token>
-    const auth = req.headers.authorization || '';
-    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
-    if (!token) return res.status(401).json({ message: 'Não autenticado.' });
+app.post('/api/recuperar-senha', (req, res) => {
+    const { email } = req.body;
 
-    let dados;
-    try {
-        dados = jwt.verify(token, JWT_SECRET);
-    } catch (e) {
-        return res.status(401).json({ message: 'Sessão inválida ou expirada.' });
+    if (!email) {
+        return res.status(400).json({ message: 'Informe o e-mail.' });
     }
 
-    const nome = (req.body.nome || '').trim();
-    if (!nome || nome.length > 30) {
-        return res.status(400).json({ message: 'Nome inválido (1 a 30 caracteres).' });
-    }
-
-    db.query('UPDATE usuarios SET nome = ? WHERE id_usuario = ?', [nome, dados.id_usuario], (err) => {
+    db.query('SELECT id_usuario FROM usuarios WHERE email = ?', [email], async (err, results) => {
         if (err) {
-            console.error('ERRO AO ATUALIZAR NOME:', err);
-            return res.status(500).json({ message: 'Erro no banco de dados.' });
+            console.error(err);
+            return res.status(500).json({ message: 'Erro no servidor' });
         }
-        // Token novo, porque o nome também vai dentro dele
-        return res.json({
-            message: 'Nome atualizado!',
-            username: nome,
-            token: gerarToken({ id_usuario: dados.id_usuario, nome })
-        });
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'E-mail não encontrado!' });
+        }
+
+        try {
+            const tempPassword = crypto.randomBytes(4).toString('hex');
+            const hash = await bcrypt.hash(tempPassword, 10);
+
+            db.query('UPDATE usuarios SET senha = ? WHERE email = ?', [hash, email], (err2) => {
+                if (err2) {
+                    console.error(err2);
+                    return res.status(500).json({ message: 'Erro ao redefinir a senha.' });
+                }
+
+                return res.status(200).json({
+                    message: 'Senha redefinida com sucesso!',
+                    tempPassword
+                });
+            });
+        } catch (e) {
+            console.error(e);
+            return res.status(500).json({ message: 'Erro ao processar a senha.' });
+        }
     });
 });
 
 // ================================
-// ERROS GERAIS (JSON malformado, corpo grande demais etc.)
-// Fica DEPOIS de todas as rotas
+// ROTA 5: PROGRESSO DA CONTA (usado pelo nw-sync.js)
+// Tabela: progresso_usuario (id_usuario, chave, valor)
 // ================================
-app.use((err, req, res, next) => {
-    console.error('ERRO NÃO TRATADO:', err.message);
-    if (res.headersSent) return next(err);
-    const status = err.status || err.statusCode || 500;
-    res.status(status).json({
-        message: status === 413 ? 'O arquivo enviado é grande demais.' : 'Requisição inválida ou erro no servidor.',
-        erro: status === 413 ? 'O arquivo enviado é grande demais.' : 'Requisição inválida ou erro no servidor.'
-    });
+const CHAVES_DA_CONTA = /^(status_|musical_|medalha_|notewave-caderno|noteWave_diasEstudo$|noteWave_missoesFeitas$|noteWave_tour_choice$|progressoModulos$|nw_runner)/;
+
+app.get('/api/progresso', autenticar, async (req, res) => {
+    try {
+        const [linhas] = await db.promise().query(
+            'SELECT chave, valor FROM progresso_usuario WHERE id_usuario = ?',
+            [req.usuario.id]
+        );
+        const dados = {};
+        linhas.forEach(l => { dados[l.chave] = l.valor; });
+        return res.json({ dados });
+    } catch (e) {
+        console.error('ERRO AO LER PROGRESSO:', e);
+        return res.status(500).json({ message: 'Erro ao carregar o progresso.' });
+    }
+});
+
+app.put('/api/progresso', autenticar, async (req, res) => {
+    const dados = (req.body && req.body.dados) || {};
+    const remover = Array.isArray(req.body && req.body.remover) ? req.body.remover : [];
+    const idUsuario = req.usuario.id;
+
+    const conn = await db.promise().getConnection();
+    try {
+        await conn.beginTransaction();
+
+        for (const chave of remover) {
+            if (!CHAVES_DA_CONTA.test(chave)) continue;
+            await conn.query(
+                'DELETE FROM progresso_usuario WHERE id_usuario = ? AND chave = ?',
+                [idUsuario, chave]
+            );
+        }
+
+        for (const [chave, valor] of Object.entries(dados)) {
+            if (!CHAVES_DA_CONTA.test(chave)) continue;
+            await conn.query(
+                'DELETE FROM progresso_usuario WHERE id_usuario = ? AND chave = ?',
+                [idUsuario, chave]
+            );
+            await conn.query(
+                'INSERT INTO progresso_usuario (id_usuario, chave, valor) VALUES (?, ?, ?)',
+                [idUsuario, chave, String(valor)]
+            );
+        }
+
+        await conn.commit();
+        return res.json({ ok: true });
+    } catch (e) {
+        await conn.rollback();
+        console.error('ERRO AO SALVAR PROGRESSO:', e);
+        return res.status(500).json({ message: 'Erro ao salvar o progresso.' });
+    } finally {
+        conn.release();
+    }
+});
+
+// ================================
+// ROTA DE TESTE DO TOKEN
+// ================================
+app.get('/api/me', autenticar, (req, res) => {
+    res.json({ id: req.usuario.id, email: req.usuario.email });
+});
+
+app.use('/api/runner', require('./runnerApi')(db.promise()));
+
+// Journal (artigos, reações, favoritos, comentários)
+app.use('/api/journal', require('./journalApi')(db.promise()));
+
+// Imagens de capa dos artigos publicados
+app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
+
+// Foto de perfil
+app.use('/api/usuarios', require('./fotoApi')(db.promise(), autenticar));
+
+// Doações (usa vários prefixos: /donations, /donation-interests, /donation-comments...)
+app.use('/api', require('./doacaoApi')(db.promise()));
+
+// ================================
+// ROTA: ALTERAR NOME / APELIDO
+// ================================
+app.put('/api/usuario/nome', autenticar, async (req, res) => {
+    try {
+        const nome = String((req.body && req.body.nome) || '').trim().slice(0, 30);
+
+        if (!nome) {
+            return res.status(400).json({ message: 'O nome não pode ficar vazio.' });
+        }
+
+        const [r] = await db.promise().query(
+            'UPDATE usuarios SET nome = ? WHERE id_usuario = ?',
+            [nome, req.usuario.id]
+        );
+
+        if (!r.affectedRows) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        // Mesmo formato de token do login (id + email), então todas as rotas continuam reconhecendo
+        return res.json({
+            message: 'Nome atualizado com sucesso!',
+            username: nome,
+            token: gerarToken({ id: req.usuario.id, email: req.usuario.email })
+        });
+    } catch (e) {
+        console.error('ERRO AO ALTERAR NOME:', e);
+        return res.status(500).json({ message: 'Não foi possível salvar o nome.' });
+    }
 });
 
 // ================================

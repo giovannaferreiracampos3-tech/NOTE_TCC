@@ -6,6 +6,9 @@
 //   JWT_SECRET   (mesmo do server.js)
 //   DOACAO_KEY   (opcional: chave que criptografa os telefones; se faltar, usa o JWT_SECRET)
 //   TWILIO_SID, TWILIO_TOKEN, TWILIO_FROM  (envio de SMS; sem eles, só em desenvolvimento o código aparece no console)
+//
+// Fotos de perfil: as respostas trazem "autorFoto" (publicação e comentários) e "usuarioFoto" (interessados).
+// São o caminho guardado em usuarios.foto (ex.: /uploads/avatars/12-1730700000.png) ou null.
 // ================================
 const express = require('express');
 const jwt = require('jsonwebtoken');
@@ -106,7 +109,7 @@ module.exports = (db) => {
   r.use((req, res, next) => {
     req.user = null;
     const a = req.headers.authorization || '';
-    if (a.startsWith('Bearer ')) { try { const p = jwt.verify(a.slice(7), JWT_SECRET); req.user = { id: p.id_usuario, nome: p.nome }; } catch (e) { /* token inválido = visitante */ } }
+    if (a.startsWith('Bearer ')) { try { const p = jwt.verify(a.slice(7), JWT_SECRET); req.user = { id: Number(p.id_usuario ?? p.id), nome: p.nome }; } catch (e) { /* token inválido = visitante */ } }
     next();
   });
   const exige = (req, res, next) => req.user ? next() : erro(res, 401, 'Entre na sua conta para fazer isso.');
@@ -126,6 +129,12 @@ module.exports = (db) => {
 
   const notificar = (conn, userId, donId, msg) => conn.query('INSERT INTO donation_notifications (user_id, donation_id, message) VALUES (?,?,?)', [userId, donId, msg]);
   const buscar = async id => { const [[d]] = await db.query('SELECT * FROM donations WHERE id=? AND deleted_at IS NULL', [id]); return d; };
+
+  // Comentário no formato que o front espera (com a foto de quem comentou)
+  const comentarioJson = (c, req) => ({
+    id: c.id, autor: nomePublico(c.nome), autorFoto: c.foto || null,
+    texto: c.comment, data: c.created_at, meu: !!req.user && req.user.id === c.user_id, paiId: c.parent_comment_id
+  });
 
   // ---------- validação dos campos de publicação ----------
   // O celular é opcional. Se vier preenchido, precisa ser celular válido (a confirmação por SMS é conferida depois).
@@ -164,7 +173,7 @@ module.exports = (db) => {
       const tel = String((req.body || {}).telefone || '').replace(/\D/g, '');
       if (!CELULAR.test(tel)) return erro(res, 400, 'Informe um celular válido com DDD para receber o SMS.');
       const ph = hashTel(tel);
-  
+
       if (!SEM_LIMITE_SMS) {
         const [[u]] = await db.query('SELECT TIMESTAMPDIFF(SECOND, created_at, NOW()) s FROM donation_phone_verifications WHERE user_id=? ORDER BY id DESC LIMIT 1', [req.user.id]);
         if (u && u.s < 60) return erro(res, 429, 'Aguarde ' + (60 - u.s) + ' segundos para pedir outro código.');
@@ -172,7 +181,7 @@ module.exports = (db) => {
         const [[{ n }]] = await db.query('SELECT COUNT(*) n FROM donation_phone_verifications WHERE phone_hash=? AND created_at > NOW() - INTERVAL 1 HOUR', [ph]);
         if (n >= 3) return erro(res, 429, 'Este número recebeu códigos demais. Tente novamente mais tarde.');
       }
-  
+
       const codigo = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
       const [ins] = await db.query('INSERT INTO donation_phone_verifications (user_id, phone_hash, code_hash, expires_at) VALUES (?,?,?, DATE_ADD(NOW(), INTERVAL 10 MINUTE))',
         [req.user.id, ph, hashCodigo(req.user.id, tel, codigo)]);
@@ -208,7 +217,8 @@ module.exports = (db) => {
   const item = x => ({
     id: x.id, nome: x.instrument_name, categoria: x.category,
     resumo: x.description.length > 120 ? x.description.slice(0, 117).trimEnd() + '…' : x.description,
-    autor: nomePublico(x.autor_nome), data: x.created_at, status: x.status, totalComentarios: x.total_comentarios,
+    autor: nomePublico(x.autor_nome), autorFoto: x.autor_foto || null,
+    data: x.created_at, status: x.status, totalComentarios: x.total_comentarios,
     imagem: x.imagem ? '/uploads/' + x.imagem : null,
     totalInteressados: x.total_interessados, pendentes: x.pendentes
   });
@@ -233,7 +243,7 @@ module.exports = (db) => {
     const [[{ total }]] = await db.query('SELECT COUNT(*) total FROM donations d WHERE ' + where, p);
     const extra = minhas ? ', (SELECT COUNT(*) FROM donation_interests i WHERE i.donation_id=d.id) total_interessados, (SELECT COUNT(*) FROM donation_interests i WHERE i.donation_id=d.id AND i.status=\'pendente\') pendentes' : '';
     const [rows] = await db.query(
-      `SELECT d.id, d.instrument_name, d.category, d.description, d.status, d.created_at, u.nome autor_nome,
+      `SELECT d.id, d.instrument_name, d.category, d.description, d.status, d.created_at, u.nome autor_nome, u.foto autor_foto,
         (SELECT image_path FROM donation_images WHERE donation_id=d.id ORDER BY position, id LIMIT 1) imagem,
         (SELECT COUNT(*) FROM donation_comments c WHERE c.donation_id=d.id) total_comentarios ${extra}
        FROM donations d JOIN usuarios u ON u.id_usuario=d.user_id WHERE ${where}
@@ -243,10 +253,10 @@ module.exports = (db) => {
 
   r.get('/donations/:id', h(async (req, res) => {
     const id = parseInt(req.params.id, 10);
-    const [[d]] = await db.query('SELECT d.*, u.nome autor_nome FROM donations d JOIN usuarios u ON u.id_usuario=d.user_id WHERE d.id=? AND d.deleted_at IS NULL', [id]);
+    const [[d]] = await db.query('SELECT d.*, u.nome autor_nome, u.foto autor_foto FROM donations d JOIN usuarios u ON u.id_usuario=d.user_id WHERE d.id=? AND d.deleted_at IS NULL', [id]);
     if (!d) return erro(res, 404, 'Publicação não encontrada.');
     const [imgs] = await db.query('SELECT id, image_path FROM donation_images WHERE donation_id=? ORDER BY position, id', [id]);
-    const [coms] = await db.query('SELECT c.id, c.user_id, c.parent_comment_id, c.comment, c.created_at, u.nome FROM donation_comments c JOIN usuarios u ON u.id_usuario=c.user_id WHERE c.donation_id=? ORDER BY c.created_at, c.id', [id]);
+    const [coms] = await db.query('SELECT c.id, c.user_id, c.parent_comment_id, c.comment, c.created_at, u.nome, u.foto FROM donation_comments c JOIN usuarios u ON u.id_usuario=c.user_id WHERE c.donation_id=? ORDER BY c.created_at, c.id', [id]);
     let meuInteresse = null;
     if (req.user) {
       const [[i]] = await db.query(`SELECT i.id, i.status, (p.consent_status='autorizado') liberado FROM donation_interests i
@@ -257,10 +267,11 @@ module.exports = (db) => {
     const dono = !!req.user && req.user.id === d.user_id;
     // O telefone NUNCA sai nesta rota; só o dono sabe se existe um cadastrado
     res.json({
-      id: d.id, nome: d.instrument_name, categoria: d.category, descricao: d.description, cidade: d.city, autor: nomePublico(d.autor_nome),
+      id: d.id, nome: d.instrument_name, categoria: d.category, descricao: d.description, cidade: d.city,
+      autor: nomePublico(d.autor_nome), autorFoto: d.autor_foto || null,
       data: d.created_at, status: d.status, meu: dono, temTelefone: dono ? !!d.phone : undefined,
       imagens: imgs.map(x => ({ id: x.id, url: '/uploads/' + x.image_path })), meuInteresse,
-      comentarios: coms.map(c => ({ id: c.id, autor: nomePublico(c.nome), texto: c.comment, data: c.created_at, meu: !!req.user && req.user.id === c.user_id, paiId: c.parent_comment_id }))
+      comentarios: coms.map(c => comentarioJson(c, req))
     });
   }));
 
@@ -343,8 +354,8 @@ module.exports = (db) => {
   // ================= COMENTÁRIOS =================
   r.get('/donations/:id/comments', h(async (req, res) => {
     const id = parseInt(req.params.id, 10); if (!(await buscar(id))) return erro(res, 404, 'Publicação não encontrada.');
-    const [coms] = await db.query('SELECT c.id, c.user_id, c.parent_comment_id, c.comment, c.created_at, u.nome FROM donation_comments c JOIN usuarios u ON u.id_usuario=c.user_id WHERE c.donation_id=? ORDER BY c.created_at, c.id', [id]);
-    res.json(coms.map(c => ({ id: c.id, autor: nomePublico(c.nome), texto: c.comment, data: c.created_at, meu: !!req.user && req.user.id === c.user_id, paiId: c.parent_comment_id })));
+    const [coms] = await db.query('SELECT c.id, c.user_id, c.parent_comment_id, c.comment, c.created_at, u.nome, u.foto FROM donation_comments c JOIN usuarios u ON u.id_usuario=c.user_id WHERE c.donation_id=? ORDER BY c.created_at, c.id', [id]);
+    res.json(coms.map(c => comentarioJson(c, req)));
   }));
 
   r.post('/donations/:id/comments', exige, limite(20, 600000, 'comentar'), h(async (req, res) => {
@@ -382,7 +393,8 @@ module.exports = (db) => {
     try {
       await conn.beginTransaction();
       const [ins] = await conn.query('INSERT INTO donation_interests (donation_id, interested_user_id) VALUES (?,?)', [id, req.user.id]);
-      await notificar(conn, d.user_id, id, nomePublico(req.user.nome) + ' tem interesse no seu instrumento "' + d.instrument_name + '".');
+      const [[eu]] = await conn.query('SELECT nome FROM usuarios WHERE id_usuario=?', [req.user.id]);
+      await notificar(conn, d.user_id, id, nomePublico(eu && eu.nome) + ' tem interesse no seu instrumento "' + d.instrument_name + '".');
       await conn.commit(); res.status(201).json({ id: ins.insertId });
     } catch (e) {
       await conn.rollback();
@@ -395,11 +407,11 @@ module.exports = (db) => {
     const id = parseInt(req.params.id, 10), d = await buscar(id);
     if (!d) return erro(res, 404, 'Publicação não encontrada.');
     if (d.user_id !== req.user.id) return erro(res, 403, 'Somente o responsável vê as solicitações.');
-    const [rows] = await db.query(`SELECT i.id, i.status, i.created_at, u.nome, (p.consent_status='autorizado') liberado FROM donation_interests i
+    const [rows] = await db.query(`SELECT i.id, i.status, i.created_at, u.nome, u.foto, (p.consent_status='autorizado') liberado FROM donation_interests i
       JOIN usuarios u ON u.id_usuario=i.interested_user_id
       LEFT JOIN donation_contact_permissions p ON p.donation_id=i.donation_id AND p.interested_user_id=i.interested_user_id
       WHERE i.donation_id=? ORDER BY i.created_at`, [id]);
-    res.json(rows.map(x => ({ id: x.id, usuario: nomePublico(x.nome), data: x.created_at, status: x.status, contatoLiberado: !!x.liberado })));
+    res.json(rows.map(x => ({ id: x.id, usuario: nomePublico(x.nome), usuarioFoto: x.foto || null, data: x.created_at, status: x.status, contatoLiberado: !!x.liberado })));
   }));
 
   // Carrega uma solicitação garantindo que quem pede é o dono da doação

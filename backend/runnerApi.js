@@ -20,7 +20,7 @@ module.exports = function (db) {
     const h = req.headers.authorization || '';
     const t = h.startsWith('Bearer ') ? h.slice(7) : null;
     if (!t) return res.status(401).json({ erro: 'nao-autenticado' });
-    try { req.uid = jwt.verify(t, JWT_SECRET).id_usuario; next(); }
+    try { req.uid = jwt.verify(t, JWT_SECRET).id; next(); }
     catch (e) { res.status(401).json({ erro: 'sessao-invalida' }); }
   }
   router.use(auth);

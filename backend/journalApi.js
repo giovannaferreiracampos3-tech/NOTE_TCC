@@ -2,6 +2,9 @@
    Artigos da equipe ficam no banco. Usuários logados podem: reagir, favoritar, comentar,
    PUBLICAR os próprios artigos (com imagem de capa) e APAGÁ-LOS.
    Uso no server.js:  app.use('/api/journal', require('./journalApi')(db.promise()));
+
+   Fotos de perfil: artigos e comentários trazem "autorFoto" (caminho guardado em usuarios.foto,
+   ex.: /uploads/avatars/12-1730700000.png) ou null. Artigos da equipe não têm id_usuario, então vêm com null.
 */
 const express = require('express');
 const jwt = require('jsonwebtoken');
@@ -91,19 +94,21 @@ module.exports = function (db) {
     return id;
   };
 
+  // LEFT JOIN em usuarios: artigos da equipe (id_usuario nulo) continuam aparecendo, só sem foto
   const SELECT_BASE = `
     SELECT p.id_publicacao AS id, p.titulo, p.resumo, p.categoria, p.origem, p.destaque, p.blocos,
-           p.criada_em AS data, p.autor, p.imagem, p.id_usuario AS idDono,
+           p.criada_em AS data, p.autor, p.imagem, p.id_usuario AS idDono, ua.foto AS autorFoto,
            (SELECT COUNT(*) FROM comentarios c WHERE c.id_publicacao = p.id_publicacao) AS totalComentarios,
            (SELECT COUNT(*) FROM reacoes r WHERE r.id_publicacao = p.id_publicacao) AS totalReacoes,
            EXISTS(SELECT 1 FROM favoritos f WHERE f.id_publicacao = p.id_publicacao AND f.id_usuario = ?) AS favorito
-    FROM publicacoes p`;
+    FROM publicacoes p
+    LEFT JOIN usuarios ua ON ua.id_usuario = p.id_usuario`;
 
   const formatar = (r, eu) => {
     const blocos = lerJson(r.blocos);
     return {
       id: r.id, titulo: r.titulo, resumo: r.resumo, categoria: r.categoria, origem: r.origem,
-      destaque: !!r.destaque, autor: r.autor, data: r.data, minutos: minutos(blocos, r.resumo),
+      destaque: !!r.destaque, autor: r.autor, autorFoto: r.autorFoto || null, data: r.data, minutos: minutos(blocos, r.resumo),
       totalComentarios: r.totalComentarios, totalReacoes: r.totalReacoes, favorito: !!r.favorito,
       imagem: r.imagem || null,
       meu: !!eu && r.idDono === eu
@@ -154,12 +159,12 @@ module.exports = function (db) {
     const [linhas] = await db.query(SELECT_BASE + ' WHERE p.id_publicacao = ?', [eu || 0, id]);
     if (!linhas[0]) return res.status(404).json({ erro: 'Publicação não encontrada.' });
     const [coms] = await db.query(
-      `SELECT c.id_comentario AS id, c.texto, c.criado_em AS data, c.id_usuario AS idAutor, u.nome AS autor
+      `SELECT c.id_comentario AS id, c.texto, c.criado_em AS data, c.id_usuario AS idAutor, u.nome AS autor, u.foto AS autorFoto
        FROM comentarios c JOIN usuarios u ON u.id_usuario = c.id_usuario
        WHERE c.id_publicacao = ? ORDER BY c.criado_em ASC LIMIT 200`, [id]);
     res.json({
       ...formatar(linhas[0], eu), blocos: lerJson(linhas[0].blocos), ...(await reacoesDe(id, eu)),
-      comentarios: coms.map(c => ({ id: c.id, texto: c.texto, data: c.data, autor: c.autor, meu: !!eu && c.idAutor === eu }))
+      comentarios: coms.map(c => ({ id: c.id, texto: c.texto, data: c.data, autor: c.autor, autorFoto: c.autorFoto || null, meu: !!eu && c.idAutor === eu }))
     });
   }));
 
