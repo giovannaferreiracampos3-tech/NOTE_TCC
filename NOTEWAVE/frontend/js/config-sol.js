@@ -1,2 +1,0 @@
-window.ATIV = { p: 'sol', nome: 'Clave de Sol', dados: licoesDeNotasSol,
-    midi: { 'position-DoCentral': 60, 'position-Re1': 62, 'position-Mi1': 64, 'position-Fa1': 65, 'position-Sol1': 67, 'position-La1': 69, 'position-Si1': 71, 'position-Do2': 72, 'position-Re2': 74, 'position-Mi2': 76, 'position-Fa2': 77, 'position-Sol2': 79, 'position-La2': 81, 'position-Si2': 83 } };

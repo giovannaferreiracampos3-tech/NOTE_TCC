@@ -1,2 +1,0 @@
-window.ATIV = { p: 'fa', nome: 'Clave de Fá', dados: licoesDeNotasFa,
-    midi: { 'position-Re1': 38, 'position-Mi1': 40, 'position-Fa1': 41, 'position-Sol1': 43, 'position-La1': 45, 'position-Si1': 47, 'position-Do2': 48, 'position-Re2': 50, 'position-Mi2': 52, 'position-Fa2': 53, 'position-Sol2': 55, 'position-La2': 57, 'position-Si2': 59, 'position-DoCentral': 60 } };
