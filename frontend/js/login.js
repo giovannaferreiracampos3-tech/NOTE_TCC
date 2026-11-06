@@ -1,4 +1,37 @@
 // ================================
+// SESSÃO: abrir a tela de login = sair da conta anterior
+// (envia o que faltava para o servidor e limpa o progresso daquele usuário do navegador)
+// ================================
+const saindoDaConta = window.NWSync ? window.NWSync.sair() : Promise.resolve();
+
+// ================================
+// INICIAR SESSÃO: guarda o token e baixa o progresso DESTA conta (lições, medalhas, caderno...)
+// ================================
+async function iniciarSessao(data, username) {
+    await saindoDaConta;
+
+    const token = data && (data.token || data.accessToken || data.jwt);
+    if (token) {
+        localStorage.setItem("token", token);
+    } else {
+        localStorage.removeItem("token");
+        console.warn("[NoteWave] O servidor não devolveu um token no login. Sem ele, o Jornal e o progresso na conta não funcionam: o server.js precisa enviar { token }.");
+    }
+    localStorage.setItem("noteWave_user", username);
+
+    if (!window.NWSync) {
+        console.warn("[NoteWave] nw-sync.js não foi carregado no login.html: o progresso não será salvo na conta.");
+        return;
+    }
+    try {
+        await window.NWSync.entrar();
+    } catch (erro) {
+        console.error(erro);
+        alert("Você entrou, mas não foi possível carregar seu progresso agora. Tente entrar de novo em instantes.");
+    }
+}
+
+// ================================
 // TROCAR ENTRE LOGIN E CADASTRO
 // ================================
 function switchTab(tabName) {
@@ -45,15 +78,15 @@ function closeForgotModal() {
 }
 
 // ================================
-// CHECAR "LEMBRAR DE MIM" AO CARREGAR
+// CHECAR "LEMBRAR DE MIM" AO CARREGAR (só o e-mail, nunca a senha)
 // ================================
 document.addEventListener("DOMContentLoaded", () => {
-    const savedEmail = localStorage.getItem("remember_email");
-    const savedPass = localStorage.getItem("remember_pass");
+    localStorage.removeItem("remember_pass"); // limpa senhas salvas por versões antigas
 
-    if (savedEmail && savedPass) {
+    const savedEmail = localStorage.getItem("remember_email");
+
+    if (savedEmail) {
         document.getElementById("loginEmail").value = savedEmail;
-        document.getElementById("loginPassword").value = savedPass;
         document.getElementById("rememberMe").checked = true;
     }
 });
@@ -88,10 +121,9 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             return;
         }
 
-       // Dentro da função de cadastro do login.js:
-       localStorage.setItem("noteWave_user", username);
+        await iniciarSessao(data, username);
         alert("Conta criada com sucesso!");
-        
+
         // Vai direto para o perfil
         window.location.href = "perfil.html";
 
@@ -127,13 +159,12 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
         if (rememberMe) {
             localStorage.setItem("remember_email", email);
-            localStorage.setItem("remember_pass", password);
         } else {
             localStorage.removeItem("remember_email");
-            localStorage.removeItem("remember_pass");
         }
+        localStorage.removeItem("remember_pass"); // limpa senhas salvas antes
 
-        localStorage.setItem("noteWave_user", data.username || data.user?.username);
+        await iniciarSessao(data, data.username || data.user?.username);
 
         alert("Login realizado com sucesso!");
         window.location.href = "perfil.html";
@@ -174,3 +205,61 @@ document.getElementById("forgotForm").addEventListener("submit", async function(
         alert("Não foi possível conectar ao servidor.");
     }
 });
+
+// ================================
+// LOGIN COM GOOGLE
+// ================================
+const GOOGLE_CLIENT_ID = "872496584799-n8mb7of1sjg6q89amhdk29mlfettfvfc.apps.googleusercontent.com";
+
+function initGoogle() {
+    google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredential
+    });
+
+    ["googleBtnLogin", "googleBtnRegister"].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        google.accounts.id.renderButton(el, {
+            theme: "outline",
+            size: "large",
+            text: id === "googleBtnLogin" ? "signin_with" : "signup_with",
+            shape: "rectangular",
+            width: 320,
+            locale: "pt-BR"
+        });
+    });
+}
+
+async function handleGoogleCredential(googleResponse) {
+    try {
+        const response = await fetch("http://localhost:5000/api/google-login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ credential: googleResponse.credential })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.message || data.error);
+            return;
+        }
+
+        await iniciarSessao(data, data.username || data.user?.username);
+        window.location.href = "perfil.html";
+
+    } catch (error) {
+        console.error(error);
+        alert("Não foi possível conectar ao servidor.");
+    }
+}
+
+// Gancho oficial do Google: chama initGoogle assim que a biblioteca carrega
+window.onGoogleLibraryLoad = initGoogle;
+
+// Se a biblioteca do Google já tiver carregado antes deste arquivo, inicia agora
+if (window.google && window.google.accounts && window.google.accounts.id) {
+    initGoogle();
+}

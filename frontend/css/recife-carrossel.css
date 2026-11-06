@@ -1,0 +1,43 @@
+/* Carrossel de atividades em formas do mar. Carregue DEPOIS de atividades-mar.css */
+.carrossel{display:flex;align-items:center;justify-content:center;gap:clamp(4px,2vw,22px);margin-top:6px}
+.janela{flex:none;width:min(72vw,360px)}
+.janela #cards{display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:10px 0 18px}
+.janela #cards::-webkit-scrollbar{display:none}
+
+/* o cartão vira a forma: sem fundo, borda ou sombra próprios */
+.janela .card{position:relative;flex:0 0 100%;display:block;aspect-ratio:320/360;scroll-snap-align:center;scroll-snap-stop:always;background:none;border:0;border-radius:32px;box-shadow:none;padding:0;color:#06223f}
+.janela .card:hover,.janela .card:focus-visible{transform:none}
+.janela .card:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.forma{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 12px 16px rgba(0,20,40,.3));transition:transform .25s}
+:root[data-tema=escuro] .forma{filter:drop-shadow(0 0 16px rgba(159,232,255,.3)) drop-shadow(0 10px 14px rgba(0,0,0,.4))}
+.janela .card:hover .forma,.janela .card:focus-visible .forma{transform:translateY(-5px) rotate(-1deg)}
+.conteudo{position:absolute;left:var(--l);right:var(--l);top:var(--t);bottom:var(--b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center}
+.card[data-f="0"]{--l:21%;--t:25%;--b:27%}
+.card[data-f="1"]{--l:17%;--t:23%;--b:23%}
+.card[data-f="2"]{--l:16%;--t:25%;--b:25%}
+.card[data-f="3"]{--l:18%;--t:24%;--b:24%}
+.janela .card .ico{font-size:30px}
+.janela .card h3{font-size:21px;color:#06223f}
+.janela .card p{font-size:13px;line-height:1.4;color:#264a60}
+.janela .card .best{margin:4px 0 0;font-size:13px;background:rgba(255,255,255,.6);padding:3px 12px;border-radius:99px}
+
+.seta{all:unset;cursor:pointer;flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;padding-bottom:5px;box-sizing:border-box;font:700 34px/1 Georgia,serif;color:#06223f;background:radial-gradient(circle at 35% 30%,#fff,#bfeaf0 70%);box-shadow:0 6px 16px rgba(0,20,40,.3),inset 0 0 0 3px rgba(255,255,255,.7);transition:transform .15s}
+.seta:hover{transform:scale(1.1)}
+.seta:focus-visible,.pontos button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+:root[data-tema=escuro] .seta{color:#eaf6f6;background:radial-gradient(circle at 35% 30%,#3a9bbd,#0f3a57 75%);box-shadow:0 6px 16px rgba(0,0,0,.45),inset 0 0 0 3px rgba(159,232,255,.35)}
+.pontos{display:flex;justify-content:center;gap:10px;margin-top:2px}
+.pontos button{all:unset;cursor:pointer;width:12px;height:12px;border-radius:50%;background:var(--pill);box-shadow:inset 0 0 0 2px var(--txt2);transition:width .2s,background .2s}
+.pontos button[aria-current=true]{width:30px;border-radius:99px;background:var(--sun)}
+@media(max-width:520px){.seta{width:42px;height:42px;font-size:28px}.janela{width:min(68vw,330px)}}
+
+/* ===== Refinamento: texto dentro das conchas ===== */
+.card[data-f="0"]{--l:21%;--t:25%;--b:24%}
+.card[data-f="1"]{--l:19%;--t:24%;--b:20%}
+.card[data-f="2"]{--l:19%;--t:26%;--b:21%}
+.card[data-f="3"]{--l:19%;--t:24%;--b:21%}
+.conteudo{gap:4px}
+.janela .card .ico{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:20px;background:radial-gradient(circle at 35% 30%,#fff,#e6f4f6 75%);box-shadow:0 3px 8px rgba(0,40,70,.25),inset 0 0 0 2px rgba(255,255,255,.9)}
+.janela .card h3{font-size:20px;line-height:1.15;letter-spacing:.2px;color:#06223f}
+.janela .card h3::after{content:"";display:block;width:56px;height:8px;margin:5px auto 0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='8'%3E%3Cpath d='M0 4q7-6 14 0t14 0t14 0t14 0' fill='none' stroke='%232f8f9a' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center}
+.janela .card p{font-size:12.5px;line-height:1.38;color:#1d4660}
+.janela .card .best{margin-top:3px;font-size:12.5px;font-weight:700;color:#5a3d00;background:linear-gradient(180deg,#fff3c4,#ffd45f);box-shadow:0 2px 6px rgba(120,80,0,.3),inset 0 0 0 1.5px rgba(255,255,255,.7);padding:3px 12px}

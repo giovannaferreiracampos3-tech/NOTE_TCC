@@ -1,0 +1,18 @@
+/* NoteWave – animação de abertura (splash). Usada por ../js/splash.js */
+html.nw-lock{overflow:hidden}
+#nw-splash{position:fixed;inset:0;z-index:2147483000;overflow:hidden;cursor:pointer;
+  background:linear-gradient(#061a3d,#0a3566 55%,#0c4a86);transition:opacity .9s ease}
+#nw-splash.nw-out{opacity:0;pointer-events:none}
+.nw-st{position:absolute;left:0;top:0;transform-origin:0 0;overflow:hidden}
+.nw-st>*{position:absolute}
+.nw-ray{top:-200px;width:260px;height:95%;background:linear-gradient(#7fd0ff55,#7fd0ff00 85%);filter:blur(28px);mix-blend-mode:screen;transform-origin:50% 0}
+.nw-cv,.nw-cw{left:0;top:0;pointer-events:none}
+.nw-wv{left:0;bottom:0;width:5760px;height:460px}
+.nw-veil{inset:0;background:#04122b}
+.nw-pool{width:1100px;height:1100px;margin:-550px 0 0 -550px;background:radial-gradient(closest-side,#2f8fe066,#1b6fc233 50%,#0000)}
+.nw-m{width:0;height:0;left:0;top:0;filter:drop-shadow(0 0 2px #a8e0ff) drop-shadow(0 0 26px #3ea0ff99)}
+.nw-m img{position:absolute;left:0;bottom:0;transform:translateX(-50%);max-width:none}
+.nw-tx{font:700 170px/1 Poppins,"Segoe UI",system-ui,sans-serif;letter-spacing:1px;white-space:nowrap;transform:translateY(-52%);visibility:hidden}
+.nw-tx span{display:inline-block}
+.nw-tx .w{color:#6cc7ff}.nw-tx .n{color:#eef8ff}
+.nw-sp{width:120px;height:120px;margin:-60px 0 0 -60px;opacity:0;filter:drop-shadow(0 0 14px #9be0ff)}

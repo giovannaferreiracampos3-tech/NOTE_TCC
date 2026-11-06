@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NoteWave - Recife de Atividades</title>
+<link rel="stylesheet" href="../css/recife-base.css">
+<link rel="stylesheet" href="../css/atividades-mar.css">
+<link rel="stylesheet" href="../css/recife-carrossel.css">
+<link rel="stylesheet" href="../css/recife-hero.css">
+<script src="../js/recife-tema.js"></script>
+</head>
+<body>
+
+<!-- ===================== VÍDEO DE ENTRADA =====================
+     Toca uma vez por sessão, com botão "Pular" (ou tecla Esc).
+     PARA ADICIONAR: salve o vídeo em ../video/intro-recife.mp4 e
+     preencha data-src abaixo. Enquanto estiver vazio, aparece um
+     aviso tracejado dourado no lugar. Para remover tudo, apague este bloco. -->
+<div class="intro" id="intro" hidden>
+  <video id="introVideo" data-src="" muted playsinline preload="auto"></video>
+  <div class="vazio" id="introVazio">🎬 Espaço do vídeo de entrada<small>Adicione o arquivo em data-src do elemento #introVideo (atividades-mar.html).</small></div>
+  <button class="pular" id="introPular" type="button">Pular ▸</button>
+</div>
+<!-- =================== FIM DO VÍDEO DE ENTRADA =================== -->
+
+<header class="top">
+  <a class="back" href="../html/trilha_de_aulas.html">← Voltar para a trilha</a>
+  <div class="treasure" title="Estrelas conquistadas">⭐ <span id="totalStars">0</span></div>
+</header>
+<main>
+  <section id="hub">
+    <header class="hero">
+      <svg class="staff" viewBox="0 0 800 150" aria-hidden="true">
+        <g class="ondas"><path class="l" d="M-200 44q50-14 100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0"/><path class="l" d="M-200 58q50-14 100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0"/><path class="l" d="M-200 72q50-14 100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0"/><path class="l" d="M-200 86q50-14 100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0"/><path class="l" d="M-200 100q50-14 100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0t100 0"/></g>
+        <g transform="translate(110 72)"><g class="b" style="animation-delay:-0s"><ellipse class="h" rx="9" ry="6.5" transform="rotate(-20)"/><path class="s" d="M8 -3V-36q11 5 12 16"/></g></g><g transform="translate(260 100)"><g class="b" style="animation-delay:-2s"><ellipse class="h" rx="9" ry="6.5" transform="rotate(-20)"/><path class="s" d="M8 -3V-36q11 5 12 16"/></g></g><g transform="translate(560 84)"><g class="b" style="animation-delay:-3s"><ellipse class="h" rx="9" ry="6.5" transform="rotate(-20)"/><ellipse class="h" cx="30" cy="-5" rx="9" ry="6.5" transform="rotate(-20 30 -5)"/><path class="s" d="M8 -3V-38M38 -8V-43"/><path class="br" d="M8 -38L38 -43"/></g></g><g transform="translate(700 64)"><g class="b" style="animation-delay:-4s"><ellipse class="h" rx="9" ry="6.5" transform="rotate(-20)"/><path class="s" d="M8 -3V-36q11 5 12 16"/></g></g>
+      </svg>
+      <h1><span class="t1">Recife</span> <span class="t2">de Atividades</span></h1>
+      <p class="lead">Escolha um mergulho. Cada um treina uma habilidade musical diferente.</p>
+      <div class="tesouro">
+        <div class="moedas" id="moedas" aria-hidden="true"></div>
+        <p id="medalHint"></p>
+      </div>
+    </header>
+    <div class="grid" id="cards"></div>
+  </section>
+  <section id="game" hidden>
+    <div class="gbar">
+      <button class="quit" id="quit" aria-label="Sair da atividade">✕</button>
+      <div class="tide" role="progressbar" aria-valuemin="0" aria-valuemax="8" id="tide"><i id="tideFill"></i></div>
+      <span class="hits" id="hits">0 acertos</span>
+    </div>
+    <h2 id="prompt"></h2>
+    <div id="stage" class="stage"></div>
+    <div id="options" class="options"></div>
+    <div id="fb" class="fb" hidden>
+      <div><strong id="fbTitle"></strong><p id="fbMsg"></p></div>
+      <button id="fbBtn" class="btn">Continuar</button>
+    </div>
+  </section>
+  <section id="result" hidden>
+    <div class="res">
+      <h2 id="resTitle"></h2>
+      <div class="shells" id="resStars"></div>
+      <p id="resMsg"></p>
+      <div class="row">
+        <button class="btn" id="again">Mergulhar de novo</button>
+        <button class="btn ghost" id="toHub">Voltar ao recife</button>
+        <a class="btn" id="medalLink" hidden
+        href="../html/medalhas.html?recompensa=true&titulo=Mestre%20do%20Recife">🏅 Ver minha medalha</a>
+      </div>
+    </div>
+  </section>
+</main>
+<script src="../js/nw-sync.js"></script>
+<script src="../js/atividades-mar.js"></script>
+<script src="../js/recife-carrossel.js"></script>
+<script src="../js/recife-hero.js"></script>
+<script src="../js/rodape.js"></script>
+</body>
+</html>

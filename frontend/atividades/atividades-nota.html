@@ -4,11 +4,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exercício: Leitura de Notas</title>
+    <title>Exercício: Leitura de Notas (Clave de Fá)</title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/final-ocean.css">
+    <link rel="stylesheet" href="../css/recompensa-fa.css">
+    <link rel="stylesheet" href="../css/recompensa-fontes.css">
+    <link rel="stylesheet" href="../css/onda-transicao.css">
+    <link rel="stylesheet" href="../css/tema.css">
+    <link rel="stylesheet" href="../css/modo-escuro-atividades.css">
+    <link rel="stylesheet" href="../css/atividades-mar-tema.css">
+    <link rel="stylesheet" href="../css/fim-trilha.css">
 </head>
 
 <body>
+
+    <!-- TELA FINAL: CONCLUSÃO DA TRILHA (CLAVE DE FÁ) -->
+    <section id="finalOcean" class="final-ocean" aria-hidden="true" style="display: none;">
+        <div class="ocean-background"></div>
+    
+        <div class="ocean-result">
+            <h2 id="oceanResultTitle"></h2>
+            <p id="oceanResultMessage"></p>
+            <p>
+                Aproveitamento:
+                <span id="finalPercentage">0%</span>
+            </p>
+    
+            <div id="resultStars" aria-label="Estrelas conquistadas">
+                <span class="result-star">⭐</span>
+                <span class="result-star">⭐</span>
+                <span class="result-star">⭐</span>
+            </div>
+    
+            <p id="starResultMessage"></p>
+    
+            <button id="retryLessonBtn" hidden class="ocean-button">
+                Refazer
+            </button>
+    
+            <button id="skipLessonBtn" hidden class="ocean-button ocean-button--secondary">
+                Pular
+            </button>
+    
+            <div id="skipConfirmation" class="skip-confirmation" hidden>
+                <p>
+                    Tem certeza que deseja pular?
+                    Você está tão perto de conseguir sua medalha!
+                </p>
+                <button id="cancelSkipBtn" class="ocean-button ocean-button--secondary">Continuar tentando</button>
+                <button id="confirmSkipBtn" class="ocean-button">Sim, pular</button>
+            </div>
+    
+            <button id="receiveMedalBtn" hidden class="ocean-button ocean-button--medal">
+                RECEBER MEDALHA!
+            </button>
+    
+            <div id="medalReveal" class="medal-reveal" hidden></div>
+        </div>
+    </section>
+
+    <!-- TELA DE RECOMPENSA 1: ESTRELAS (CLAVE DE FÁ) -->
+    <div id="telaEstrelas" class="duo-tela" style="display: none;">
+        <div class="duo-card-recompensa">
+            <h2 class="duo-titulo">Fim da Lição!</h2>
+            <div class="duo-estrelas-container" id="duoEstrelasAnimadas"></div>
+            <p class="duo-mensagem">Você mandou muito bem!</p>
+            <button class="duo-btn" id="btnProximoEstrelas">Continuar</button>
+        </div>
+    </div>
+
+    <!-- TELA DE RECOMPENSA 2: MEDALHA (CLAVE DE FÁ) -->
+    <div id="telaMedalha" class="duo-tela" style="display: none;">
+        <div class="duo-card-recompensa">
+            <h2 class="duo-titulo-medalha">Nova Conquista!</h2>
+            <div class="duo-medalha-brilho">
+                <div class="icone-medalha-gigante">
+                    <svg viewBox="0 0 100 100" style="width: 80px; height: 80px;">
+                        <path fill="currentColor" d="M35,25 C45,20 62,24 62,42 C62,56 50,66 42,75 L36,75 C44,65 54,55 54,43 C54,34 43,30 36,33 L35,25 Z M70,33 A 4 4 0 1 1 70,32.9 Z M70,47 A 4 4 0 1 1 70,46.9 Z"/>
+                    </svg>
+                </div>
+            </div>
+            <p class="duo-mensagem-destaque">Medalha Clave de Fá</p>
+            <button class="duo-btn" id="btnIrParaMedalhas">Continuar</button>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Cabeçalho do aplicativo -->
         <header class="app-header">
@@ -21,17 +101,14 @@
             <!-- Seção principal do exercício -->
             <section class="exercise-section">
                 <!-- Identificação dinâmica -->
-                <div class="lesson-number" id="lessonNumber">
-                    <div class="../licoes-data"></div>
-                </div>
+                <div class="lesson-number" id="lessonNumber">Lição...</div>
                 <h1 class="title" id="lessonTitle">Clave de Fá</h1>
                 <p class="instruction">Ouça o áudio e identifique a nota correspondente.</p>
+
                 <!-- Caixa de dica reflexiva -->
                 <div id="helpBox" class="help-box" style="display: none;">
                     💡 <strong>Dica:</strong> <span id="helpText"></span>
                 </div>
-
-
 
                 <!-- Pentagrama musical estrutural -->
                 <div class="staff-container">
@@ -101,143 +178,16 @@
         </main>
     </div>
 
-    <!-- =====================================================
-     NOTEWAVE — TELA FINAL DA TRILHA
-     Adicionar antes dos scripts no final do body.
-     ===================================================== -->
 
- 
-    <section class="final-ocean" id="finalOcean" style="display: none;" aria-hidden="true" aria-labelledby="oceanResultTitle">
- 
-        <!-- Fundo do oceano -->
-        <div class="ocean-background" aria-hidden="true"></div>
 
-        <!-- Areia que aparece quando as ondas recuam -->
-        <div class="ocean-sand" aria-hidden="true"></div>
-
-        <!-- Ondas animadas -->
-        <div class="ocean-wave ocean-wave--deep" aria-hidden="true"></div>
-
-        <div class="ocean-wave ocean-wave--middle" aria-hidden="true"></div>
-
-        <div class="ocean-wave ocean-wave--foam" aria-hidden="true"></div>
-
-        <!-- Mascote musical surfando -->
-        <div class="surfing-note" aria-hidden="true">
-            <img src="../imagem/notinha02.jpeg" alt="">
-        </div>
-
-        <!-- Estrelas conquistadas espalhadas pela areia -->
-        <div class="beach-stars" id="beachStars" aria-hidden="true"></div>
-
-        <!-- Resultado final -->
-        <div class="ocean-result" id="oceanResult" role="group" aria-describedby="oceanResultMessage">
-            <h2 id="oceanResultTitle">
-                Fim da trilha!
-            </h2>
-
-            <p id="oceanResultMessage">
-                Você chegou ao final da sua jornada musical!
-            </p>
-
-            <!-- Porcentagem da última lição -->
-            <div class="result-percentage" id="finalPercentage" aria-label="Aproveitamento na última lição">
-                0%
-            </div>
-
-            <!-- Estrelas correspondentes ao resultado -->
-            <div class="result-stars" id="resultStars" role="img" aria-label="Nenhuma estrela conquistada">
-                <span class="result-star" data-star="1">★</span>
-                <span class="result-star" data-star="2">★</span>
-                <span class="result-star" data-star="3">★</span>
-            </div>
-
-            <!-- Mensagem específica para cada resultado -->
-            <p id="starResultMessage">
-                Continue praticando! Cada tentativa faz parte da aprendizagem.
-            </p>
-
-            <!-- Ações exibidas conforme o desempenho -->
-            <div class="ocean-actions" id="oceanActions">
-
-                <!-- Exibido para resultados de 0% a 49% -->
-                <button type="button" class="ocean-button" id="retryLessonBtn">
-                    ↻ Refazer
-                </button>
-
-                <!-- Exibido para resultados de 50% a 79% -->
-                <button type="button" class="ocean-button ocean-button--secondary" id="skipLessonBtn" hidden>
-                    Pular →
-                </button>
-
-                <!-- Confirmação de pular -->
-                <div class="skip-confirmation" id="skipConfirmation" hidden>
-                    <strong>Tem certeza que deseja pular?</strong>
-                    Você está tão perto de conseguir sua medalha!
-
-                    <div class="ocean-actions">
-                        <button type="button" class="ocean-button" id="confirmSkipBtn">
-                            Sim, quero pular
-                        </button>
-
-                        <button type="button" class="ocean-button ocean-button--secondary" id="cancelSkipBtn">
-                            Continuar tentando
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Exibido para resultados de 80% a 100% -->
-                <button type="button" class="ocean-button ocean-button--medal" id="receiveMedalBtn" hidden>
-                    🏅 RECEBER MEDALHA!
-                </button>
-
-                <!-- Medalha revelada após o resgate -->
-                <div class="medal-reveal" id="medalReveal" hidden aria-live="polite">
-                    <div class="medal-emblem" aria-hidden="true">
-                        🏅
-                    </div>
-
-                    <p>Medalha conquistada!</p>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- =====================================================
-
-         TELAS DE RECOMPENSA (ESTILO DUOLINGO)
-
-         ===================================================== -->
-<!-- Tela 1: Mostra as estrelas conquistadas -->
-<div id="telaEstrelas" class="duo-tela" style="display: none;">
-    <h2 class="duo-titulo">Fim da Lição!</h2>
-    <div class="duo-estrelas-container" id="duoEstrelasAnimadas">
-    <!-- As estrelas serão injetadas aqui pelo JS -->
-    </div>
-    <p class="duo-mensagem">Você mandou muito bem!</p>
-    <button class="duo-btn" id="btnProximoEstrelas">Continuar</button>
-    </div>
-     
-        <!-- Tela 2: Revela a medalha conquistada -->
-    <div id="telaMedalha" class="duo-tela" style="display: none;">
-    <h2 class="duo-titulo-medalha">Nova Conquista!</h2>
-    <div class="duo-medalha-brilho">
-    <div class="icone-medalha-gigante">
-    <!-- SVG da Clave de Fá igual ao da página de medalhas -->
-    <svg viewBox="0 0 100 100" style="width: 80px; height: 80px;">
-    <path fill="currentColor" d="M35,25 C45,20 62,24 62,42 C62,56 50,66 42,75 L36,75 C44,65 54,55 54,43 C54,34 43,30 36,33 L35,25 Z M70,33 A 4 4 0 1 1 70,32.9 Z M70,47 A 4 4 0 1 1 70,46.9 Z"/>
-    </svg>
-    </div>
-    </div>
-    <p class="duo-mensagem-destaque">Medalha Clave de Fá</p>
-    <button class="duo-btn" id="btnIrParaMedalhas">Continuar</button>
-    </div>
-     
-
-    <!-- Scripts modulares -->
+    <!-- Scripts modulares para a Clave de Fá -->
     <script src="../js/licoes-data.js"></script>
-    <script src="../js/atividades-nota.js"></script>
+    <script src="../js/config-fa.js"></script>
+    <script src="../js/atividades-engine.js"></script>
+    <script src="../js/onda-transicao.js"></script>
+    <script src="../js/tema.js"></script>
+    <script src="../js/nw-sync.js"></script>
+    <script src="../js/rodape.js"></script>
 </body>
 
 </html>

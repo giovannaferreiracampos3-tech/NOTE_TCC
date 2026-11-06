@@ -1,0 +1,45 @@
+/* NoteWave - base do recife (tema claro/escuro, cena de fundo, vídeo de entrada).
+   Carregue em TODAS as páginas do recife, antes dos outros CSS. */
+   :root{--s1:#d6f3f4;--s2:#7fcfda;--s3:#2a93ad;--txt:#06223f;--txt2:#0b3c5d;--pill:rgba(255,255,255,.6);
+    --r1:#0e5f73;--r2:#2a8ea3;--r3:#6cc0cc;--c1:#ff6f59;--c2:#ffc857;--c3:#b784e8;--kelp:#1f8f6a;--rayop:.55;--glow:.6}
+    :root[data-tema=escuro]{--s1:#0f5f7d;--s2:#0b3c5d;--s3:#03142a;--txt:#eaf6f6;--txt2:#bfe3e6;--pill:rgba(255,255,255,.1);
+    --r1:#02101f;--r2:#06223f;--r3:#0b3c5d;--c1:#ff8a9b;--c2:#ffd77a;--c3:#c9a0ff;--kelp:#16b58a;--rayop:.2;--glow:1}
+    [hidden]{display:none!important}
+    body{background:linear-gradient(180deg,var(--s1),var(--s2) 55%,var(--s3)) fixed!important}
+    
+    /* Cena de fundo (injetada por recife-tema.js) */
+    .recife{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+    .recife svg{width:100%;height:100%;display:block}
+    .recife .r1{fill:var(--r1)}.r2{fill:var(--r2)}.r3{fill:var(--r3)}
+    .recife .f1{fill:var(--c1)}.f2{fill:var(--c2)}.f3{fill:var(--c3)}
+    .recife .k1{stroke:var(--c1)}.k2{stroke:var(--c2)}.k3{stroke:var(--c3)}
+    .cor{fill:none;stroke-width:16;stroke-linecap:round;stroke-linejoin:round}
+    .kelp{fill:none;stroke:var(--kelp);stroke-width:12;stroke-linecap:round;transform-box:fill-box;transform-origin:50% 100%;animation:bal 5s ease-in-out infinite alternate}
+    .ray{fill:url(#ray);opacity:var(--rayop);transform-box:fill-box;transform-origin:50% 0;animation:sway 9s ease-in-out infinite alternate}
+    .b{fill:none;stroke:#fff;stroke-opacity:.55;stroke-width:2;animation:sobe linear infinite}
+    .nt{font:34px Georgia,serif;fill:#fff;fill-opacity:.6;animation:sobe linear infinite}
+    .cr{fill:#8fefff;opacity:.75}
+    .peixe{animation:nada linear infinite}
+    .glow{fill:url(#gl);opacity:var(--glow);transform-box:fill-box;transform-origin:center;animation:pulsa 4s ease-in-out infinite alternate}
+    .g2{fill:url(#gb);animation-duration:2.6s}
+    .feixe{fill:url(#fx);opacity:calc(var(--glow)*.8)}
+    .twk{fill:#fff;animation:tw 2.5s ease-in-out infinite}
+    @keyframes sobe{from{transform:translateY(0);opacity:0}10%{opacity:1}to{transform:translateY(-950px);opacity:0}}
+    @keyframes bal{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+    @keyframes sway{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+    @keyframes nada{from{transform:translateX(-200px)}to{transform:translateX(1800px)}}
+    @keyframes pulsa{to{transform:scale(1.15)}}
+    @keyframes tw{50%{opacity:.1}}
+    
+    /* Botão de tema */
+    .nw-tema{position:fixed;top:12px;right:12px;z-index:50;width:42px;height:42px;border-radius:50%;border:0;cursor:pointer;font-size:19px;background:var(--pill);backdrop-filter:blur(6px)}
+    .top .nw-tema{position:static;margin-left:10px;flex:none}
+    .nw-tema:focus-visible,.intro .pular:focus-visible{outline:3px solid #ffc857;outline-offset:3px}
+    
+    /* ===== VÍDEO DE ENTRADA (só aparece em páginas com #intro) ===== */
+    .intro{position:fixed;inset:0;z-index:100;background:#021524;display:flex;align-items:center;justify-content:center}
+    .intro video{width:100%;height:100%;object-fit:cover}
+    .intro .vazio{border:3px dashed #ffc857;border-radius:20px;padding:40px 48px;color:#ffc857;text-align:center;font:700 clamp(18px,3vw,26px) system-ui,sans-serif;max-width:min(92vw,640px)}
+    .intro .vazio small{display:block;margin-top:10px;font-weight:400;font-size:14px;color:#bfe3e6}
+    .intro .pular{position:absolute;right:20px;bottom:20px;border:0;cursor:pointer;font:700 15px system-ui,sans-serif;padding:12px 22px;border-radius:999px;background:#ffc857;color:#06223f}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

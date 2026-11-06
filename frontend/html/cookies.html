@@ -3,63 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Cookies - NoteWave</title>
-    
-    <!-- CSS Principal do projeto -->
+    <title>NoteWave - Preferências de Cookies</title>
+
+    <!-- Fontes e Ícones Oficiais -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web@2.0.3"></script>
+
+    <!-- CSS Padronizado -->
     <link rel="stylesheet" href="../css/configuracoes.css">
+    <link rel="stylesheet" href="../css/tema.css">
+
+    <style>
+        /* Card centralizado, rodapé embaixo */
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px 0;
+        }
+
+        .help-main-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--nw-card-solid);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: 0 14px 34px rgba(7, 87, 132, 0.12);
+            border: 2px solid var(--nw-line);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.dark-mode .help-main-container {
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.35);
+        }
+
+        .help-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .btn-voltar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .btn-voltar:hover {
+            border-color: var(--nw-aqua);
+        }
+
+        /* ---------- Seção dos cookies ---------- */
+        .cookie-section {
+            margin-top: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .cookie-section h2 {
+            font-size: 19px;
+            font-weight: 700;
+            color: var(--nw-title);
+            margin-bottom: 2px;
+        }
+
+        .cookie-section > p {
+            color: var(--nw-muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 6px;
+        }
+
+        .cookie-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            background-color: var(--nw-soft);
+            border: 2px solid var(--nw-line);
+            border-radius: 20px;
+            padding: 20px 22px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .cookie-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--nw-aqua);
+        }
+
+        .cookie-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        /* ícone em quadradinho (mesma ideia dos cards da home) */
+        .cookie-icone {
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            font-size: 22px;
+            color: #fff;
+            background: linear-gradient(135deg, #1e3c72, #2a5298 50%, #38bdf8);
+            box-shadow: 0 6px 14px rgba(0, 51, 153, 0.25), inset 0 2px 3px rgba(255, 255, 255, 0.45);
+        }
+
+        .cookie-info span.title {
+            display: block;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--nw-title);
+            margin-bottom: 4px;
+        }
+
+        .cookie-info span.desc {
+            display: block;
+            font-size: 13px;
+            color: var(--nw-muted);
+            line-height: 1.5;
+        }
+
+        /* selo "Sempre Ativo" */
+        .cookie-fixo {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--nw-blue);
+            background: var(--nw-card-solid);
+            border: 2px solid var(--nw-line);
+            padding: 6px 12px;
+            border-radius: 999px;
+        }
+
+        .cookie-fixo i {
+            color: var(--nw-gold-shadow);
+        }
+
+        @media (max-width: 560px) {
+            .help-main-container { padding: 26px 20px; border-radius: 24px; }
+            .cookie-item { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container-principal">
-        <main class="conteudo-principal">
-            <header class="config-header">
-                <!-- 1. QUADRADO DE CIMA: BOTÃO VOLTAR COM SETA SVG -->
-                <a href="../html/configuracoes.html" class="btn-voltar-card" aria-label="Voltar para configurações">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                </a>
-                
-                <h1>Preferências de Cookies</h1>
-                <p>Gerencie como o NoteWave utiliza seus dados de navegação.</p>
-            </header>
+    <script>
+        // Aplica o modo escuro salvo antes de desenhar a página
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
 
-            <div class="config-grid">
-                <section class="config-card" style="grid-column: 1 / -1;">
-                    <!-- 2. QUADRADO DE BAIXO: TÍTULO COM EMOJI DE COOKIE -->
-                    <h2>🍪 Uso de Cookies no NoteWave</h2>
-                    
-                    <p class="description" style="font-size: 15px; margin-bottom: 20px;">
-                        Utilizamos cookies para manter sua sessão de estudo ativa, salvar suas preferências visuais e registrar seu progresso (pontuação, medalhas e constância).
-                    </p>
+    <div class="help-main-container">
 
-                    <!-- Opção 1: Essenciais -->
-                    <div class="toggle-control" style="margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
-                        <div class="toggle-label">
-                            <span style="display: block; font-weight: 600;">Cookies Essenciais</span>
-                            <span class="description">Necessários para fazer login e manter o site funcionando.</span>
-                        </div>
-                        <span style="font-size: 13px; color: var(--text-secondary); font-weight: 600;">Sempre Ativo</span>
+        <!-- Barra superior com botão de voltar -->
+        <div class="help-top-bar">
+            <a href="configuracoes.html" class="btn-voltar">
+                <i class="ph ph-arrow-left"></i> Voltar para Configurações
+            </a>
+        </div>
+
+        <header class="page-header">
+            <h1>Preferências de Cookies</h1>
+            <p>Gerencie como o NoteWave utiliza seus dados de navegação.</p>
+        </header>
+
+        <div class="cookie-section">
+            <h2>🍪 Uso de Cookies no NoteWave</h2>
+            <p>
+                Utilizamos cookies para manter sua sessão de estudo ativa, salvar suas preferências visuais e registrar seu progresso (pontuação, medalhas e constância).
+            </p>
+
+            <!-- Opção 1: Essenciais -->
+            <div class="cookie-item">
+                <div class="cookie-main">
+                    <div class="cookie-icone"><i class="ph ph-lock-key"></i></div>
+                    <div class="cookie-info">
+                        <span class="title">Cookies Essenciais</span>
+                        <span class="desc">Necessários para fazer login e manter o site funcionando corretamente.</span>
                     </div>
-
-                    <!-- Opção 2: Desempenho e Gamificação -->
-                    <div class="toggle-control">
-                        <div class="toggle-label">
-                            <span style="display: block; font-weight: 600;">Cookies de Progresso & Métricas</span>
-                            <span class="description">Permitem salvar o histórico de aulas, acertos, erros e dias seguidos.</span>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" checked>
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
-                </section>
+                </div>
+                <span class="cookie-fixo"><i class="ph-fill ph-check-circle"></i> Sempre Ativo</span>
             </div>
-        </main>
+
+            <!-- Opção 2: Progresso e Métricas -->
+            <div class="cookie-item">
+                <div class="cookie-main">
+                    <div class="cookie-icone"><i class="ph ph-chart-line-up"></i></div>
+                    <div class="cookie-info">
+                        <span class="title">Cookies de Progresso &amp; Métricas</span>
+                        <span class="desc">Permitem salvar o histórico de aulas, acertos, erros e dias seguidos.</span>
+                    </div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Script do Modo Escuro -->
-    <script src="../js/configuracoes.js"></script>
+    <script src="../js/rodape.js"></script>
+    <script src="../js/music.js"></script>
+    <script src="../js/nw-sync.js"></script>
 </body>
 </html>

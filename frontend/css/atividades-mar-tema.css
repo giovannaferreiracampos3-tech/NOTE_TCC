@@ -1,0 +1,20 @@
+/* Camada visual NoteWave (mar e praia). Carregue DEPOIS de style.css / style-sol.css. */
+body{background:linear-gradient(180deg,#d9f1f2 0%,#eaf6f6 45%,#f2d9a8 100%) fixed!important}
+.app-container{background:transparent}
+.exercise-section,.performance-section{background:#fff!important;border-radius:24px 24px 24px 6px!important;box-shadow:0 8px 24px rgba(11,60,93,.12)!important}
+.title{font-family:Georgia,'Times New Roman',serif!important;color:#0b3c5d}
+.btn-back{color:#0b3c5d!important;font-weight:600}
+.option-btn{border:2px solid #b9dde0!important;border-radius:16px!important;font-weight:700;transition:background .15s,transform .1s}
+.option-btn:hover:not(:disabled):not(.right):not(.wrong){background:#eaf6f6!important;transform:translateY(-2px)}
+.option-btn.right,.option-btn.right:hover,.option-btn.right:disabled{background:#2fa85a!important;border-color:#1f7d42!important;color:#fff!important;opacity:1!important;transform:none;pointer-events:none;box-shadow:0 0 0 4px rgba(47,168,90,.25)!important;animation:acerto .35s}
+.option-btn.right::after{content:" ✓"}
+.option-btn.wrong,.option-btn.wrong:hover,.option-btn.wrong:disabled{background:#fde8e6!important;border-color:#e53e3e!important;color:#b42318!important;opacity:1!important;text-decoration:line-through}
+@keyframes acerto{50%{transform:scale(1.06)}}
+.option-btn:disabled:not(.right):not(.wrong){opacity:.45}
+.option-btn:focus-visible,.play-btn:focus-visible,.next-btn:focus-visible{outline:3px solid #ffc857;outline-offset:3px}
+.play-btn{background:#1b9aaa!important;color:#fff!important}
+.help-box{background:#fff6dc!important;border-left:5px solid #ffc857;border-radius:12px}
+.feedback-panel.success{background:#d7f5e1!important}.feedback-panel.danger{background:#ffe0dc!important}
+.next-btn{background:#ff6f59!important;color:#fff!important;border-radius:999px!important}
+.progress-ring{--ring:#1b9aaa}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

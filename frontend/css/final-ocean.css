@@ -1,0 +1,592 @@
+/* Tela final (oceano/medalha), extraída do style-sol.css para a Clave de Fá */
+.final-ocean {
+    --ocean-dark: #073763;
+    --ocean-blue: #087db5;
+    --ocean-light: #52c7eb;
+    --foam: #f7fdff;
+    --sand: #f6e5b9;
+    --star-gold: #ffc94a;
+
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 24px;
+    isolation: isolate;
+
+    background: linear-gradient(
+        180deg,
+        #dff7ff 0%,
+        #b8e9fa 40%,
+        #83d5ee 70%,
+        #f6e5b9 100%
+    );
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+.final-ocean.is-active {
+    visibility: visible;
+    pointer-events: auto;
+    animation: oceanSceneAppear 0.7s ease forwards;
+}
+.final-ocean.is-closing {
+    animation: oceanSceneDisappear 0.7s ease forwards;
+}
+.final-ocean *,
+.final-ocean *::before,
+.final-ocean *::after {
+    box-sizing: border-box;
+}
+.ocean-background {
+    background:
+        transparent;
+}
+.ocean-sand {
+    position: absolute;
+    left: -10%;
+    bottom: -12%;
+    width: 120%;
+    height: 43%;
+    z-index: -1;
+
+    border-radius: 50% 50% 0 0 / 18% 18% 0 0;
+
+    background:
+        radial-gradient(
+            circle at 25% 25%,
+            rgba(255, 255, 255, 0.7) 0 1px,
+            transparent 2px
+        ),
+        radial-gradient(
+            circle at 70% 60%,
+            rgba(180, 135, 74, 0.13) 0 1px,
+            transparent 2px
+        ),
+        linear-gradient(
+            180deg,
+            #fff1c9,
+            #f4d99b 70%,
+            #e9c77d
+        );
+
+    background-size: 24px 24px, 31px 31px, auto;
+
+    transform: translateY(100%);
+}
+.final-ocean.is-active .ocean-sand {
+    animation: sandReveal 1.5s 1.5s cubic-bezier(.2,.8,.2,1) forwards;
+}
+.ocean-wave {
+    position: absolute;
+    left: -15%;
+    bottom: -8%;
+    width: 130%;
+    height: 90%;
+    z-index: 2;
+
+    border-radius: 46% 54% 0 0 / 15% 18% 0 0;
+
+    transform: translateY(110%) rotate(-3deg);
+    transform-origin: bottom center;
+    will-change: transform;
+}
+.ocean-wave--deep {
+    z-index: 1;
+    height: 90%;
+    background: linear-gradient(
+        160deg,
+        #07518a,
+        #087eb5 55%,
+        #24a6d4
+    );
+}
+.ocean-wave--middle {
+    z-index: 2;
+    height: 79%;
+    background: linear-gradient(
+        150deg,
+        #0d8cc3,
+        #36b9e3 65%,
+        #6ed7ed
+    );
+}
+.ocean-wave--foam {
+    z-index: 3;
+    height: 70%;
+    background: linear-gradient(
+        165deg,
+        #f8feff 0%,
+        #d8f6ff 32%,
+        #7edaf0 72%,
+        #35b6df 100%
+    );
+
+    border-top: 12px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 -12px 28px rgba(255, 255, 255, 0.35);
+}
+.final-ocean.is-active .ocean-wave--deep {
+    animation: waveRiseFall 3.4s 0.1s cubic-bezier(.22,.7,.24,1) forwards;
+}
+.final-ocean.is-active .ocean-wave--middle {
+    animation: waveRiseFall 3.4s 0.2s cubic-bezier(.22,.7,.24,1) forwards;
+}
+.final-ocean.is-active .ocean-wave--foam {
+    animation: waveRiseFall 3.4s 0.35s cubic-bezier(.22,.7,.24,1) forwards;
+}
+.ocean-wave--foam::before,
+.ocean-wave--foam::after {
+    content: "";
+    position: absolute;
+    top: -20px;
+    width: 65%;
+    height: 65px;
+
+    border-radius: 50%;
+    background: #f8feff;
+}
+.ocean-wave--foam::before {
+    left: -5%;
+    transform: rotate(-5deg);
+}
+.ocean-wave--foam::after {
+    right: -5%;
+    transform: rotate(5deg);
+}
+.final-ocean.is-active .surfing-note {
+    animation:
+        surferEntrance 1.2s 0.7s cubic-bezier(.18,.85,.28,1.2) forwards,
+        surferRide 1.6s 1.9s ease-in-out infinite alternate;
+}
+.final-ocean.is-active .surfing-note::before {
+    animation: sparkle 1.5s 1.4s ease-in-out infinite;
+}
+.final-ocean.is-active .surfing-note::after {
+    animation: sparkle 1.5s 1.8s ease-in-out infinite reverse;
+}
+.ocean-result {
+    position: relative;
+    z-index: 10;
+
+    width: min(100%, 490px);
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 30px 26px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 30px;
+
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow:
+        0 24px 70px rgba(5, 54, 92, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+    text-align: center;
+
+    opacity: 0;
+    transform: translateY(35px) scale(0.92);
+}
+.final-ocean.is-active .ocean-result {
+    animation: resultPop 0.75s 0.2s cubic-bezier(.2,.9,.25,1.2) forwards;
+}
+.ocean-result h2 {
+    margin: 0 0 12px;
+    color: #073763;
+    font-size: clamp(24px, 5vw, 34px);
+    font-weight: 800;
+    letter-spacing: -0.7px;
+}
+.ocean-result p {
+    margin: 0 0 20px;
+    color: #45647b;
+    font-size: 16px;
+    line-height: 1.6;
+}
+.ocean-result .result-percentage {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 94px;
+    min-height: 94px;
+    margin: 8px auto 20px;
+    padding: 15px;
+
+    border: 5px solid #7bd8ed;
+    border-radius: 50%;
+
+    color: #07518a;
+    background: #e8faff;
+
+    font-size: 25px;
+    font-weight: 900;
+}
+.result-stars {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 20px;
+}
+.result-star {
+    display: inline-block;
+    color: #d9e4ea;
+    font-size: clamp(38px, 9vw, 55px);
+    transform: scale(0.5);
+    opacity: 0;
+}
+.result-star.is-earned {
+    color: #ffbd30;
+    filter: drop-shadow(0 4px 5px rgba(190, 133, 21, 0.25));
+}
+.final-ocean.is-active .result-star {
+    animation: earnedStarPop 0.55s calc(0.25s + var(--star-index, 0) * 0.12s)
+        cubic-bezier(.2,.9,.3,1.4) forwards;
+}
+.ocean-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin-top: 22px;
+}
+.ocean-button {
+    position: relative;
+    overflow: hidden;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 22px;
+
+    border: 0;
+    border-radius: 17px;
+
+    color: #fff;
+    background: #087db5;
+
+    font: inherit;
+    font-size: 16px;
+    font-weight: 800;
+    text-align: center;
+
+    cursor: pointer;
+    touch-action: manipulation;
+
+    box-shadow: 0 5px 0 #075b89;
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        filter 0.18s ease;
+}
+.ocean-button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 70%;
+    height: 100%;
+
+    background: linear-gradient(
+        110deg,
+        transparent,
+        rgba(255, 255, 255, 0.35),
+        transparent
+    );
+
+    transform: skewX(-20deg);
+}
+.ocean-button:hover::after {
+    animation: buttonShimmer 0.7s ease;
+}
+.ocean-button:hover {
+    filter: brightness(1.07);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #598907;
+}
+.ocean-button:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #075b89;
+}
+.ocean-button:focus-visible {
+    outline: 4px solid #ffbd30;
+    outline-offset: 4px;
+}
+.ocean-button--secondary {
+    color: #07518a;
+    background: #e3f7ff;
+    box-shadow: 0 5px 0 #acdff0;
+}
+.ocean-button--secondary:hover {
+    box-shadow: 0 7px 0 #acdff0;
+}
+.ocean-button--medal {
+    color: #49300a;
+    background: linear-gradient(135deg, #ffe78b, #ffbd30);
+    box-shadow: 0 5px 0 #d79a1d;
+}
+.ocean-button--medal:hover {
+    box-shadow: 0 7px 0 #d79a1d;
+}
+.skip-confirmation {
+    padding: 14px;
+    border: 1px solid #f2d28b;
+    border-radius: 15px;
+
+    color: #785318;
+    background: #fff8df;
+
+    font-size: 14px;
+    line-height: 1.55;
+    text-align: left;
+}
+.skip-confirmation strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #68440c;
+}
+.medal-emblem {
+    display: grid;
+    place-items: center;
+
+    width: 110px;
+    aspect-ratio: 1;
+    border: 6px solid #fff0b1;
+    border-radius: 50%;
+
+    color: #fff8dc;
+    background: linear-gradient(145deg, #ffcf52, #e99a18);
+
+    font-size: 52px;
+    box-shadow:
+        0 0 0 7px rgba(255, 201, 74, 0.2),
+        0 12px 30px rgba(182, 126, 16, 0.25);
+
+    transform: scale(0) rotate(-35deg);
+}
+.medal-reveal.is-earned .medal-emblem {
+    animation: medalCelebrate 0.9s 0.15s cubic-bezier(.2,.9,.25,1.4) forwards;
+}
+.medal-reveal p {
+    margin: 0;
+    color: #79531a;
+    font-weight: 700;
+}
+@media (max-width: 600px) {
+    .final-ocean {
+        padding: 16px;
+    }
+
+    .surfing-note {
+        top: 17%;
+        width: min(36vw, 145px);
+    }
+
+    .ocean-result {
+        padding: 24px 19px;
+        border-radius: 25px;
+    }
+
+    .ocean-result p {
+        font-size: 15px;
+    }
+
+    .ocean-sand {
+        height: 37%;
+    }
+
+    .beach-star {
+        bottom: 9%;
+    }
+
+    .ocean-button {
+        min-height: 52px;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .final-ocean *,
+    .final-ocean *::before,
+    .final-ocean *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+    }
+}
+#resultStars {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin: 20px 0;
+}
+#resultStars .result-star {
+    display: inline-block;
+    font-size: clamp(48px, 10vw, 68px);
+    line-height: 1;
+    color: #dbe5ec;
+    filter: none;
+    opacity: 1;
+    transform: scale(1);
+    transition:
+        color 0.3s ease,
+        transform 0.3s ease,
+        filter 0.3s ease;
+}
+#resultStars .result-star.is-earned {
+    color: #ffc94a;
+    filter: drop-shadow(0 4px 5px rgba(190, 133, 21, 0.25));
+    animation: noteWaveStar 0.45s ease both;
+}
+#resultStars .result-star:nth-child(2).is-earned {
+    animation-delay: 0.12s;
+}
+#resultStars .result-star:nth-child(3).is-earned {
+    animation-delay: 0.24s;
+}
+@keyframes oceanSceneAppear {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes oceanSceneDisappear {
+    from { opacity: 1; }
+    to   { opacity: 0; visibility: hidden; }
+}
+@keyframes waveRiseFall {
+    0% {
+        transform: translateY(110%) rotate(-3deg);
+    }
+
+    35% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    52% {
+        transform: translateY(-3%) rotate(1deg);
+    }
+
+    72% {
+        transform: translateY(2%) rotate(-1deg);
+    }
+
+    100% {
+        transform: translateY(110%) rotate(3deg);
+    }
+}
+@keyframes sandReveal {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+@keyframes surferEntrance {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 90vh) rotate(-25deg) scale(0.55);
+    }
+
+    65% {
+        opacity: 1;
+        transform: translate(-50%, -20px) rotate(8deg) scale(1.08);
+    }
+
+    82% {
+        transform: translate(-50%, 8px) rotate(-4deg) scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 0) rotate(0deg) scale(1);
+    }
+}
+@keyframes surferRide {
+    from {
+        transform: translate(-50%, -5px) rotate(-3deg);
+    }
+
+    to {
+        transform: translate(-50%, 8px) rotate(4deg);
+    }
+}
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.3) rotate(0deg);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2) rotate(45deg);
+    }
+}
+@keyframes resultPop {
+    0% {
+        opacity: 0;
+        transform: translateY(35px) scale(0.92);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translateY(-5px) scale(1.02);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+@keyframes earnedStarPop {
+    0% {
+        opacity: 0;
+        transform: scale(0.2) rotate(-25deg);
+    }
+
+    75% {
+        opacity: 1;
+        transform: scale(1.2) rotate(8deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+@keyframes medalCelebrate {
+    0% {
+        transform: scale(0) rotate(-35deg);
+    }
+
+    65% {
+        transform: scale(1.18) rotate(8deg);
+    }
+
+    82% {
+        transform: scale(0.94) rotate(-3deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+@keyframes buttonShimmer {
+    from { left: -120%; }
+    to   { left: 150%; }
+}
+@keyframes noteWaveStar {
+    0% {
+        transform: scale(0.65);
+    }
+
+    70% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
