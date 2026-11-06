@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
@@ -32,23 +32,22 @@ console.log('Login existe?', require('fs').existsSync(path.join(pastaFront, 'htm
 app.use(express.static(require('path').join(__dirname, '..', 'frontend')));
 
 // ================================
-// BANCO DE DADOS
+// BANCO DE DADOS (PostgreSQL / Supabase)
 // ================================
-const db = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME || 'tcc',
-    waitForConnections: true,
-    connectionLimit: 10
+const db = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
 });
 
-db.getConnection((err, conn) => {
+// Sem isso, uma conexão ociosa derrubada pelo servidor (comum no Supabase) pode derrubar o Node
+db.on('error', (err) => console.error('Erro em conexão ociosa do PostgreSQL:', err.message));
+
+db.connect((err, client, release) => {
     if (err) {
-        console.error('Erro ao conectar no MySQL:', err.message);
+        console.error('Erro ao conectar no PostgreSQL:', err.message);
     } else {
-        console.log('Conectado ao MySQL com sucesso!');
-        conn.release();
+        console.log('Conectado ao PostgreSQL com sucesso!');
+        release();
     }
 });
 
@@ -90,63 +89,55 @@ app.post('/api/register', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        db.query('SELECT id_usuario FROM usuarios WHERE email = ?', [email], (errBusca, existentes) => {
-            if (errBusca) {
-                console.error('ERRO NO MYSQL AO CONSULTAR E-MAIL:', errBusca);
-                return res.status(500).json({ message: 'Erro no servidor' });
-            }
+        const existentes = await db.query('SELECT id_usuario FROM usuarios WHERE email = $1', [email]);
+        if (existentes.rowCount > 0) {
+            return res.status(400).json({ message: 'Este e-mail já está cadastrado!' });
+        }
 
-            if (existentes.length > 0) {
+        try {
+            const result = await db.query(
+                'INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3) RETURNING id_usuario',
+                [username, email, hashedPassword]
+            );
+
+            console.log('Usuário salvo com sucesso:', username);
+            const token = gerarToken({ id: result.rows[0].id_usuario, email });
+            return res.status(201).json({
+                message: 'Conta criada com sucesso!',
+                username,
+                token
+            });
+        } catch (err) {
+            console.error('ERRO NO POSTGRES AO CADASTRAR:', err);
+            if (err.code === '23505') { // unique_violation (corrida entre dois cadastros)
                 return res.status(400).json({ message: 'Este e-mail já está cadastrado!' });
             }
-
-            const sql = 'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)';
-
-            db.query(sql, [username, email, hashedPassword], (err, result) => {
-                if (err) {
-                    console.error('ERRO NO MYSQL AO CADASTRAR:', err);
-                    if (err.code === 'ER_DUP_ENTRY') {
-                        return res.status(400).json({ message: 'Este e-mail já está cadastrado!' });
-                    }
-                    return res.status(500).json({ message: 'Erro no banco de dados: ' + err.sqlMessage });
-                }
-
-                console.log('Usuário salvo com sucesso:', username);
-                const token = gerarToken({ id: result.insertId, email });
-                return res.status(201).json({
-                    message: 'Conta criada com sucesso!',
-                    username,
-                    token
-                });
-            });
-        });
+            return res.status(500).json({ message: 'Erro no banco de dados.' });
+        }
     } catch (error) {
-        console.error('ERRO NO BCRYPT:', error);
-        return res.status(500).json({ message: 'Erro ao processar a senha' });
+        console.error('ERRO NO CADASTRO:', error);
+        return res.status(500).json({ message: 'Erro no servidor' });
     }
 });
 
 // ================================
 // ROTA 2: LOGIN
 // ================================
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
         return res.status(400).json({ message: 'Preencha e-mail e senha!' });
     }
 
-    db.query('SELECT * FROM usuarios WHERE email = ?', [email], async (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ message: 'Erro no servidor' });
-        }
+    try {
+        const { rows } = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
 
-        if (results.length === 0) {
+        if (rows.length === 0) {
             return res.status(404).json({ message: 'E-mail não encontrado!' });
         }
 
-        const usuario = results[0];
+        const usuario = rows[0];
         const senhaValida = await bcrypt.compare(password, usuario.senha);
 
         if (!senhaValida) {
@@ -159,7 +150,10 @@ app.post('/api/login', (req, res) => {
             username: usuario.nome,
             token: gerarToken(usuario)
         });
-    });
+    } catch (err) {
+        console.error('ERRO NO LOGIN:', err);
+        return res.status(500).json({ message: 'Erro no servidor' });
+    }
 });
 
 // ================================
@@ -195,95 +189,69 @@ app.post('/api/google-login', async (req, res) => {
         const email = payload.email;
         const nome = payload.name || email.split('@')[0];
 
-        db.query('SELECT * FROM usuarios WHERE email = ?', [email], async (err, results) => {
-            if (err) {
-                console.error('ERRO AO CONSULTAR USUÁRIO (GOOGLE):', err);
-                return res.status(500).json({ message: 'Erro no servidor' });
-            }
+        const { rows } = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
 
-            // Já existe: só entra
-            if (results.length > 0) {
-                const usuario = results[0];
-                console.log('Login Google por:', usuario.nome);
-                return res.status(200).json({
-                    message: 'Login com Google realizado com sucesso!',
-                    username: usuario.nome,
-                    token: gerarToken(usuario)
-                });
-            }
+        // Já existe: só entra
+        if (rows.length > 0) {
+            const usuario = rows[0];
+            console.log('Login Google por:', usuario.nome);
+            return res.status(200).json({
+                message: 'Login com Google realizado com sucesso!',
+                username: usuario.nome,
+                token: gerarToken(usuario)
+            });
+        }
 
-            // Não existe: cria a conta com senha aleatória
-            try {
-                const hash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+        // Não existe: cria a conta com senha aleatória
+        const hash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+        const result = await db.query(
+            'INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3) RETURNING id_usuario',
+            [nome, email, hash]
+        );
 
-                db.query(
-                    'INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)',
-                    [nome, email, hash],
-                    (err2, result) => {
-                        if (err2) {
-                            console.error('ERRO AO CRIAR CONTA (GOOGLE):', err2);
-                            return res.status(500).json({ message: 'Erro ao criar conta.' });
-                        }
-
-                        console.log('Conta criada via Google:', nome);
-                        return res.status(201).json({
-                            message: 'Conta criada com Google!',
-                            username: nome,
-                            token: gerarToken({ id: result.insertId, email })
-                        });
-                    }
-                );
-            } catch (e) {
-                console.error('ERRO AO PROCESSAR CONTA (GOOGLE):', e);
-                return res.status(500).json({ message: 'Erro ao processar a conta.' });
-            }
+        console.log('Conta criada via Google:', nome);
+        return res.status(201).json({
+            message: 'Conta criada com Google!',
+            username: nome,
+            token: gerarToken({ id: result.rows[0].id_usuario, email })
         });
     } catch (error) {
         console.error('ERRO NO GOOGLE LOGIN:', error);
-        
+        // antes o catch não respondia nada e a requisição ficava pendurada
+        return res.status(401).json({ message: 'Não foi possível entrar com o Google. Tente de novo.' });
     }
 });
 
 // ================================
 // ROTA 4: RECUPERAR SENHA
 // ================================
-app.post('/api/recuperar-senha', (req, res) => {
+app.post('/api/recuperar-senha', async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
         return res.status(400).json({ message: 'Informe o e-mail.' });
     }
 
-    db.query('SELECT id_usuario FROM usuarios WHERE email = ?', [email], async (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ message: 'Erro no servidor' });
-        }
+    try {
+        const { rowCount } = await db.query('SELECT id_usuario FROM usuarios WHERE email = $1', [email]);
 
-        if (results.length === 0) {
+        if (rowCount === 0) {
             return res.status(404).json({ message: 'E-mail não encontrado!' });
         }
 
-        try {
-            const tempPassword = crypto.randomBytes(4).toString('hex');
-            const hash = await bcrypt.hash(tempPassword, 10);
+        const tempPassword = crypto.randomBytes(4).toString('hex');
+        const hash = await bcrypt.hash(tempPassword, 10);
 
-            db.query('UPDATE usuarios SET senha = ? WHERE email = ?', [hash, email], (err2) => {
-                if (err2) {
-                    console.error(err2);
-                    return res.status(500).json({ message: 'Erro ao redefinir a senha.' });
-                }
+        await db.query('UPDATE usuarios SET senha = $1 WHERE email = $2', [hash, email]);
 
-                return res.status(200).json({
-                    message: 'Senha redefinida com sucesso!',
-                    tempPassword
-                });
-            });
-        } catch (e) {
-            console.error(e);
-            return res.status(500).json({ message: 'Erro ao processar a senha.' });
-        }
-    });
+        return res.status(200).json({
+            message: 'Senha redefinida com sucesso!',
+            tempPassword
+        });
+    } catch (e) {
+        console.error('ERRO AO RECUPERAR SENHA:', e);
+        return res.status(500).json({ message: 'Erro ao redefinir a senha.' });
+    }
 });
 
 // ================================
@@ -294,12 +262,12 @@ const CHAVES_DA_CONTA = /^(status_|musical_|medalha_|notewave-caderno|noteWave_d
 
 app.get('/api/progresso', autenticar, async (req, res) => {
     try {
-        const [linhas] = await db.promise().query(
-            'SELECT chave, valor FROM progresso_usuario WHERE id_usuario = ?',
+        const { rows } = await db.query(
+            'SELECT chave, valor FROM progresso_usuario WHERE id_usuario = $1',
             [req.usuario.id]
         );
         const dados = {};
-        linhas.forEach(l => { dados[l.chave] = l.valor; });
+        rows.forEach(l => { dados[l.chave] = l.valor; });
         return res.json({ dados });
     } catch (e) {
         console.error('ERRO AO LER PROGRESSO:', e);
@@ -312,14 +280,14 @@ app.put('/api/progresso', autenticar, async (req, res) => {
     const remover = Array.isArray(req.body && req.body.remover) ? req.body.remover : [];
     const idUsuario = req.usuario.id;
 
-    const conn = await db.promise().getConnection();
+    const conn = await db.connect();
     try {
-        await conn.beginTransaction();
+        await conn.query('BEGIN');
 
         for (const chave of remover) {
             if (!CHAVES_DA_CONTA.test(chave)) continue;
             await conn.query(
-                'DELETE FROM progresso_usuario WHERE id_usuario = ? AND chave = ?',
+                'DELETE FROM progresso_usuario WHERE id_usuario = $1 AND chave = $2',
                 [idUsuario, chave]
             );
         }
@@ -327,19 +295,19 @@ app.put('/api/progresso', autenticar, async (req, res) => {
         for (const [chave, valor] of Object.entries(dados)) {
             if (!CHAVES_DA_CONTA.test(chave)) continue;
             await conn.query(
-                'DELETE FROM progresso_usuario WHERE id_usuario = ? AND chave = ?',
+                'DELETE FROM progresso_usuario WHERE id_usuario = $1 AND chave = $2',
                 [idUsuario, chave]
             );
             await conn.query(
-                'INSERT INTO progresso_usuario (id_usuario, chave, valor) VALUES (?, ?, ?)',
+                'INSERT INTO progresso_usuario (id_usuario, chave, valor) VALUES ($1, $2, $3)',
                 [idUsuario, chave, String(valor)]
             );
         }
 
-        await conn.commit();
+        await conn.query('COMMIT');
         return res.json({ ok: true });
     } catch (e) {
-        await conn.rollback();
+        await conn.query('ROLLBACK').catch(() => {});
         console.error('ERRO AO SALVAR PROGRESSO:', e);
         return res.status(500).json({ message: 'Erro ao salvar o progresso.' });
     } finally {
@@ -354,22 +322,9 @@ app.get('/api/me', autenticar, (req, res) => {
     res.json({ id: req.usuario.id, email: req.usuario.email });
 });
 
-app.use('/api/runner', require('./runnerApi')(db.promise()));
-
-// Journal (artigos, reações, favoritos, comentários)
-app.use('/api/journal', require('./journalApi')(db.promise()));
-
-// Imagens de capa dos artigos publicados
-app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
-
-// Foto de perfil
-app.use('/api/usuarios', require('./fotoApi')(db.promise(), autenticar));
-
-// Doações (usa vários prefixos: /donations, /donation-interests, /donation-comments...)
-app.use('/api', require('./doacaoApi')(db.promise()));
-
 // ================================
 // ROTA: ALTERAR NOME / APELIDO
+// (fica antes do router de doações, que está montado em /api inteiro)
 // ================================
 app.put('/api/usuario/nome', autenticar, async (req, res) => {
     try {
@@ -379,12 +334,12 @@ app.put('/api/usuario/nome', autenticar, async (req, res) => {
             return res.status(400).json({ message: 'O nome não pode ficar vazio.' });
         }
 
-        const [r] = await db.promise().query(
-            'UPDATE usuarios SET nome = ? WHERE id_usuario = ?',
+        const r = await db.query(
+            'UPDATE usuarios SET nome = $1 WHERE id_usuario = $2',
             [nome, req.usuario.id]
         );
 
-        if (!r.affectedRows) {
+        if (!r.rowCount) {
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
 
@@ -401,8 +356,27 @@ app.put('/api/usuario/nome', autenticar, async (req, res) => {
 });
 
 // ================================
+// ROUTERS (todos recebem o pg.Pool direto, sem .promise())
+// ================================
+app.use('/api/runner', require('./runnerApi')(db));
+
+// Journal (artigos, reações, favoritos, comentários)
+app.use('/api/journal', require('./journalApi')(db));
+
+// Imagens de capa dos artigos publicados
+app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
+
+// Foto de perfil
+app.use('/api/usuarios', require('./fotoApi')(db, autenticar));
+
+// Doações (usa vários prefixos: /donations, /donation-interests, /donation-comments...)
+app.use('/api', require('./doacaoApi')(db));
+
+// ================================
 // INICIAR O SERVIDOR
 // ================================
 app.listen(PORT, () => {
     console.log(`Servidor NoteWave rodando em http://localhost:${PORT}`);
 });
+
+module.exports = app;

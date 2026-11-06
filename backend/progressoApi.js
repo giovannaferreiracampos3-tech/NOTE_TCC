@@ -1,10 +1,12 @@
-/* progressoApi.js – NoteWave – progresso individual de cada usuário (Express + MySQL)
+/* progressoApi.js – NoteWave – progresso individual de cada usuário (Express + PostgreSQL)
    Guarda, por conta, tudo o que antes ficava só no navegador: lições concluídas, medalhas,
    sequência de estudos, caderno, foto de perfil etc.
 
    Uso no server.js (junto das outras rotas):
+     const { Pool } = require('pg');
+     const db = new Pool({ connectionString: process.env.DATABASE_URL });
      app.use(express.json({ limit: '2mb' }));   // precisa ser ANTES das rotas; a foto de perfil é grande
-     app.use('/api/progresso', require('./progressoApi')(db.promise()));
+     app.use('/api/progresso', require('./progressoApi')(db));
 
    A tabela progresso_usuario é criada sozinha na primeira vez que o servidor sobe. */
    const express = require('express');
@@ -30,19 +32,19 @@
    
    const chaveValida = k => typeof k === 'string' && CHAVE_OK.test(k) && PERMITIDA.test(k);
    
+   // `db` deve ser um pg.Pool
    module.exports = function (db) {
      const router = express.Router();
      router.use(express.json({ limit: '2mb' }));
    
      db.query(`
        CREATE TABLE IF NOT EXISTS progresso_usuario (
-         id_usuario INT NOT NULL,
+         id_usuario INTEGER NOT NULL REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
          chave VARCHAR(100) NOT NULL,
-         valor MEDIUMTEXT NOT NULL,
-         atualizado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-         PRIMARY KEY (id_usuario, chave),
-         FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
-       ) CHARACTER SET utf8mb4`
+         valor TEXT NOT NULL,
+         atualizado_em TIMESTAMPTZ NOT NULL DEFAULT now(),
+         PRIMARY KEY (id_usuario, chave)
+       )`
      ).catch(e => console.error('ERRO ao criar progresso_usuario:', e.message));
    
      const seguro = fn => (req, res) => fn(req, res).catch(e => {
@@ -54,9 +56,9 @@
      router.get('/', seguro(async (req, res) => {
        const eu = usuarioDaRequisicao(req);
        if (!eu) return res.status(401).json({ erro: 'Entre na sua conta para fazer isso.' });
-       const [linhas] = await db.query('SELECT chave, valor FROM progresso_usuario WHERE id_usuario = ?', [eu]);
+       const { rows } = await db.query('SELECT chave, valor FROM progresso_usuario WHERE id_usuario = $1', [eu]);
        const dados = {};
-       linhas.forEach(l => { dados[l.chave] = l.valor; });
+       rows.forEach(l => { dados[l.chave] = l.valor; });
        res.json({ dados });
      }));
    
@@ -76,14 +78,15 @@
          if (!chaveValida(chave) || typeof valor !== 'string' || valor.length > MAX_VALOR) { falhas.push(chave); continue; }
          try {
            await db.query(
-             `INSERT INTO progresso_usuario (id_usuario, chave, valor) VALUES (?, ?, ?)
-              ON DUPLICATE KEY UPDATE valor = VALUES(valor)`, [eu, chave, valor]);
+             `INSERT INTO progresso_usuario (id_usuario, chave, valor) VALUES ($1, $2, $3)
+              ON CONFLICT (id_usuario, chave)
+              DO UPDATE SET valor = EXCLUDED.valor, atualizado_em = now()`, [eu, chave, valor]);
          } catch (e) { console.error('Falha ao salvar', chave, e.message); falhas.push(chave); }
        }
    
        const apagar = remover.filter(chaveValida);
        if (apagar.length) {
-         await db.query('DELETE FROM progresso_usuario WHERE id_usuario = ? AND chave IN (?)', [eu, apagar]);
+         await db.query('DELETE FROM progresso_usuario WHERE id_usuario = $1 AND chave = ANY($2::text[])', [eu, apagar]);
        }
        res.json({ ok: true, falhas });
      }));

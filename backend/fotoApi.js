@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Recebe o pool do MySQL (db.promise()) e o middleware "autenticar" do server.js
+// Recebe o pg.Pool e o middleware "autenticar" do server.js
 module.exports = (db, autenticar) => {
     const router = express.Router();
 
@@ -28,8 +28,8 @@ module.exports = (db, autenticar) => {
     }
 
     async function fotoAtual(id) {
-        const [[u]] = await db.query('SELECT foto FROM usuarios WHERE id_usuario = ?', [id]);
-        return u ? u.foto : null;
+        const { rows } = await db.query('SELECT foto FROM usuarios WHERE id_usuario = $1', [id]);
+        return rows[0] ? rows[0].foto : null;
     }
 
     // Foto do usuário logado
@@ -55,7 +55,7 @@ module.exports = (db, autenticar) => {
             try {
                 const antiga = await fotoAtual(req.usuario.id);
                 const nova = '/uploads/avatars/' + req.file.filename;
-                await db.query('UPDATE usuarios SET foto = ? WHERE id_usuario = ?', [nova, req.usuario.id]);
+                await db.query('UPDATE usuarios SET foto = $1 WHERE id_usuario = $2', [nova, req.usuario.id]);
                 apagarArquivo(antiga);
                 res.json({ foto: nova });
             } catch (e) {
@@ -70,7 +70,7 @@ module.exports = (db, autenticar) => {
     router.delete('/me/foto', autenticar, async (req, res) => {
         try {
             const antiga = await fotoAtual(req.usuario.id);
-            await db.query('UPDATE usuarios SET foto = NULL WHERE id_usuario = ?', [req.usuario.id]);
+            await db.query('UPDATE usuarios SET foto = NULL WHERE id_usuario = $1', [req.usuario.id]);
             apagarArquivo(antiga);
             res.json({ foto: null });
         } catch (e) {

@@ -1,7 +1,10 @@
-/* journalApi.js – NoteWave Journal – API (Express + MySQL)
+/* journalApi.js – NoteWave Journal – API (Express + PostgreSQL)
    Artigos da equipe ficam no banco. Usuários logados podem: reagir, favoritar, comentar,
    PUBLICAR os próprios artigos (com imagem de capa) e APAGÁ-LOS.
-   Uso no server.js:  app.use('/api/journal', require('./journalApi')(db.promise()));
+   Uso no server.js:
+     const { Pool } = require('pg');
+     const db = new Pool({ connectionString: process.env.DATABASE_URL });
+     app.use('/api/journal', require('./journalApi')(db));
 
    Fotos de perfil: artigos e comentários trazem "autorFoto" (caminho guardado em usuarios.foto,
    ex.: /uploads/avatars/12-1730700000.png) ou null. Artigos da equipe não têm id_usuario, então vêm com null.
@@ -37,7 +40,7 @@ function usuarioDaRequisicao(req) {
 }
 
 const texto = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
-const lerJson = v => (typeof v === 'string' ? JSON.parse(v) : v) || [];
+const lerJson = v => (typeof v === 'string' ? JSON.parse(v) : v) || [];   // JSONB já chega como objeto
 function minutos(blocos, resumo) {
   const palavras = (resumo + ' ' + blocos.map(b => (b.texto || '') + ' ' + (b.itens || []).join(' ')).join(' ')).split(/\s+/).length;
   return Math.max(1, Math.round(palavras / 200));
@@ -85,6 +88,7 @@ async function apagarArquivo(url) {
   try { await fs.unlink(path.join(PASTA_IMAGENS, path.basename(url))); } catch (e) { /* já não existe */ }
 }
 
+// `db` deve ser um pg.Pool
 module.exports = function (db) {
   const router = express.Router();
   const seguro = fn => (req, res) => fn(req, res).catch(e => { console.error('ERRO NO JOURNAL:', e); res.status(500).json({ erro: 'Erro no servidor. Tente de novo.' }); });
@@ -93,14 +97,18 @@ module.exports = function (db) {
     if (!id) res.status(401).json({ erro: 'Entre na sua conta para fazer isso.' });
     return id;
   };
+  // id da URL: inteiro positivo ou null
+  const idDaUrl = req => { const n = Number(req.params.id); return Number.isSafeInteger(n) && n > 0 && n < 2147483647 ? n : null; };
 
-  // LEFT JOIN em usuarios: artigos da equipe (id_usuario nulo) continuam aparecendo, só sem foto
+  // LEFT JOIN em usuarios: artigos da equipe (id_usuario nulo) continuam aparecendo, só sem foto.
+  // Atenção: no Postgres alias sem aspas vira minúsculo, então os camelCase precisam de "aspas".
+  // $1 = id do usuário logado (ou 0)
   const SELECT_BASE = `
     SELECT p.id_publicacao AS id, p.titulo, p.resumo, p.categoria, p.origem, p.destaque, p.blocos,
-           p.criada_em AS data, p.autor, p.imagem, p.id_usuario AS idDono, ua.foto AS autorFoto,
-           (SELECT COUNT(*) FROM comentarios c WHERE c.id_publicacao = p.id_publicacao) AS totalComentarios,
-           (SELECT COUNT(*) FROM reacoes r WHERE r.id_publicacao = p.id_publicacao) AS totalReacoes,
-           EXISTS(SELECT 1 FROM favoritos f WHERE f.id_publicacao = p.id_publicacao AND f.id_usuario = ?) AS favorito
+           p.criada_em AS data, p.autor, p.imagem, p.id_usuario AS "idDono", ua.foto AS "autorFoto",
+           (SELECT COUNT(*)::int FROM comentarios c WHERE c.id_publicacao = p.id_publicacao) AS "totalComentarios",
+           (SELECT COUNT(*)::int FROM reacoes r WHERE r.id_publicacao = p.id_publicacao) AS "totalReacoes",
+           EXISTS(SELECT 1 FROM favoritos f WHERE f.id_publicacao = p.id_publicacao AND f.id_usuario = $1) AS favorito
     FROM publicacoes p
     LEFT JOIN usuarios ua ON ua.id_usuario = p.id_usuario`;
 
@@ -111,17 +119,17 @@ module.exports = function (db) {
       destaque: !!r.destaque, autor: r.autor, autorFoto: r.autorFoto || null, data: r.data, minutos: minutos(blocos, r.resumo),
       totalComentarios: r.totalComentarios, totalReacoes: r.totalReacoes, favorito: !!r.favorito,
       imagem: r.imagem || null,
-      meu: !!eu && r.idDono === eu
+      meu: !!eu && Number(r.idDono) === eu
     };
   };
 
   async function reacoesDe(idPub, eu) {
-    const [linhas] = await db.query('SELECT tipo, COUNT(*) AS n FROM reacoes WHERE id_publicacao = ? GROUP BY tipo', [idPub]);
+    const { rows: linhas } = await db.query('SELECT tipo, COUNT(*)::int AS n FROM reacoes WHERE id_publicacao = $1 GROUP BY tipo', [idPub]);
     const reacoes = { aprendi: 0, adorei: 0, inspirador: 0, excelente: 0 };
     linhas.forEach(l => { reacoes[l.tipo] = l.n; });
     let minha = null;
     if (eu) {
-      const [m] = await db.query('SELECT tipo FROM reacoes WHERE id_publicacao = ? AND id_usuario = ?', [idPub, eu]);
+      const { rows: m } = await db.query('SELECT tipo FROM reacoes WHERE id_publicacao = $1 AND id_usuario = $2', [idPub, eu]);
       minha = m[0] ? m[0].tipo : null;
     }
     return { reacoes, minhaReacao: minha };
@@ -131,40 +139,42 @@ module.exports = function (db) {
   router.get('/artigos', seguro(async (req, res) => {
     const eu = usuarioDaRequisicao(req);
     const { cat, origem, q, ordem, favoritos, meus } = req.query;
-    const onde = [], args = [eu || 0];
-    if (CATEGORIAS.includes(cat)) { onde.push('p.categoria = ?'); args.push(cat); }
-    if (['equipe', 'comunidade'].includes(origem)) { onde.push('p.origem = ?'); args.push(origem); }
+    const onde = [], args = [eu || 0];                    // $1 já é o usuário
+    const arg = v => { args.push(v); return '$' + args.length; };   // adiciona e devolve o $n
+    if (CATEGORIAS.includes(cat)) onde.push('p.categoria = ' + arg(cat));
+    if (['equipe', 'comunidade'].includes(origem)) onde.push('p.origem = ' + arg(origem));
     if (favoritos === '1') {
       if (!eu) return res.status(401).json({ erro: 'Entre na sua conta para ver seus favoritos.' });
-      onde.push('EXISTS(SELECT 1 FROM favoritos f2 WHERE f2.id_publicacao = p.id_publicacao AND f2.id_usuario = ?)'); args.push(eu);
+      onde.push('EXISTS(SELECT 1 FROM favoritos f2 WHERE f2.id_publicacao = p.id_publicacao AND f2.id_usuario = ' + arg(eu) + ')');
     }
     if (meus === '1') {
       if (!eu) return res.status(401).json({ erro: 'Entre na sua conta para ver suas publicações.' });
-      onde.push('p.id_usuario = ?'); args.push(eu);
+      onde.push('p.id_usuario = ' + arg(eu));
     }
     String(q || '').trim().split(/\s+/).filter(Boolean).slice(0, 6).forEach(palavra => {
-      onde.push('(p.titulo LIKE ? OR p.resumo LIKE ? OR p.autor LIKE ? OR CAST(p.blocos AS CHAR) LIKE ?)');
       const l = '%' + palavra.replace(/[%_\\]/g, '\\$&') + '%';
-      args.push(l, l, l, l);
+      const a = arg(l);   // o mesmo $n serve para as 4 colunas
+      onde.push(`(p.titulo ILIKE ${a} OR p.resumo ILIKE ${a} OR p.autor ILIKE ${a} OR p.blocos::text ILIKE ${a})`);
     });
     const sql = SELECT_BASE + (onde.length ? ' WHERE ' + onde.join(' AND ') : '') +
       ' ORDER BY p.criada_em ' + (ordem === 'antigos' ? 'ASC' : 'DESC') + ' LIMIT 60';
-    const [linhas] = await db.query(sql, args);
+    const { rows: linhas } = await db.query(sql, args);
     res.json(linhas.map(l => formatar(l, eu)));
   }));
 
   // ---------- LER UM ARTIGO (com reações e comentários) ----------
   router.get('/artigos/:id', seguro(async (req, res) => {
-    const eu = usuarioDaRequisicao(req), id = Number(req.params.id);
-    const [linhas] = await db.query(SELECT_BASE + ' WHERE p.id_publicacao = ?', [eu || 0, id]);
+    const eu = usuarioDaRequisicao(req), id = idDaUrl(req);
+    if (!id) return res.status(404).json({ erro: 'Publicação não encontrada.' });
+    const { rows: linhas } = await db.query(SELECT_BASE + ' WHERE p.id_publicacao = $2', [eu || 0, id]);
     if (!linhas[0]) return res.status(404).json({ erro: 'Publicação não encontrada.' });
-    const [coms] = await db.query(
-      `SELECT c.id_comentario AS id, c.texto, c.criado_em AS data, c.id_usuario AS idAutor, u.nome AS autor, u.foto AS autorFoto
+    const { rows: coms } = await db.query(
+      `SELECT c.id_comentario AS id, c.texto, c.criado_em AS data, c.id_usuario AS "idAutor", u.nome AS autor, u.foto AS "autorFoto"
        FROM comentarios c JOIN usuarios u ON u.id_usuario = c.id_usuario
-       WHERE c.id_publicacao = ? ORDER BY c.criado_em ASC LIMIT 200`, [id]);
+       WHERE c.id_publicacao = $1 ORDER BY c.criado_em ASC LIMIT 200`, [id]);
     res.json({
       ...formatar(linhas[0], eu), blocos: lerJson(linhas[0].blocos), ...(await reacoesDe(id, eu)),
-      comentarios: coms.map(c => ({ id: c.id, texto: c.texto, data: c.data, autor: c.autor, autorFoto: c.autorFoto || null, meu: !!eu && c.idAutor === eu }))
+      comentarios: coms.map(c => ({ id: c.id, texto: c.texto, data: c.data, autor: c.autor, autorFoto: c.autorFoto || null, meu: !!eu && Number(c.idAutor) === eu }))
     });
   }));
 
@@ -186,13 +196,13 @@ module.exports = function (db) {
     if (!mod.ok) return res.status(422).json({ erro: mod.mensagem });
 
     // Limite de publicações por hora (evita spam)
-    const [cont] = await db.query(
-      'SELECT COUNT(*) AS total FROM publicacoes WHERE id_usuario = ? AND criada_em > (NOW() - INTERVAL 1 HOUR)', [eu]);
+    const { rows: cont } = await db.query(
+      `SELECT COUNT(*)::int AS total FROM publicacoes WHERE id_usuario = $1 AND criada_em > (now() - INTERVAL '1 hour')`, [eu]);
     if (cont[0].total >= MAX_POSTS_POR_HORA)
       return res.status(429).json({ erro: 'Você publicou bastante em pouco tempo. Tente de novo daqui a pouco.' });
 
     // Nome do autor vem do banco (nunca do que o navegador enviou)
-    const [us] = await db.query('SELECT nome FROM usuarios WHERE id_usuario = ?', [eu]);
+    const { rows: us } = await db.query('SELECT nome FROM usuarios WHERE id_usuario = $1', [eu]);
     if (!us[0]) return res.status(401).json({ erro: 'Usuário não encontrado. Entre de novo.' });
 
     // Imagem de capa (opcional)
@@ -207,38 +217,39 @@ module.exports = function (db) {
     }
 
     try {
-      const [r] = await db.query(
+      // Se "destaque" for SMALLINT/TINYINT no seu schema, troque FALSE por 0
+      const { rows } = await db.query(
         `INSERT INTO publicacoes (titulo, resumo, categoria, blocos, autor, origem, destaque, id_usuario, imagem)
-         VALUES (?, ?, ?, ?, ?, 'comunidade', 0, ?, ?)`,
+         VALUES ($1, $2, $3, $4, $5, 'comunidade', FALSE, $6, $7)
+         RETURNING id_publicacao`,
         [titulo, resumo, categoria, JSON.stringify(blocos), us[0].nome, eu, imagemUrl]);
-      res.status(201).json({ id: r.insertId });
+      res.status(201).json({ id: rows[0].id_publicacao });
     } catch (e) { await apagarArquivo(imagemUrl); throw e; } // não deixa imagem órfã
   }));
 
   // ---------- APAGAR ARTIGO (apaga do banco: comentários, reações, favoritos e a imagem) ----------
   router.delete('/artigos/:id', seguro(async (req, res) => {
     const eu = exigir(req, res); if (!eu) return;
-    const id = Number(req.params.id);
+    const id = idDaUrl(req);
     if (!id) return res.status(400).json({ erro: 'Publicação inválida.' });
 
-    const [a] = await db.query('SELECT id_usuario, imagem FROM publicacoes WHERE id_publicacao = ?', [id]);
+    const { rows: a } = await db.query('SELECT id_usuario, imagem FROM publicacoes WHERE id_publicacao = $1', [id]);
     if (!a[0]) return res.status(404).json({ erro: 'Publicação não encontrada.' });
-    if (a[0].id_usuario == null || a[0].id_usuario !== eu)
+    if (a[0].id_usuario == null || Number(a[0].id_usuario) !== eu)
       return res.status(403).json({ erro: 'Você só pode apagar as suas próprias publicações.' });
 
-    // Transação, quando a conexão permitir (pool); senão apaga na ordem certa
-    const conn = typeof db.getConnection === 'function' ? await db.getConnection() : db;
+    const conn = await db.connect();
     try {
-      await conn.beginTransaction();
-      await conn.query('DELETE FROM comentarios WHERE id_publicacao = ?', [id]);
-      await conn.query('DELETE FROM reacoes WHERE id_publicacao = ?', [id]);
-      await conn.query('DELETE FROM favoritos WHERE id_publicacao = ?', [id]);
-      await conn.query('DELETE FROM publicacoes WHERE id_publicacao = ? AND id_usuario = ?', [id, eu]);
-      await conn.commit();
+      await conn.query('BEGIN');
+      await conn.query('DELETE FROM comentarios WHERE id_publicacao = $1', [id]);
+      await conn.query('DELETE FROM reacoes WHERE id_publicacao = $1', [id]);
+      await conn.query('DELETE FROM favoritos WHERE id_publicacao = $1', [id]);
+      await conn.query('DELETE FROM publicacoes WHERE id_publicacao = $1 AND id_usuario = $2', [id, eu]);
+      await conn.query('COMMIT');
     } catch (e) {
-      await conn.rollback().catch(() => {});
+      await conn.query('ROLLBACK').catch(() => {});
       throw e;
-    } finally { if (conn !== db) conn.release(); }
+    } finally { conn.release(); }
 
     await apagarArquivo(a[0].imagem);
     res.json({ ok: true });
@@ -247,34 +258,40 @@ module.exports = function (db) {
   // ---------- REAÇÃO (uma por pessoa; clicar na mesma remove) ----------
   router.put('/artigos/:id/reacao', seguro(async (req, res) => {
     const eu = exigir(req, res); if (!eu) return;
-    const id = Number(req.params.id), tipo = req.body.tipo;
+    const id = idDaUrl(req), tipo = req.body.tipo;
+    if (!id) return res.status(404).json({ erro: 'Publicação não encontrada.' });
     if (!REACOES.includes(tipo)) return res.status(400).json({ erro: 'Reação inválida.' });
-    const [atual] = await db.query('SELECT tipo FROM reacoes WHERE id_publicacao = ? AND id_usuario = ?', [id, eu]);
-    if (atual[0] && atual[0].tipo === tipo) await db.query('DELETE FROM reacoes WHERE id_publicacao = ? AND id_usuario = ?', [id, eu]);
-    else await db.query('INSERT INTO reacoes (id_publicacao, id_usuario, tipo) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE tipo = VALUES(tipo)', [id, eu, tipo]);
+    const { rows: atual } = await db.query('SELECT tipo FROM reacoes WHERE id_publicacao = $1 AND id_usuario = $2', [id, eu]);
+    if (atual[0] && atual[0].tipo === tipo) await db.query('DELETE FROM reacoes WHERE id_publicacao = $1 AND id_usuario = $2', [id, eu]);
+    else await db.query(
+      `INSERT INTO reacoes (id_publicacao, id_usuario, tipo) VALUES ($1, $2, $3)
+       ON CONFLICT (id_publicacao, id_usuario) DO UPDATE SET tipo = EXCLUDED.tipo`, [id, eu, tipo]);
     res.json(await reacoesDe(id, eu));
   }));
 
   // ---------- FAVORITO ----------
   router.put('/artigos/:id/favorito', seguro(async (req, res) => {
     const eu = exigir(req, res); if (!eu) return;
-    const id = Number(req.params.id);
-    const [r] = await db.query('DELETE FROM favoritos WHERE id_publicacao = ? AND id_usuario = ?', [id, eu]);
-    if (r.affectedRows) return res.json({ favorito: false });
-    await db.query('INSERT INTO favoritos (id_publicacao, id_usuario) VALUES (?, ?)', [id, eu]);
+    const id = idDaUrl(req);
+    if (!id) return res.status(404).json({ erro: 'Publicação não encontrada.' });
+    const r = await db.query('DELETE FROM favoritos WHERE id_publicacao = $1 AND id_usuario = $2', [id, eu]);
+    if (r.rowCount) return res.json({ favorito: false });
+    await db.query('INSERT INTO favoritos (id_publicacao, id_usuario) VALUES ($1, $2)', [id, eu]);
     res.json({ favorito: true });
   }));
 
   router.get('/favoritos/total', seguro(async (req, res) => {
     const eu = usuarioDaRequisicao(req);
     if (!eu) return res.json({ total: 0 });
-    const [r] = await db.query('SELECT COUNT(*) AS total FROM favoritos WHERE id_usuario = ?', [eu]);
-    res.json({ total: r[0].total });
+    const { rows } = await db.query('SELECT COUNT(*)::int AS total FROM favoritos WHERE id_usuario = $1', [eu]);
+    res.json({ total: rows[0].total });
   }));
 
   // ---------- COMENTÁRIOS ----------
   router.post('/artigos/:id/comentarios', seguro(async (req, res) => {
     const eu = exigir(req, res); if (!eu) return;
+    const id = idDaUrl(req);
+    if (!id) return res.status(404).json({ erro: 'Publicação não encontrada.' });
     const t = texto(req.body.texto, 1000);
     if (t.length < 2) return res.status(400).json({ erro: 'Escreva o comentário antes de enviar.' });
 
@@ -282,21 +299,25 @@ module.exports = function (db) {
     const mod = moderar({ 'comentário': t });
     if (!mod.ok) return res.status(422).json({ erro: mod.mensagem });
 
-    const [p] = await db.query('SELECT 1 FROM publicacoes WHERE id_publicacao = ?', [Number(req.params.id)]);
+    const { rows: p } = await db.query('SELECT 1 FROM publicacoes WHERE id_publicacao = $1', [id]);
     if (!p[0]) return res.status(404).json({ erro: 'Publicação não encontrada.' });
-    const [r] = await db.query('INSERT INTO comentarios (id_publicacao, id_usuario, texto) VALUES (?, ?, ?)', [Number(req.params.id), eu, t]);
-    res.status(201).json({ id: r.insertId });
+    const { rows } = await db.query(
+      'INSERT INTO comentarios (id_publicacao, id_usuario, texto) VALUES ($1, $2, $3) RETURNING id_comentario', [id, eu, t]);
+    res.status(201).json({ id: rows[0].id_comentario });
   }));
 
   // Pode apagar: o autor do comentário OU o dono do artigo
   router.delete('/comentarios/:id', seguro(async (req, res) => {
     const eu = exigir(req, res); if (!eu) return;
-    const [r] = await db.query(
-      `DELETE c FROM comentarios c
-       JOIN publicacoes p ON p.id_publicacao = c.id_publicacao
-       WHERE c.id_comentario = ? AND (c.id_usuario = ? OR p.id_usuario = ?)`,
-      [Number(req.params.id), eu, eu]);
-    if (!r.affectedRows) return res.status(403).json({ erro: 'Você só pode apagar os seus comentários ou os do seu artigo.' });
+    const id = idDaUrl(req);
+    if (!id) return res.status(403).json({ erro: 'Você só pode apagar os seus comentários ou os do seu artigo.' });
+    const r = await db.query(
+      `DELETE FROM comentarios c
+       USING publicacoes p
+       WHERE p.id_publicacao = c.id_publicacao
+         AND c.id_comentario = $1 AND (c.id_usuario = $2 OR p.id_usuario = $2)`,
+      [id, eu]);
+    if (!r.rowCount) return res.status(403).json({ erro: 'Você só pode apagar os seus comentários ou os do seu artigo.' });
     res.json({ ok: true });
   }));
 

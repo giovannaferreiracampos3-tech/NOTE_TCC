@@ -12,6 +12,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'troque-este-segredo';
 
 class Regra extends Error {}   // erro "de negócio": volta para o jogo como 400
 
+// `db` deve ser um pg.Pool  (const { Pool } = require('pg'); new Pool({...}))
 module.exports = function (db) {
   const router = express.Router();
 
@@ -35,30 +36,37 @@ module.exports = function (db) {
   };
 
   // ---------- estado do usuário (com trava de linha para não haver compra dupla) ----------
-  const lerJson = (t, fb) => { try { const v = JSON.parse(t); return v == null ? fb : v; } catch (e) { return fb; } };
+  // Aceita tanto texto (coluna TEXT) quanto objeto já parseado (coluna JSONB, o pg parseia sozinho)
+  const lerJson = (t, fb) => {
+    if (t == null) return fb;
+    if (typeof t !== 'string') return t;
+    try { const v = JSON.parse(t); return v == null ? fb : v; } catch (e) { return fb; }
+  };
   const normEq = eq => ({ acessorios: (eq && eq.acessorios) || {}, efeito: (eq && eq.efeito) || null, cenario: (eq && eq.cenario) || 'castelo' });
 
   async function comEstado(id, fn) {
-    const conn = await db.getConnection();
+    const conn = await db.connect();
     try {
-      await conn.beginTransaction();
-      await conn.query('INSERT IGNORE INTO runner_estado (id_usuario) VALUES (?)', [id]);
-      const [rows] = await conn.query('SELECT * FROM runner_estado WHERE id_usuario = ? FOR UPDATE', [id]);
+      await conn.query('BEGIN');
+      await conn.query('INSERT INTO runner_estado (id_usuario) VALUES ($1) ON CONFLICT (id_usuario) DO NOTHING', [id]);
+      const { rows } = await conn.query('SELECT * FROM runner_estado WHERE id_usuario = $1 FOR UPDATE', [id]);
       const r = rows[0];
       const d = {
-        saldo: r.saldo | 0,
+        saldo: Number(r.saldo) | 0,
         inventario: lerJson(r.inventario, []),
         equipado: normEq(lerJson(r.equipado, {})),
         desafios: lerJson(r.desafios, null)
       };
       const saida = await fn(d, conn);
       await conn.query(
-        'UPDATE runner_estado SET saldo=?, inventario=?, equipado=?, desafios=? WHERE id_usuario=?',
+        'UPDATE runner_estado SET saldo=$1, inventario=$2, equipado=$3, desafios=$4 WHERE id_usuario=$5',
         [d.saldo, JSON.stringify(d.inventario), JSON.stringify(d.equipado), JSON.stringify(d.desafios), id]);
-      await conn.commit();
+      await conn.query('COMMIT');
       return saida;
-    } catch (e) { await conn.rollback(); throw e; }
-    finally { conn.release(); }
+    } catch (e) {
+      try { await conn.query('ROLLBACK'); } catch (e2) { /* conexão já caiu */ }
+      throw e;
+    } finally { conn.release(); }
   }
 
   // ---------- desafios (mesma lógica que estava no api.js local) ----------
@@ -126,7 +134,7 @@ module.exports = function (db) {
     d.saldo += p.moedas;
     const concluidos = registrarDesafios(d, p);
     await conn.query(
-      'INSERT INTO runner_partidas (id_usuario, pontos, moedas, acertos, erros, estrelas, duracao_ms) VALUES (?,?,?,?,?,?,?)',
+      'INSERT INTO runner_partidas (id_usuario, pontos, moedas, acertos, erros, estrelas, duracao_ms) VALUES ($1,$2,$3,$4,$5,$6,$7)',
       [req.uid, p.pontos, p.moedas, p.acertos, p.erros, p.estrelas, p.duracao_ms]);
     return { saldo: d.saldo, moedasCreditadas: p.moedas, desafiosConcluidos: concluidos };
   })));
