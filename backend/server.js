@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
@@ -15,9 +15,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 console.log('GOOGLE_CLIENT_ID carregado:', GOOGLE_CLIENT_ID);
 
+console.log('JWT_SECRET existe?', !!JWT_SECRET);
 if (!JWT_SECRET) {
-    console.error('Defina JWT_SECRET no arquivo .env');
-    process.exit(1);
+    throw new Error('JWT_SECRET não definido');
 }
 
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
@@ -375,8 +375,13 @@ app.use('/api', require('./doacaoApi')(db));
 // ================================
 // INICIAR O SERVIDOR
 // ================================
-app.listen(PORT, () => {
-    console.log(`Servidor NoteWave rodando em http://localhost:${PORT}`);
-});
+// ================================
+// INICIAR O SERVIDOR
+// ================================
+if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Servidor NoteWave rodando em http://localhost:${PORT}`);
+    });
+}
 
 module.exports = app;
