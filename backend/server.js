@@ -34,9 +34,11 @@ app.use(express.static(require('path').join(__dirname, '..', 'frontend')));
 // ================================
 // BANCO DE DADOS (PostgreSQL / Supabase)
 // ================================
+const usaSupabase = (process.env.DATABASE_URL || '').includes('supabase');
+
 const db = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    ssl: usaSupabase ? { rejectUnauthorized: false } : false
 });
 
 // Sem isso, uma conexão ociosa derrubada pelo servidor (comum no Supabase) pode derrubar o Node
