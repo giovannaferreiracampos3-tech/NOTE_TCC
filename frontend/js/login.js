@@ -108,7 +108,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 
     try {
-        const response = await fetch("http://localhost:5000/api/register", {
+        const response = await fetch("http://https://note-tcc-backend.vercel.app/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password })
@@ -144,7 +144,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     const rememberMe = document.getElementById("rememberMe").checked;
 
     try {
-        const response = await fetch("http://localhost:5000/api/login", {
+        const response = await fetch("http://https://note-tcc-backend.vercel.app/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
@@ -184,7 +184,7 @@ document.getElementById("forgotForm").addEventListener("submit", async function(
     const email = document.getElementById("forgotEmail").value.trim();
 
     try {
-        const response = await fetch("http://localhost:5000/api/recuperar-senha", {
+        const response = await fetch("http://https://note-tcc-backend.vercel.app/api/recuperar-senha", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
@@ -234,7 +234,7 @@ function initGoogle() {
 
 async function handleGoogleCredential(googleResponse) {
     try {
-        const response = await fetch("http://localhost:5000/api/google-login", {
+        const response = await fetch("http://https://note-tcc-backend.vercel.app/api/google-login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ credential: googleResponse.credential })

@@ -4,7 +4,7 @@
    - Medalhas, sequência de estudos e progresso geral
 
    Se a API estiver em outro endereço, defina antes deste script:
-     window.NW_API_BASE = 'http://localhost:5000/api'            */
+     window.NW_API_BASE = 'http://https://note-tcc-backend.vercel.app/api'            */
      document.addEventListener('DOMContentLoaded', () => {
       const $ = id => document.getElementById(id);
       const ls = window.localStorage;
@@ -14,7 +14,7 @@
       // ---------------------------------------------------------------
       const API_BASE = window.NW_API_BASE
         || (window.NW_API_PROGRESSO ? window.NW_API_PROGRESSO.replace(/\/progresso\/?$/, '') : '')
-        || 'http://localhost:5000/api';
+        || 'http://https://note-tcc-backend.vercel.app/api';
       const HOST = API_BASE.replace(/\/api\/?$/, '');
       const fotoUrl = p => !p ? '' : /^https?:|^data:|^blob:/.test(p) ? p : HOST + p;
       const token = () => ls.getItem('token');
