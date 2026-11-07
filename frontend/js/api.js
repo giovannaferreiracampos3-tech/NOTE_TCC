@@ -3,7 +3,7 @@
   'use strict';
 
   const MODO = 'servidor';
-  const BASE = window.NW_API_RUNNER || 'http://https://note-tcc-backend.vercel.app/api/runner';
+  const BASE = window.NW_API_RUNNER || 'https://note-tcc-backend.vercel.app/api/runner';
 
   async function chamar(metodo, rota, corpo) {
     const r = await fetch(BASE + rota, {

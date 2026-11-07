@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
 
             // 1) Salva no banco de dados (backend na porta 5000, com o token do login)
-            const resposta = await fetch('http://https://note-tcc-backend.vercel.app/api/usuario/nome', {
+            const resposta = await fetch('https://note-tcc-backend.vercel.app/api/usuario/nome', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

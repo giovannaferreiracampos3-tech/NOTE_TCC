@@ -1,6 +1,6 @@
 /* NoteWave Doações – interface conectada ao backend Node.js/MySQL.
    Login: token em localStorage('token'), enviado em "Authorization: Bearer".
-   API em outro endereço? Defina antes deste script: window.NW_API = 'http://https://note-tcc-backend.vercel.app/api'
+   API em outro endereço? Defina antes deste script: window.NW_API = 'https://note-tcc-backend.vercel.app/api'
 
    CONTRATO DA API (o backend precisa responder assim; IDs de usuário nunca vêm do front):
    GET    /donations?q&categoria&status&cidade&pagina&limite&minhas=1   -> { itens:[{id,nome,categoria,resumo,autor,autorFoto?,data,status,totalComentarios,imagem,totalInteressados?,pendentes?}], total, pagina, paginas }
@@ -23,7 +23,7 @@
 */
 (() => {
   'use strict';
-  const BASE = window.NW_API || 'http://https://note-tcc-backend.vercel.app/api';
+  const BASE = window.NW_API || 'https://note-tcc-backend.vercel.app/api';
   const HOST = BASE.replace(/\/api\/?$/, '');
   const MASCOTE = '../img/viola.png';
   const LIM = { fotos: 6, mb: 5, nome: 80, desc: 1000, descMin: 20, coment: 500 };

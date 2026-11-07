@@ -12,7 +12,7 @@
      <script src="../js/nw-sync.js"></script>
    Se a API estiver em outro endereço, defina antes: window.NW_API_PROGRESSO = 'http://.../api/progresso' */
    (() => {
-    const API = window.NW_API_PROGRESSO || 'http://https://note-tcc-backend.vercel.app/api/progresso';
+    const API = window.NW_API_PROGRESSO || 'https://note-tcc-backend.vercel.app/api/progresso';
     const HOST = API.replace(/\/api\/progresso\/?$/, '');
     const API_FOTO = HOST + '/api/usuarios/me/foto';
     const CHAVE_FOTO = 'noteWave_avatar';

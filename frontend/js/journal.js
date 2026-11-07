@@ -1,8 +1,8 @@
 /* NoteWave Journal – interface conectada ao backend (/api/journal).
    Login: o front lê o token em localStorage('token') e envia em "Authorization: Bearer".
-   Se sua API está em outro endereço, defina antes deste script: window.NW_API = 'http://https://note-tcc-backend.vercel.app/api/journal' */
+   Se sua API está em outro endereço, defina antes deste script: window.NW_API = 'https://note-tcc-backend.vercel.app/api/journal' */
    (() => {
-    const API = window.NW_API || 'http://https://note-tcc-backend.vercel.app/api/journal';
+    const API = window.NW_API || 'https://note-tcc-backend.vercel.app/api/journal';
     const HOST = API.replace(/\/api\/journal\/?$/, '');
   
     // ---------------------------------------------------------------
