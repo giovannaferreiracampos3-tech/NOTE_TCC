@@ -8,8 +8,10 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 const nodemailer = require('nodemailer');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = 5000;
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -23,8 +25,12 @@ if (!JWT_SECRET) {
 
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
-app.use(cors());
+app.use(cors({ origin: 'https://notetcc-frontend.vercel.app' }));
 app.use(express.json({ limit: '5mb' }));
+const limiteAuth = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
+app.use('/api/login', limiteAuth);
+app.use('/api/register', limiteAuth);
+app.use('/api/recuperar-senha', limiteAuth);
 const path = require('path');
 const pastaFront = path.join(__dirname, '..', 'frontend');
 console.log('Servindo front de:', pastaFront);
@@ -101,6 +107,9 @@ app.post('/api/register', async (req, res) => {
     if (!username || !email || !password) {
         return res.status(400).json({ message: 'Preencha todos os campos!' });
     }
+    if (password.length < 8) {
+        return res.status(400).json({ message: 'A senha precisa ter pelo menos 8 caracteres.' });
+    }
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -150,7 +159,9 @@ app.post('/api/login', async (req, res) => {
         const { rows } = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: 'E-mail não encontrado!' });
+            if (rows.length === 0) {
+                return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
+            }
         }
 
         const usuario = rows[0];
