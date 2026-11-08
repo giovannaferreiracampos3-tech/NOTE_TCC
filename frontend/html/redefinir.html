@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteWave - Redefinir senha</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/login.css">
+    <link rel="icon" type="image/png" href="/img/nota.png">
+</head>
+<body>
+    <main class="container" style="justify-content:center;">
+        <section class="auth-card">
+            <h2 class="auth-title">Nova senha 🔑</h2>
+            <p class="auth-sub">Digite a nova senha da sua conta (mínimo 8 caracteres).</p>
+
+            <form id="resetForm">
+                <div class="form-group">
+                    <label for="novaSenha">Nova senha</label>
+                    <div class="input-box">
+                        <i class="ph ph-lock-key"></i>
+                        <input type="password" id="novaSenha" minlength="8" autocomplete="new-password" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmaSenha">Confirmar senha</label>
+                    <div class="input-box">
+                        <i class="ph ph-lock-key"></i>
+                        <input type="password" id="confirmaSenha" minlength="8" autocomplete="new-password" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Salvar nova senha</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const token = new URLSearchParams(window.location.search).get("token");
+        history.replaceState(null, "", window.location.pathname); // tira o token da barra de endereço
+
+        document.getElementById("resetForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const senha = document.getElementById("novaSenha").value;
+            const confirma = document.getElementById("confirmaSenha").value;
+
+            if (!token) { alert("Link inválido. Peça a recuperação de senha de novo."); return; }
+            if (senha !== confirma) { alert("As senhas não são iguais."); return; }
+
+            try {
+                const resp = await fetch("https://note-tcc-backend.vercel.app/api/redefinir-senha", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ token, password: senha })
+                });
+                const data = await resp.json();
+                alert(data.message || data.error);
+                if (resp.ok) window.location.href = "login.html";
+            } catch (erro) {
+                console.error(erro);
+                alert("Não foi possível conectar ao servidor.");
+            }
+        });
+    </script>
+</body>
+</html>

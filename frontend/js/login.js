@@ -197,7 +197,7 @@ document.getElementById("forgotForm").addEventListener("submit", async function(
             return;
         }
 
-        alert(data.message + (data.tempPassword ? `\n\nSua nova senha temporária: ${data.tempPassword}` : ""));
+        alert(data.message);
         closeForgotModal();
 
     } catch (error) {

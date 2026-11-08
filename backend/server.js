@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = 5000;
@@ -52,6 +53,19 @@ db.connect((err, client, release) => {
         release();
     }
 });
+
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
+});
+
+function escaparHtml(texto) {
+    return String(texto).replace(/[&<>"']/g, c => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+}
 
 // ================================
 // FUNÇÕES AUXILIARES
@@ -225,34 +239,117 @@ app.post('/api/google-login', async (req, res) => {
 });
 
 // ================================
-// ROTA 4: RECUPERAR SENHA
+// ROTA 4: PEDIR RECUPERAÇÃO DE SENHA (envia link por e-mail)
 // ================================
 app.post('/api/recuperar-senha', async (req, res) => {
-    const { email } = req.body;
+    const email = String((req.body && req.body.email) || '').trim().toLowerCase();
+
+    // Resposta sempre igual, exista o e-mail ou não
+    const respostaPadrao = {
+        message: 'Se o e-mail estiver cadastrado, você receberá as instruções para redefinir a senha.'
+    };
 
     if (!email) {
         return res.status(400).json({ message: 'Informe o e-mail.' });
     }
 
     try {
-        const { rowCount } = await db.query('SELECT id_usuario FROM usuarios WHERE email = $1', [email]);
+        const { rows } = await db.query(
+            'SELECT id_usuario, nome FROM usuarios WHERE LOWER(email) = $1',
+            [email]
+        );
+        if (rows.length === 0) return res.json(respostaPadrao);
 
-        if (rowCount === 0) {
-            return res.status(404).json({ message: 'E-mail não encontrado!' });
+        const usuario = rows[0];
+
+        // Limite: no máximo 1 pedido por minuto para o mesmo usuário
+        const recente = await db.query(
+            `SELECT 1 FROM reset_senha
+             WHERE id_usuario = $1 AND criado_em > now() - interval '1 minute'`,
+            [usuario.id_usuario]
+        );
+        if (recente.rowCount > 0) return res.json(respostaPadrao);
+
+        // Invalida pedidos anteriores
+        await db.query(
+            'UPDATE reset_senha SET usado = true WHERE id_usuario = $1 AND usado = false',
+            [usuario.id_usuario]
+        );
+
+        // Token aleatório: o e-mail leva o token, o banco guarda só o hash dele
+        const token = crypto.randomBytes(32).toString('hex');
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+
+        await db.query(
+            `INSERT INTO reset_senha (id_usuario, token_hash, expira_em)
+             VALUES ($1, $2, now() + interval '30 minutes')`,
+            [usuario.id_usuario, tokenHash]
+        );
+
+        const link = `${process.env.FRONTEND_URL}/html/redefinir.html?token=${token}`;
+
+        await transporter.sendMail({
+            from: `"NoteWave" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: 'Redefinir sua senha - NoteWave',
+            html: `
+                <h2>Olá, ${escaparHtml(usuario.nome)}!</h2>
+                <p>Recebemos um pedido para redefinir a senha da sua conta no NoteWave.</p>
+                <p><a href="${link}">Clique aqui para criar uma nova senha</a></p>
+                <p>Este link vale por 30 minutos e só pode ser usado uma vez.</p>
+                <p>Se não foi você, ignore este e-mail: sua senha continua a mesma.</p>
+            `
+        });
+
+        return res.json(respostaPadrao);
+    } catch (e) {
+        console.error('ERRO AO PEDIR RECUPERAÇÃO:', e);
+        return res.status(500).json({ message: 'Não foi possível enviar o e-mail agora. Tente mais tarde.' });
+    }
+});
+
+// ================================
+// ROTA 4B: DEFINIR NOVA SENHA (usa o token do e-mail)
+// ================================
+app.post('/api/redefinir-senha', async (req, res) => {
+    const token = String((req.body && req.body.token) || '');
+    const novaSenha = String((req.body && req.body.password) || '');
+
+    if (!token || novaSenha.length < 8) {
+        return res.status(400).json({ message: 'A senha precisa ter pelo menos 8 caracteres.' });
+    }
+
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const conn = await db.connect();
+
+    try {
+        await conn.query('BEGIN');
+
+        const { rows } = await conn.query(
+            `SELECT id, id_usuario FROM reset_senha
+             WHERE token_hash = $1 AND usado = false AND expira_em > now()
+             FOR UPDATE`,
+            [tokenHash]
+        );
+
+        if (rows.length === 0) {
+            await conn.query('ROLLBACK');
+            return res.status(400).json({ message: 'Link inválido ou expirado. Peça um novo.' });
         }
 
-        const tempPassword = crypto.randomBytes(4).toString('hex');
-        const hash = await bcrypt.hash(tempPassword, 10);
+        const hash = await bcrypt.hash(novaSenha, 10);
 
-        await db.query('UPDATE usuarios SET senha = $1 WHERE email = $2', [hash, email]);
+        await conn.query('UPDATE usuarios SET senha = $1 WHERE id_usuario = $2', [hash, rows[0].id_usuario]);
+        await conn.query('UPDATE reset_senha SET usado = true WHERE id_usuario = $1', [rows[0].id_usuario]);
 
-        return res.status(200).json({
-            message: 'Senha redefinida com sucesso!',
-            tempPassword
-        });
+        await conn.query('COMMIT');
+        return res.json({ message: 'Senha alterada com sucesso! Faça login com a nova senha.' });
     } catch (e) {
-        console.error('ERRO AO RECUPERAR SENHA:', e);
+        await conn.query('ROLLBACK').catch(() => {});
+        console.error('ERRO AO REDEFINIR SENHA:', e);
         return res.status(500).json({ message: 'Erro ao redefinir a senha.' });
+    } finally {
+        conn.release();
     }
 });
 
