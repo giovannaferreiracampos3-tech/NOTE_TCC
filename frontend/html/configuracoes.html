@@ -104,34 +104,24 @@
                             </label>
                         </div>
 
-                        <!-- Seção: Excluir conta (fora do <form> para o Enter não enviar o formulário do nome) -->
-                    <section class="config-section zona-perigo">
-                        <h2><i class="ph ph-warning"></i> Excluir conta</h2>
+                        <!-- Botão final: apagar conta -->
+                    <div class="apagar-wrap">
+                        <button type="button" id="btnApagarConta" class="btn-apagar">Apagar conta</button>
+                    </div>
 
-                        <div class="excluir-linha">
-                            <div class="excluir-texto">
-                                <p class="description">
-                                    Ao excluir sua conta, apagamos seu perfil, progresso, medalhas, favoritos,
-                                    comentários e publicações. <strong>Isso não pode ser desfeito.</strong>
-                                </p>
-
-                                <button type="button" id="btnExcluirConta" class="btn-perigo">
-                                    <i class="ph ph-trash"></i> Excluir minha conta
-                                </button>
-
-                                <div id="boxConfirmaExclusao" class="box-confirma" hidden>
-                                    <label for="senhaExcluir">Digite sua senha para confirmar</label>
-                                    <input type="password" id="senhaExcluir" class="form-input" placeholder="Sua senha atual" autocomplete="current-password">
-                                    <div class="excluir-acoes">
-                                        <button type="button" id="btnConfirmarExclusao" class="btn-perigo">Sim, excluir para sempre</button>
-                                        <button type="button" id="btnCancelarExclusao" class="btn-suporte">Cancelar</button>
-                                    </div>
-                                </div>
+                    <!-- Janela de confirmação -->
+                    <div id="modalApagar" class="modal-apagar" hidden>
+                        <div class="modal-apagar-card" role="dialog" aria-modal="true" aria-labelledby="tituloApagar">
+                            <img src="../img/notinha-triste.png" alt="Notinha triste" class="modal-apagar-img">
+                            <h3 id="tituloApagar">Apagar sua conta?</h3>
+                            <p>Seu perfil, progresso, medalhas e publicações serão apagados para sempre. Isso não pode ser desfeito.</p>
+                            <input type="password" id="senhaApagar" class="form-input" placeholder="Digite sua senha para confirmar" autocomplete="current-password">
+                            <div class="modal-apagar-acoes">
+                                <button type="button" id="btnCancelarApagar" class="btn-suporte">Cancelar</button>
+                                <button type="button" id="btnConfirmarApagar" class="btn-apagar">Apagar conta</button>
                             </div>
-
-                            <img src="../img/notinha-triste.png" alt="Notinha triste" class="excluir-notinha">
                         </div>
-                    </section>
+                    </div>
 
                     </section>
 

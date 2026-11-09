@@ -114,35 +114,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// === EXCLUIR CONTA ===
+// === APAGAR CONTA ===
 document.addEventListener('DOMContentLoaded', () => {
-    const btnAbrir = document.getElementById('btnExcluirConta');
-    const box = document.getElementById('boxConfirmaExclusao');
-    const inputSenha = document.getElementById('senhaExcluir');
-    const btnConfirmar = document.getElementById('btnConfirmarExclusao');
-    const btnCancelar = document.getElementById('btnCancelarExclusao');
-    if (!btnAbrir || !box || !inputSenha || !btnConfirmar || !btnCancelar) return;
+    const btnAbrir = document.getElementById('btnApagarConta');
+    const modal = document.getElementById('modalApagar');
+    const inputSenha = document.getElementById('senhaApagar');
+    const btnConfirmar = document.getElementById('btnConfirmarApagar');
+    const btnCancelar = document.getElementById('btnCancelarApagar');
+    if (!btnAbrir || !modal || !inputSenha || !btnConfirmar || !btnCancelar) return;
+
+    function fechar() {
+        modal.hidden = true;
+        inputSenha.value = '';
+        btnConfirmar.disabled = false;
+    }
 
     btnAbrir.addEventListener('click', () => {
-        box.hidden = false;
-        btnAbrir.hidden = true;
+        modal.hidden = false;
         inputSenha.focus();
     });
 
-    btnCancelar.addEventListener('click', () => {
-        box.hidden = true;
-        btnAbrir.hidden = false;
-        inputSenha.value = '';
-    });
+    btnCancelar.addEventListener('click', fechar);
 
-    btnConfirmar.addEventListener('click', async () => {
+    // Clicar fora da janela ou apertar Esc também fecha
+    modal.addEventListener('click', (e) => { if (e.target === modal) fechar(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) fechar(); });
+
+    async function apagar() {
         const senha = inputSenha.value;
         if (!senha) {
             alert('Digite sua senha para confirmar.');
             return;
         }
-
-        if (!confirm('Tem certeza? Sua conta e todo o seu progresso serão apagados para sempre.')) return;
 
         btnConfirmar.disabled = true;
         try {
@@ -158,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dados = await resposta.json().catch(() => ({}));
 
             if (!resposta.ok) {
-                alert(dados.message || 'Não foi possível excluir a conta.');
+                alert(dados.message || 'Não foi possível apagar a conta.');
                 btnConfirmar.disabled = false;
                 return;
             }
@@ -168,12 +171,15 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.clear();
             if (tema) localStorage.setItem('theme', tema);
 
-            alert('Sua conta foi excluída. Sentiremos sua falta!');
+            alert('Sua conta foi apagada. Sentiremos sua falta!');
             window.location.href = 'login.html';
         } catch (erro) {
             console.error(erro);
             alert('Não foi possível conectar ao servidor.');
             btnConfirmar.disabled = false;
         }
-    });
+    }
+
+    btnConfirmar.addEventListener('click', apagar);
+    inputSenha.addEventListener('keydown', (e) => { if (e.key === 'Enter') apagar(); });
 });
