@@ -6,8 +6,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>NoteWave - Configurações</title>
 
     <!-- Fontes e Ícones Oficiais -->
@@ -195,33 +194,12 @@
     <!-- Scripts -->
     <script src="../js/configuracoes.js"></script>
     <script src="../js/tour.js"></script> <!-- Certifique-se de incluir seu arquivo do tour aqui -->
-    <script>
-        
-        // Gerenciamento do Modo Escuro integrado com localStorage
-        const toggleDarkMode = document.getElementById('toggleDarkMode');
-
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.classList.add('dark-mode');
-            if (toggleDarkMode) toggleDarkMode.checked = true;
-        }
-
-        if (toggleDarkMode) {
-            toggleDarkMode.addEventListener('change', () => {
-                if (toggleDarkMode.checked) {
-                    document.body.classList.add('dark-mode');
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    document.body.classList.remove('dark-mode');
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-        }
-    </script>
 </body>
 
-  <script src="../js/music.js"></script>
-  <script src="../js/rodape.js"></script>
-  <script src="../js/nw-sync.js"></script>
+</script>
+<script src="../js/music.js"></script>
+<script src="../js/rodape.js"></script>
+<script src="../js/nw-sync.js"></script>
 </body>
 </html>
 
