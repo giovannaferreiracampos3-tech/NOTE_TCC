@@ -6,7 +6,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    
     <title>NoteWave - Configurações</title>
 
     <!-- Fontes e Ícones Oficiais -->
@@ -194,6 +194,16 @@
     <!-- Scripts -->
     <script src="../js/configuracoes.js"></script>
     <script src="../js/tour.js"></script> <!-- Certifique-se de incluir seu arquivo do tour aqui -->
+    <script>
+        // Modo escuro: quem aplica o tema é o tema.js (já carregado no <head>)
+        const toggleDarkMode = document.getElementById('toggleDarkMode');
+        if (toggleDarkMode) {
+            toggleDarkMode.checked = NoteWaveTema.escuro();
+            toggleDarkMode.addEventListener('change', () => {
+                NoteWaveTema.definir(toggleDarkMode.checked);
+            });
+        }
+    </script>
 </body>
 
 </script>
@@ -201,6 +211,7 @@
 <script src="../js/rodape.js"></script>
 <script src="../js/nw-sync.js"></script>
 </body>
+</html>
 </html>
 
 </html>
