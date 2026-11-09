@@ -137,16 +137,44 @@ body:not(.dark-mode) .jr-chip.ativo{background:linear-gradient(135deg,#003399,#0
 
 /* Responsivo: o menu vira barra no topo em telas pequenas */
 @media(max-width:900px){.jr-destaque,.jr-duo{grid-template-columns:1fr}}
-@media(max-width:820px){
-  .app-container{flex-direction:column}
-  .sidebar{width:100%;flex-direction:row;align-items:center;padding:10px 14px;overflow-x:auto;gap:8px}
-  .sidebar-header{margin:0}.sidebar-header img{width:40px!important;height:40px!important}.sidebar-header .logo-text{display:none}
-  .sidebar-nav{flex-direction:row;flex:none}.sidebar-footer{margin:0 0 0 auto}
-  .nav-item span{display:none}.nav-item{padding:10px 12px}
-  .main-content{padding:20px 16px}
-}
-@media(max-width:600px){.jr-artigo h1{font-size:28px}.jr-info .tempo{margin-left:0}}
 @media(prefers-reduced-motion:reduce){.jr-card,.jr-btn,.jr-chip{transition:none}}
+@media(max-width:900px){
+  .app-container{flex-direction:column}
+
+  /* Menu vira barra horizontal no topo, com altura só do necessário */
+  .sidebar{
+    width:100%;min-width:0;height:auto!important;
+    flex-direction:row;align-items:center;gap:8px;
+    padding:10px 12px;position:sticky;top:0;z-index:100;
+    border-right:none;border-bottom:1px solid var(--jr-border,#edf2f7)
+  }
+  .sidebar-header{margin:0;flex:0 0 auto}
+  .sidebar-header img{width:44px!important;height:44px!important}
+  .sidebar-header .logo-text{display:none}
+  .sidebar-nav{flex-direction:row;flex:1;min-width:0;gap:6px;overflow-x:auto;scrollbar-width:none}
+  .sidebar-nav::-webkit-scrollbar{display:none}
+  .sidebar-footer{margin:0;padding:0;flex:0 0 auto}
+  .nav-item{flex:0 0 auto;padding:10px 12px;white-space:nowrap}
+
+  /* Conteúdo pode encolher e usa menos espaçamento */
+  .main-content{padding:16px;min-width:0}
+}
+
+@media(max-width:600px){
+  .nav-item span{display:none}
+
+  .jr-head h1,.jr-titulo{font-size:24px}
+  .jr-busca{min-width:0;max-width:none;width:100%}
+  .jr-grid{grid-template-columns:1fr}
+  .jr-destaque .capa{min-height:180px;font-size:56px}
+  .jr-destaque .corpo{padding:20px}
+  .jr-destaque h3{font-size:21px}
+  .jr-notinha{flex-direction:column;text-align:center;padding:20px}
+  .jr-notinha img{width:90px;height:90px}
+  .jr-fim{margin-left:0}
+  .jr-artigo h1{font-size:28px}
+  .jr-info .tempo{margin-left:0}
+}
 
 /* journal CSS */
 .jr-avatar{overflow:hidden}
