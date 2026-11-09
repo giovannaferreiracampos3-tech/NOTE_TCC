@@ -1,0 +1,123 @@
+/* ==========================================================================
+   NOTEWAVE: RESPONSIVO (celular e tablet)
+   Ligue por ÚLTIMO no <head> de cada página (logo antes de </head>).
+   ========================================================================== */
+
+   img { max-width: 100%; }
+
+   @media (max-width: 900px) {
+   
+     /* ---------- MENU: vira barra no topo ---------- */
+     .app-container:has(.sidebar) { flex-direction: column; }
+   
+     .sidebar {
+       position: sticky !important;
+       top: 0 !important;
+       z-index: 900;
+       align-self: stretch !important;
+       flex-direction: row !important;
+       align-items: center;
+       gap: 8px;
+       width: 100% !important;
+       min-width: 0 !important;
+       height: auto !important;
+       margin: 0 !important;
+       padding: 8px 10px !important;
+       border-radius: 0 0 20px 20px;
+       border-width: 0 0 2px 0;
+     }
+   
+     .sidebar-header,
+     .sidebar .logo {
+       flex: 0 0 auto;
+       margin: 0;
+       padding: 0;
+       border: 0;
+     }
+   
+     .sidebar-header img { width: 40px !important; height: 40px !important; }
+     .sidebar-header .logo-text { display: none; }
+   
+     .sidebar > .sidebar-nav {
+       flex-direction: row;
+       flex: 1 1 auto;
+       min-width: 0;
+       gap: 8px;
+       padding: 2px 2px 6px;
+       overflow-x: auto;
+       scrollbar-width: none;
+     }
+     .sidebar > .sidebar-nav::-webkit-scrollbar { display: none; }
+   
+     .sidebar .nav-item {
+       flex: 0 0 auto;
+       white-space: nowrap;
+       padding: 8px 10px;
+       font-size: 14px;
+     }
+   
+     /* O item da página atual nunca fica escondido: se estiver fora da vista, ele "gruda" na borda */
+     .sidebar > .sidebar-nav > .nav-item.active {
+       position: sticky;
+       left: 0;
+       right: 0;
+       z-index: 1;
+     }
+   
+     .sidebar-footer { flex: 0 0 auto; margin: 0; padding: 0; border-top: 0; }
+   
+     /* ---------- CONTEÚDO ---------- */
+     .app-container:has(.sidebar) .main-content,
+     .caderno-main {
+       padding: 16px 12px 150px;
+       min-width: 0;
+     }
+   
+     /* ---------- PERFIL ---------- */
+     .profile-card { padding: 24px 16px; border-radius: 22px; }
+     .profile-header { gap: 12px; margin-bottom: 24px; }
+     .welcome-box h1 { font-size: 22px; flex-wrap: wrap; }
+     .welcome-box h1 img { width: 40px !important; height: 40px !important; }
+     .avatar-container { width: 64px; height: 64px; flex: 0 0 auto; }
+     .stats-grid { gap: 16px; margin-bottom: 24px; }
+     .stat-card, .badges-section { padding: 18px 14px; }
+     .week-days { gap: 4px; }
+   
+     /* ---------- TRILHA ---------- */
+     .trilha-card-base { padding: 24px 16px; border-radius: 22px; }
+     .page-header h1 { font-size: 24px; }
+     .page-header p { margin-bottom: 22px; }
+     .lessons-timeline::before { left: 32px; }
+     .timeline-item { padding: 16px 14px; }
+     .status-indicator { width: 74px; gap: 8px; }
+     .lesson-info { min-width: 0; }
+     .lesson-action { padding-left: 10px; }
+   
+     /* ---------- MEDALHAS / CONFIGURAÇÕES ---------- */
+     .medalhas-card-base,
+     .config-card-base { padding: 24px 16px; border-radius: 22px; }
+   
+     /* ---------- DOAÇÕES (conferir quando eu vir o doacao.css) ---------- */
+     .dc-wrap { min-width: 0; }
+     .dc-acoes { flex-wrap: wrap; }
+     .dc-sino-painel { max-width: calc(100vw - 24px); }
+   }
+   
+   @media (max-width: 600px) {
+     /* Menu mostra só os ícones */
+     .sidebar .nav-item span { display: none; }
+     .sidebar .nav-item { padding: 8px; }
+   
+     /* ---------- JORNAL ---------- */
+     .jr-busca { min-width: 0; max-width: none; width: 100%; }
+     .jr-destaque .capa { min-height: 180px; }
+     .jr-notinha { flex-direction: column; text-align: center; }
+     .jr-fim { margin-left: 0; }
+   }
+   
+   /* ---------- PÁGINAS SEM MENU (cookies, privacidade, dúvidas) ---------- */
+   @media (max-width: 600px) {
+     body:has(> .help-main-container) { padding: 16px 12px 0; }
+     body .help-main-container { padding: 22px 16px; border-radius: 22px; }
+     body .help-main-container .page-header h1 { font-size: 24px; }
+   }
