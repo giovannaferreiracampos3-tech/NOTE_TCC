@@ -108,10 +108,15 @@
                         </div>
                     </div>
 
-                    <div class="form-options terms">
-                        <label class="remember-me">
-                            <input type="checkbox" id="regTerms" required>
-                            <span>Li e aceito os <a href="#" class="terms-link">Termos de Uso</a> e a <a href="#" class="terms-link">Política de Privacidade</a>.</span>
+                    <div class="terms-card" id="termsCard">
+                        <label class="terms-check">
+                            <input type="checkbox" id="regTerms">
+                            <span>
+                                Li e aceito os
+                                <a href="#" class="terms-link" onclick="openTermsModal(event, 'termos')">Termos de Uso</a>
+                                e a
+                                <a href="#" class="terms-link" onclick="openTermsModal(event, 'privacidade')">Política de Privacidade</a>.
+                            </span>
                         </label>
                     </div>
 
@@ -148,6 +153,27 @@
                     <button type="submit" class="btn-submit">Enviar</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="termsModal" class="terms-modal" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+        <div class="terms-content">
+            <div class="terms-icon"><i class="ph-fill ph-shield-check"></i></div>
+            <h3 id="termsTitle">Antes de continuar</h3>
+            <p class="terms-lead">Para criar sua conta no NoteWave, você precisa aceitar nossos Termos de Uso e nossa Política de Privacidade.</p>
+    
+            <div class="terms-body" id="termsBody">
+                <h4 id="sec-termos">Termos de Uso</h4>
+                <p>Escreva aqui os seus Termos de Uso: regras de uso da plataforma, responsabilidades do usuário, conteúdo permitido, etc.</p>
+    
+                <h4 id="sec-privacidade">Política de Privacidade</h4>
+                <p>Escreva aqui a sua Política de Privacidade: quais dados são coletados (nome de usuário, e-mail, progresso nas lições), como são usados, como são armazenados e como o usuário pode pedir a exclusão (LGPD).</p>
+            </div>
+    
+            <div class="modal-btns">
+                <button type="button" class="btn-cancel" onclick="refuseTerms()">Recusar</button>
+                <button type="button" class="btn-submit" onclick="acceptTerms()">Aceitar</button>
+            </div>
         </div>
     </div>
 

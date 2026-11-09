@@ -493,3 +493,125 @@
     .mascote, .balao, .nota, .onda, .tab-content.active, .forgot-content { animation: none !important; }
     .nota { display: none; }
   }
+
+  /* ---------- CAIXA DE TERMOS (CADASTRO) ---------- */
+.terms-card {
+  margin: 6px 0 22px;
+  padding: 14px 16px;
+  background: var(--soft);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.terms-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--text);
+  font-size: .88rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.terms-check input {
+  accent-color: var(--blue);
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+
+.terms-card.erro {
+  border-color: #e5484d;
+  box-shadow: 0 0 0 4px rgba(229, 72, 77, .18);
+  animation: tremer .4s ease;
+}
+@keyframes tremer {
+  0%, 100% { transform: translateX(0); }
+  25%      { transform: translateX(-6px); }
+  75%      { transform: translateX(6px); }
+}
+
+/* ---------- MODAL DE TERMOS ---------- */
+.terms-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  align-items: center;
+  justify-content: center;
+  background: rgba(3, 20, 45, .72);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+}
+.terms-modal.active { display: flex; }
+
+.terms-content {
+  width: 92%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 30px 28px;
+  background: var(--card);
+  border: 3px solid #bfe9f7;
+  border-radius: 28px;
+  box-shadow: 0 30px 70px rgba(3, 20, 45, .5);
+  animation: aparecer .25s ease;
+}
+.dark-mode .terms-content { border-color: var(--line); }
+
+.terms-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  font-size: 34px;
+  color: var(--gold);
+  background: linear-gradient(165deg, var(--navy), var(--blue));
+  box-shadow: 0 8px 18px rgba(7, 55, 99, .35);
+}
+
+.terms-content h3 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.6rem;
+  text-align: center;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+.dark-mode .terms-content h3 { color: var(--text); }
+
+.terms-lead {
+  text-align: center;
+  color: var(--muted);
+  font-size: .94rem;
+  margin-bottom: 18px;
+}
+
+.terms-body {
+  flex: 1;
+  min-height: 120px;
+  overflow-y: auto;
+  padding: 16px 18px;
+  background: var(--soft);
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  scroll-behavior: smooth;
+}
+.terms-body h4 {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: var(--brand);
+  font-size: 1.05rem;
+  margin: 0 0 6px;
+}
+.terms-body h4:not(:first-child) { margin-top: 18px; }
+.terms-body p {
+  color: var(--text);
+  font-size: .88rem;
+  line-height: 1.6;
+}
+
+.terms-content .modal-btns { margin-top: 22px; }
+.terms-content .btn-submit { flex: 1.3; }
+.terms-content .btn-cancel { flex: 1; }

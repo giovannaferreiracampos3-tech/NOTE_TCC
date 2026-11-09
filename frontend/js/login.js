@@ -78,6 +78,64 @@ function closeForgotModal() {
 }
 
 // ================================
+// MODAL DE TERMOS
+// ================================
+let cadastroPendente = false; // true = o modal foi aberto ao tentar criar a conta
+let googlePendente = null; // credencial do Google aguardando o aceite dos termos
+
+function openTermsModal(event, secao) {
+    if (event) event.preventDefault();
+    cadastroPendente = false;
+    document.getElementById("termsModal").classList.add("active");
+
+    const alvo = document.getElementById(secao === "privacidade" ? "sec-privacidade" : "sec-termos");
+    const corpo = document.getElementById("termsBody");
+    corpo.scrollTop = alvo.offsetTop - corpo.offsetTop - 16;
+}
+
+function closeTermsModal() {
+    document.getElementById("termsModal").classList.remove("active");
+}
+
+function acceptTerms() {
+    document.getElementById("regTerms").checked = true;
+    document.getElementById("termsCard").classList.remove("erro");
+    closeTermsModal();
+
+    // Veio do botão do Google: continua o login/cadastro com Google
+    if (googlePendente) {
+        const cred = googlePendente;
+        googlePendente = null;
+        handleGoogleCredential({ credential: cred });
+        return;
+    }
+
+    // Veio do botão "Criar conta": continua o cadastro
+    if (cadastroPendente) {
+        cadastroPendente = false;
+        document.getElementById("registerForm").requestSubmit();
+    }
+}
+
+function refuseTerms() {
+    document.getElementById("regTerms").checked = false;
+    cadastroPendente = false;
+    googlePendente = null;
+    closeTermsModal();
+}
+
+// Fecha com ESC
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeTermsModal();
+});
+
+// Tirar o destaque vermelho ao marcar a caixa
+document.getElementById("regTerms").addEventListener("change", (e) => {
+    if (e.target.checked) document.getElementById("termsCard").classList.remove("erro");
+});
+
+
+// ================================
 // CHECAR "LEMBRAR DE MIM" AO CARREGAR (só o e-mail, nunca a senha)
 // ================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -100,10 +158,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     const username = document.getElementById("regUser").value.trim();
     const email = document.getElementById("regEmail").value.trim();
     const password = document.getElementById("regPassword").value;
-    const acceptTerms = document.getElementById("regTerms").checked;
+    const termosAceitos = document.getElementById("regTerms").checked;
 
-    if (!acceptTerms) {
-        alert("Você precisa aceitar os Termos de Uso e a Política de Privacidade!");
+        if (!termosAceitos) {
+        document.getElementById("termsCard").classList.add("erro");
+        cadastroPendente = true;
+        document.getElementById("termsModal").classList.add("active");
         return;
     }
 
@@ -111,7 +171,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const response = await fetch("https://note-tcc-backend.vercel.app/api/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password })
+            body: JSON.stringify({ username, email, password, acceptedTerms: true })
         });
 
         const data = await response.json();
@@ -237,10 +297,20 @@ async function handleGoogleCredential(googleResponse) {
         const response = await fetch("https://note-tcc-backend.vercel.app/api/google-login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ credential: googleResponse.credential })
+            body: JSON.stringify({
+                credential: googleResponse.credential,
+                acceptedTerms: document.getElementById("regTerms").checked
+            })
         });
 
         const data = await response.json();
+
+        if (data.code === "TERMOS_OBRIGATORIOS") {
+            googlePendente = googleResponse.credential;
+            cadastroPendente = false;
+            document.getElementById("termsModal").classList.add("active");
+            return;
+        }
 
         if (!response.ok) {
             alert(data.message || data.error);

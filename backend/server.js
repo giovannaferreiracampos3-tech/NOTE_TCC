@@ -103,11 +103,15 @@ function autenticar(req, res, next) {
 // ROTA 1: CADASTRO
 // ================================
 app.post('/api/register', async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password, acceptedTerms } = req.body;
 
     if (!username || !email || !password) {
         return res.status(400).json({ message: 'Preencha todos os campos!' });
     }
+    if (acceptedTerms !== true) {
+        return res.status(400).json({ message: 'Você precisa aceitar os Termos de Uso e a Política de Privacidade.' });
+    }
+
     if (password.length < 8) {
         return res.status(400).json({ message: 'A senha precisa ter pelo menos 8 caracteres.' });
     }
@@ -122,7 +126,7 @@ app.post('/api/register', async (req, res) => {
 
         try {
             const result = await db.query(
-                'INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3) RETURNING id_usuario',
+                'INSERT INTO usuarios (nome, email, senha, termos_aceitos_em) VALUES ($1, $2, $3, now()) RETURNING id_usuario',
                 [username, email, hashedPassword]
             );
 
@@ -169,7 +173,7 @@ app.post('/api/login', async (req, res) => {
         const senhaValida = await bcrypt.compare(password, usuario.senha);
 
         if (!senhaValida) {
-            return res.status(401).json({ message: 'Senha incorreta!' });
+            return res.status(401).json({ message: 'E-mail ou senha incorretos.' });
         }
 
         console.log('Login realizado por:', usuario.nome);
@@ -188,7 +192,7 @@ app.post('/api/login', async (req, res) => {
 // ROTA 3: LOGIN COM GOOGLE
 // ================================
 app.post('/api/google-login', async (req, res) => {
-    const { credential } = req.body;
+    const { credential, acceptedTerms } = req.body;
 
     if (!credential) {
         return res.status(400).json({ message: 'Credencial do Google ausente.' });
@@ -230,10 +234,18 @@ app.post('/api/google-login', async (req, res) => {
             });
         }
 
+        // Conta nova só pode ser criada se aceitou os termos
+                if (acceptedTerms !== true) {
+                    return res.status(428).json({
+                        code: 'TERMOS_OBRIGATORIOS',
+                        message: 'Aceite os Termos de Uso e a Política de Privacidade para criar sua conta.'
+                    });
+                }
+
         // Não existe: cria a conta com senha aleatória
         const hash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
         const result = await db.query(
-            'INSERT INTO usuarios (nome, email, senha) VALUES ($1, $2, $3) RETURNING id_usuario',
+            'INSERT INTO usuarios (nome, email, senha, termos_aceitos_em) VALUES ($1, $2, $3, now()) RETURNING id_usuario',
             [nome, email, hash]
         );
 
