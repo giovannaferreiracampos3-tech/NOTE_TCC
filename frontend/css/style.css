@@ -1295,3 +1295,19 @@ body {
     background: radial-gradient(circle at center, #ffffff 0%, rgba(224, 247, 250, 0.9) 30%, transparent 70%), 
                 radial-gradient(circle at 50% 50%, #48cae4 10%, #00b4d8 60%, #0077b6 100%);
 }
+
+/* ===== CLAVE DE FÁ: igual em qualquer celular ===== */
+.staff-container { height: 120px; }
+
+.staff-container .clef {
+  left: 12px;
+  top: 11.6px;
+  width: 66.5px;
+  height: 73.9px;
+  font-size: 0;
+  line-height: 0;
+  overflow: hidden;
+  background-color: currentColor;
+  -webkit-mask: url('../img/clave-fa.svg') center / 100% 100% no-repeat;
+          mask: url('../img/clave-fa.svg') center / 100% 100% no-repeat;
+}
