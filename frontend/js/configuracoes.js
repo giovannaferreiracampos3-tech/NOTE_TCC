@@ -113,3 +113,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// === EXCLUIR CONTA ===
+document.addEventListener('DOMContentLoaded', () => {
+    const btnAbrir = document.getElementById('btnExcluirConta');
+    const box = document.getElementById('boxConfirmaExclusao');
+    const inputSenha = document.getElementById('senhaExcluir');
+    const btnConfirmar = document.getElementById('btnConfirmarExclusao');
+    const btnCancelar = document.getElementById('btnCancelarExclusao');
+    if (!btnAbrir || !box || !inputSenha || !btnConfirmar || !btnCancelar) return;
+
+    btnAbrir.addEventListener('click', () => {
+        box.hidden = false;
+        btnAbrir.hidden = true;
+        inputSenha.focus();
+    });
+
+    btnCancelar.addEventListener('click', () => {
+        box.hidden = true;
+        btnAbrir.hidden = false;
+        inputSenha.value = '';
+    });
+
+    btnConfirmar.addEventListener('click', async () => {
+        const senha = inputSenha.value;
+        if (!senha) {
+            alert('Digite sua senha para confirmar.');
+            return;
+        }
+
+        if (!confirm('Tem certeza? Sua conta e todo o seu progresso serão apagados para sempre.')) return;
+
+        btnConfirmar.disabled = true;
+        try {
+            const resposta = await fetch('https://note-tcc-backend.vercel.app/api/usuario/conta', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({ senha })
+            });
+
+            const dados = await resposta.json().catch(() => ({}));
+
+            if (!resposta.ok) {
+                alert(dados.message || 'Não foi possível excluir a conta.');
+                btnConfirmar.disabled = false;
+                return;
+            }
+
+            // Limpa tudo deste navegador, mas mantém a escolha de tema
+            const tema = localStorage.getItem('theme');
+            localStorage.clear();
+            if (tema) localStorage.setItem('theme', tema);
+
+            alert('Sua conta foi excluída. Sentiremos sua falta!');
+            window.location.href = 'login.html';
+        } catch (erro) {
+            console.error(erro);
+            alert('Não foi possível conectar ao servidor.');
+            btnConfirmar.disabled = false;
+        }
+    });
+});

@@ -31,6 +31,7 @@ const limiteAuth = rateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
 app.use('/api/login', limiteAuth);
 app.use('/api/register', limiteAuth);
 app.use('/api/recuperar-senha', limiteAuth);
+app.use('/api/usuario/conta', limiteAuth);
 const path = require('path');
 const pastaFront = path.join(__dirname, '..', 'frontend');
 console.log('Servindo front de:', pastaFront);
@@ -462,6 +463,50 @@ app.put('/api/usuario/nome', autenticar, async (req, res) => {
     } catch (e) {
         console.error('ERRO AO ALTERAR NOME:', e);
         return res.status(500).json({ message: 'Não foi possível salvar o nome.' });
+    }
+});
+
+// ================================
+// ROTA: EXCLUIR CONTA (apaga o usuário e tudo ligado a ele)
+// ================================
+app.delete('/api/usuario/conta', autenticar, async (req, res) => {
+    const senha = String((req.body && req.body.senha) || '');
+    const idUsuario = req.usuario.id;
+
+    if (!senha) {
+        return res.status(400).json({ message: 'Digite sua senha para confirmar.' });
+    }
+
+    const conn = await db.connect();
+    try {
+        const { rows } = await conn.query(
+            'SELECT senha FROM usuarios WHERE id_usuario = $1',
+            [idUsuario]
+        );
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        const senhaValida = await bcrypt.compare(senha, rows[0].senha);
+        if (!senhaValida) {
+            return res.status(401).json({ message: 'Senha incorreta.' });
+        }
+
+        await conn.query('BEGIN');
+        // Os textos publicados no Journal não somem sozinhos (ficam "sem dono"), então apagamos aqui.
+        // Comentários, reações e favoritos desses textos caem junto.
+        await conn.query('DELETE FROM publicacoes WHERE id_usuario = $1', [idUsuario]);
+        // O resto (progresso, medalhas, mural, doações, runner) é apagado em cascata.
+        await conn.query('DELETE FROM usuarios WHERE id_usuario = $1', [idUsuario]);
+        await conn.query('COMMIT');
+
+        return res.json({ message: 'Conta excluída com sucesso.' });
+    } catch (e) {
+        await conn.query('ROLLBACK').catch(() => {});
+        console.error('ERRO AO EXCLUIR CONTA:', e);
+        return res.status(500).json({ message: 'Não foi possível excluir a conta agora.' });
+    } finally {
+        conn.release();
     }
 });
 
