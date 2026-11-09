@@ -103,26 +103,6 @@
                                 <span class="slider round"></span>
                             </label>
                         </div>
-
-                        <!-- Botão final: apagar conta -->
-                    <div class="apagar-wrap">
-                        <button type="button" id="btnApagarConta" class="btn-apagar">Apagar conta</button>
-                    </div>
-
-                    <!-- Janela de confirmação -->
-                    <div id="modalApagar" class="modal-apagar" hidden>
-                        <div class="modal-apagar-card" role="dialog" aria-modal="true" aria-labelledby="tituloApagar">
-                            <img src="../img/notinha-triste.png" alt="Notinha triste" class="modal-apagar-img">
-                            <h3 id="tituloApagar">Apagar sua conta?</h3>
-                            <p>Seu perfil, progresso, medalhas e publicações serão apagados para sempre. Isso não pode ser desfeito.</p>
-                            <input type="password" id="senhaApagar" class="form-input" placeholder="Digite sua senha para confirmar" autocomplete="current-password">
-                            <div class="modal-apagar-acoes">
-                                <button type="button" id="btnCancelarApagar" class="btn-suporte">Cancelar</button>
-                                <button type="button" id="btnConfirmarApagar" class="btn-apagar">Apagar conta</button>
-                            </div>
-                        </div>
-                    </div>
-
                     </section>
 
                     <!-- Seção 2: Gerenciar Conta -->
@@ -188,8 +168,27 @@
                     </section>
                 </form>
 
+                <!-- Último item da página: apagar conta -->
+                <div class="apagar-wrap">
+                    <button type="button" id="btnApagarConta" class="btn-apagar">Apagar conta</button>
+                </div>
+
             </div>
         </main>
+    </div>
+
+    <!-- Janela de confirmação (só aparece ao clicar em "Apagar conta") -->
+    <div id="modalApagar" class="modal-apagar" hidden>
+        <div class="modal-apagar-card" role="dialog" aria-modal="true" aria-labelledby="tituloApagar">
+            <img src="../img/notinha-triste.png" alt="Notinha triste" class="modal-apagar-img">
+            <h3 id="tituloApagar">Apagar sua conta?</h3>
+            <p>Seu perfil, progresso, medalhas e publicações serão apagados para sempre. Isso não pode ser desfeito.</p>
+            <input type="password" id="senhaApagar" class="form-input" placeholder="Digite sua senha para confirmar" autocomplete="current-password">
+            <div class="modal-apagar-acoes">
+                <button type="button" id="btnCancelarApagar" class="btn-suporte">Cancelar</button>
+                <button type="button" id="btnConfirmarApagar" class="btn-apagar">Apagar conta</button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
