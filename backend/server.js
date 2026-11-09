@@ -103,7 +103,8 @@ function autenticar(req, res, next) {
 // ROTA 1: CADASTRO
 // ================================
 app.post('/api/register', async (req, res) => {
-    const { username, email, password, acceptedTerms } = req.body;
+    const { username, password, acceptedTerms } = req.body;
+    const email = String(req.body.email || '').trim().toLowerCase();
 
     if (!username || !email || !password) {
         return res.status(400).json({ message: 'Preencha todos os campos!' });
@@ -119,7 +120,7 @@ app.post('/api/register', async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const existentes = await db.query('SELECT id_usuario FROM usuarios WHERE email = $1', [email]);
+        const existentes = await db.query('SELECT id_usuario FROM usuarios WHERE LOWER(email) = $1', [email]);
         if (existentes.rowCount > 0) {
             return res.status(400).json({ message: 'Este e-mail já está cadastrado!' });
         }
@@ -161,7 +162,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     try {
-        const { rows } = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+        const { rows } = await db.query('SELECT * FROM usuarios WHERE LOWER(email) = LOWER($1)', [email]);
 
         if (rows.length === 0) {
             if (rows.length === 0) {
@@ -221,7 +222,7 @@ app.post('/api/google-login', async (req, res) => {
         const email = payload.email;
         const nome = payload.name || email.split('@')[0];
 
-        const { rows } = await db.query('SELECT * FROM usuarios WHERE email = $1', [email]);
+        const { rows } = await db.query('SELECT * FROM usuarios WHERE LOWER(email) = LOWER($1)', [email]);
 
         // Já existe: só entra
         if (rows.length > 0) {
