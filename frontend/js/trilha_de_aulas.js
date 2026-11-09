@@ -41,17 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleMenu(isMenuActive);
         });
     }
-
-    // Ouvinte para reajuste de tela (Responsividade)
-    window.addEventListener("resize", () => {
-        if (window.innerWidth >= 1024) {
-            sidebar.style.height = fullSidebarHeight;
-        } else {
-            sidebar.classList.remove("collapsed");
-            sidebar.style.height = "auto";
-            toggleMenu(sidebar.classList.contains("menu-active"));
-        }
-    });
 });
 
 // === 3. TRILHA: CADA ETAPA SÓ ABRE DEPOIS QUE A ANTERIOR FOR CONCLUÍDA ===
