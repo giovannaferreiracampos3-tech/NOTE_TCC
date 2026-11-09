@@ -39,7 +39,7 @@
     const NOTINHA = {
       ideia: '../img/notinha-ideia.jpg',
       festa: '../img/notinha-comemorando.jpg',
-      lendo: '../img/notinha-lendo.jpg'
+      lendo: '../img/feliz.png'
     };
   
     const CATS = [
