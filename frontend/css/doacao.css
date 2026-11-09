@@ -1569,104 +1569,39 @@ body.dark-mode .dc-hero .dc-btn.primario:hover {
         position: static;
     }
 
-    /* Notinha: posicionado no centro e na base do banner */
-    .dc-hero img {
-        position: absolute;
-
-        width: 280px;
-        height: 300px;
-        max-width: none;
-
-        right: 50%;
-        bottom: 0;
-
-        body.dark-mode .dc-hero::before {
-            right: 50%;
-            transform: translateX(50%);
-            bottom: -40px;
-            width: 380px;
-            height: 380px;
-            animation: none;
-        }
-    
-        body.dark-mode .dc-hero::after {
-            right: 50%;
-            transform: translateX(50%);
-            bottom: -20px;
-            width: 260px;
-            height: 260px;
-        }
-
-        transform: translateX(50%);
-
-        object-fit: contain;
-        object-position: center bottom;
-
-        z-index: 1;
+    .dc-hero {
+        padding-bottom: 320px; /* espaço para o Notinha */
     }
 
     .dc-hero h1 {
         font-size: 30px;
     }
 
-    /* Reserva espaço para o Notinha */
-    .dc-hero {
-        padding-bottom: 320px;
-    }
-}
-
-/* Navegação mobile */
-
-@media (max-width: 820px) {
-
-    .app-container {
-        flex-direction: column;
+    .dc-hero img {
+        width: 280px;
+        height: 300px;
+        max-width: none;
+        right: 50%;
+        transform: translateX(50%);
+        object-fit: contain;
+        object-position: center bottom;
     }
 
-    .sidebar {
-        width: 100%;
-
-        flex-direction: row;
-        align-items: center;
-
-        padding: 10px 14px;
-
-        overflow-x: auto;
-        gap: 8px;
+    body.dark-mode .dc-hero::before {
+        right: 50%;
+        transform: translateX(50%);
+        bottom: -40px;
+        width: 380px;
+        height: 380px;
+        animation: none;
     }
 
-    .sidebar-header {
-        margin: 0;
-    }
-
-    .sidebar-header img {
-        width: 40px !important;
-        height: 40px !important;
-    }
-
-    .sidebar-header .logo-text {
-        display: none;
-    }
-
-    .sidebar-nav {
-        flex-direction: row;
-        flex: none;
-    }
-
-    .sidebar-footer {
-        margin: 0 0 0 auto;
-    }
-
-    .nav-item span {
-        display: none;
-    }
-
-    .nav-item {
-        padding: 10px 12px;
-    }
-
-    .main-content {
-        padding: 20px 16px;
+    body.dark-mode .dc-hero::after {
+        right: 50%;
+        transform: translateX(50%);
+        bottom: -20px;
+        width: 260px;
+        height: 260px;
     }
 }
 
@@ -1675,12 +1610,24 @@ body.dark-mode .dc-hero .dc-btn.primario:hover {
 @media (max-width: 600px) {
 
     .dc-hero {
-        padding: 22px 20px;
+        padding: 22px 20px 230px; /* mantém o espaço do Notinha */
+        min-height: 0;
     }
 
     .dc-hero img {
-        max-width: 190px;
-        height: 190px;
+        width: 200px;
+        height: 200px;
+        max-width: none;
+    }
+
+    body.dark-mode .dc-hero::before {
+        width: 280px;
+        height: 280px;
+    }
+
+    body.dark-mode .dc-hero::after {
+        width: 200px;
+        height: 200px;
     }
 
     .dc-info h1 {
