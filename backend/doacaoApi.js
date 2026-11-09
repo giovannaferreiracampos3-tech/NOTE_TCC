@@ -17,16 +17,13 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
+const nuvem = require('./storage');
 const { moderar } = require('./moderacao'); // mesmo filtro de palavras do Journal
 // no topo do arquivo, junto das constantes
 const SEM_LIMITE_SMS = process.env.NODE_ENV !== 'production' && process.env.SMS_SEM_LIMITE === '1';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'troque-este-segredo'; // mesmo do server.js
 if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') console.warn('DOACAO: defina JWT_SECRET no .env!');
-const PASTA = path.join(__dirname, 'uploads', 'doacao');
-fs.mkdirSync(PASTA, { recursive: true });
 
 const CATEGORIAS = ['corda', 'sopro', 'percussao', 'teclas', 'acessorios', 'outros'];
 const STATUS = ['disponivel', 'em_processo', 'doada'];
@@ -105,7 +102,7 @@ const tipoReal = b => { // confere o conteúdo REAL do arquivo, não a extensão
   if (b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP') return 'webp';
   return null;
 };
-const apagarArquivos = caminhos => caminhos.forEach(c => fs.unlink(path.join(__dirname, 'uploads', c), () => {}));
+const apagarArquivos = caminhos => Promise.all(caminhos.map(c => nuvem.apagarCaminho(c)));
 
 // `db` deve ser um pg.Pool
 module.exports = (db) => {
@@ -178,7 +175,8 @@ module.exports = (db) => {
     for (const f of files || []) { const t = tipoReal(f.buffer); if (!t) return { e: 'Uma das fotos não é uma imagem válida (use JPG, PNG ou WEBP).' }; out.push({ buf: f.buffer, nome: 'doacao/' + crypto.randomBytes(16).toString('hex') + '.' + t }); }
     return { arquivos: out };
   }
-  const salvar = arqs => arqs.forEach(a => fs.writeFileSync(path.join(__dirname, 'uploads', a.nome), a.buf, { mode: 0o644 }));
+  const TIPOS_IMG = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
+  const salvar = arqs => Promise.all(arqs.map(a => nuvem.enviar(a.nome, a.buf, TIPOS_IMG[a.nome.split('.').pop()])));
 
   // ================= CONFIRMAÇÃO DE CELULAR POR SMS =================
   r.post('/donations/phone/send-code', exige,

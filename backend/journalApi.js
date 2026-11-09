@@ -14,6 +14,7 @@ const jwt = require('jsonwebtoken');
 const fs = require('fs/promises');
 const path = require('path');
 const crypto = require('crypto');
+const nuvem = require('./storage');
 const { moderar } = require('./moderacao');
 
 // O segredo precisa ser o MESMO que o server.js usa para criar o token de login.
@@ -83,10 +84,9 @@ function lerImagem(dataUrl) {
   if ((m[1] === 'jpeg' && !jpg) || (m[1] === 'png' && !png) || (m[1] === 'webp' && !webp)) return null;
   return { buf, ext: m[1] === 'jpeg' ? 'jpg' : m[1] };
 }
-async function apagarArquivo(url) {
-  if (!url || !url.startsWith(URL_BASE + '/uploads/journal/')) return;
-  try { await fs.unlink(path.join(PASTA_IMAGENS, path.basename(url))); } catch (e) { /* já não existe */ }
-}
+
+async function apagarArquivo(url) { await nuvem.apagar(url); }
+
 
 // `db` deve ser um pg.Pool
 module.exports = function (db) {
@@ -210,10 +210,8 @@ module.exports = function (db) {
     if (req.body.imagem) {
       const img = lerImagem(req.body.imagem);
       if (!img) return res.status(400).json({ erro: 'Imagem inválida ou grande demais.' });
-      await fs.mkdir(PASTA_IMAGENS, { recursive: true });
-      const nome = crypto.randomUUID() + '.' + img.ext;
-      await fs.writeFile(path.join(PASTA_IMAGENS, nome), img.buf);
-      imagemUrl = `${URL_BASE}/uploads/journal/${nome}`;
+      const nome = 'journal/' + crypto.randomUUID() + '.' + img.ext;
+      imagemUrl = await nuvem.enviar(nome, img.buf, img.ext === 'jpg' ? 'image/jpeg' : 'image/' + img.ext);
     }
 
     try {

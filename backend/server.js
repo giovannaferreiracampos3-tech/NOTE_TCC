@@ -521,6 +521,14 @@ app.use('/api/journal', require('./journalApi')(db));
 // Imagens de capa dos artigos publicados
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
+// As fotos ficam no Supabase Storage: /uploads/... redireciona para o endereço público
+app.get('/uploads/*rest', (req, res) => {
+    const rel = [].concat(req.params.rest).join('/');
+    if (!/^[\w-]+(\/[\w.-]+)+$/.test(rel) || rel.includes('..')) return res.status(404).end();
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.redirect(302, require('./storage').PREFIXO + rel);
+});
+
 // Foto de perfil
 app.use('/api/usuarios', require('./fotoApi')(db, autenticar));
 
