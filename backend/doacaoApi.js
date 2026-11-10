@@ -214,8 +214,6 @@ module.exports = (db, transporter) => {
       res.json({ ok: true });
     }));
 
-  // limpeza de registros antigos
-  setInterval(() => { db.query(`DELETE FROM donation_phone_verifications WHERE created_at < now() - INTERVAL '1 day'`).catch(() => {}); }, 3600000).unref();
 
   // ================= PUBLICAÇÕES =================
   const item = x => ({
@@ -509,6 +507,25 @@ module.exports = (db, transporter) => {
     await db.query('UPDATE donation_notifications SET is_read=TRUE WHERE id=$1 AND user_id=$2', [idn(req.params.id), req.user.id]);
     res.json({ ok: true });
   }));
+
+  r.post('/donations/phone/verify-code', exige, limite(15, 3600000, 'sms-verif'), h(async (req, res) => {
+    const b = req.body || {}, tel = String(b.telefone || '').replace(/\D/g, ''), cod = String(b.codigo || '').replace(/\D/g, '');
+    if (!CELULAR.test(tel) || cod.length !== 6) return erro(res, 400, 'Informe o telefone e o código de 6 números.');
+    const v = await um(db, 'SELECT id, code_hash, attempts, (expires_at < now()) AS expirou FROM donation_phone_verifications WHERE user_id=$1 AND phone_hash=$2 AND verified_at IS NULL ORDER BY id DESC LIMIT 1', [req.user.id, hashTel(tel)]);
+    if (!v) return erro(res, 400, 'Peça um novo código por e-mail.');
+    if (v.expirou || v.attempts >= 5) return erro(res, 400, 'Código expirado ou com muitas tentativas. Peça um novo.');
+    // contagem atômica: requisições simultâneas não conseguem passar de 5 tentativas
+    const inc = await db.query('UPDATE donation_phone_verifications SET attempts=attempts+1 WHERE id=$1 AND attempts<5', [v.id]);
+    if (inc.rowCount !== 1) return erro(res, 400, 'Código expirado ou com muitas tentativas. Peça um novo.');
+    const certo = crypto.timingSafeEqual(Buffer.from(v.code_hash, 'hex'), Buffer.from(hashCodigo(req.user.id, tel, cod), 'hex'));
+    if (!certo) return erro(res, 400, 'Código incorreto.');
+    const ok = await db.query('UPDATE donation_phone_verifications SET verified_at=now() WHERE id=$1 AND verified_at IS NULL', [v.id]);
+    if (ok.rowCount !== 1) return erro(res, 400, 'Peça um novo código por e-mail.');
+    res.json({ verificacaoId: v.id });
+  }));
+
+  // limpeza de registros antigos
+  setInterval(() => { db.query(`DELETE FROM donation_phone_verifications WHERE created_at < now() - INTERVAL '1 day'`).catch(() => {}); }, 3600000).unref();
 
   return r;
 };
