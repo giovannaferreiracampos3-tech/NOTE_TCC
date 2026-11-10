@@ -528,8 +528,8 @@ app.delete('/api/usuario/conta', autenticar, async (req, res) => {
 // ================================
 app.use('/api/runner', require('./runnerApi')(db));
 
-// Journal (artigos, reações, favoritos, comentários)
-app.use('/api/journal', require('./journalApi')(db));
+// Journal (artigos, reações, favoritos, comentários, denúncias)
+app.use('/api/journal', require('./journalApi')(db, transporter));
 
 // Imagens de capa dos artigos publicados
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));

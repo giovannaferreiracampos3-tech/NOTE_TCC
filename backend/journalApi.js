@@ -29,6 +29,13 @@ const CATEGORIAS_USUARIO = CATEGORIAS.filter(c => c !== 'notinha'); // "Notinha 
 const REACOES = ['aprendi', 'adorei', 'inspirador', 'excelente'];
 const MAX_IMAGEM = 2 * 1024 * 1024;   // 2 MB (o navegador já reduz antes de enviar)
 const MAX_POSTS_POR_HORA = 5;
+const MOTIVOS = ['ofensivo', 'discriminacao', 'inadequado', 'falsa', 'spam', 'dados', 'copia', 'outros'];
+const ROTULO_MOTIVO = {
+  ofensivo: 'Ofensa ou xingamento', discriminacao: 'Discriminação ou discurso de ódio',
+  inadequado: 'Conteúdo sexual ou violento', falsa: 'Informações falsas',
+  spam: 'Propaganda ou spam', dados: 'Divulgação indevida de dados pessoais',
+  copia: 'Texto copiado de outra pessoa', outros: 'Outros'
+};
 
 // Devolve o id_usuario de quem fez a requisição, ou null se não estiver logado.
 function usuarioDaRequisicao(req) {
@@ -89,7 +96,7 @@ async function apagarArquivo(url) { await nuvem.apagar(url); }
 
 
 // `db` deve ser um pg.Pool
-module.exports = function (db) {
+module.exports = function (db, transporter) {
   const router = express.Router();
   const seguro = fn => (req, res) => fn(req, res).catch(e => { console.error('ERRO NO JOURNAL:', e); res.status(500).json({ erro: 'Erro no servidor. Tente de novo.' }); });
   const exigir = (req, res) => {
@@ -319,5 +326,71 @@ module.exports = function (db) {
     res.json({ ok: true });
   }));
 
-  return router;
-};
+    // ---------- DENÚNCIAS ----------
+    const hitsDen = new Map();
+    const limiteDen = (req, res, next) => {
+      const eu = usuarioDaRequisicao(req), agora = Date.now();
+      const lista = (hitsDen.get(eu) || []).filter(t => agora - t < 3600000);
+      if (lista.length >= 10) return res.status(429).json({ erro: 'Muitas tentativas em pouco tempo. Aguarde um pouco e tente de novo.' });
+      lista.push(agora); hitsDen.set(eu, lista); next();
+    };
+  
+    router.post('/artigos/:id/denuncias', limiteDen, seguro(async (req, res) => {
+      const eu = exigir(req, res); if (!eu) return;
+      const id = idDaUrl(req), b = req.body || {};
+      const motivo = String(b.motivo || ''), desc = String(b.descricao || '').trim().slice(0, 500);
+      if (!id) return res.status(404).json({ erro: 'Publicação não encontrada.' });
+  
+      const { rows: pub } = await db.query('SELECT id_publicacao, titulo, id_usuario FROM publicacoes WHERE id_publicacao = $1', [id]);
+      if (!pub[0]) return res.status(404).json({ erro: 'Publicação não encontrada.' });
+      if (!MOTIVOS.includes(motivo)) return res.status(400).json({ erro: 'Escolha um motivo para a denúncia.' });
+      if (desc.length < 10) return res.status(400).json({ erro: 'Explique em pelo menos 10 caracteres o que aconteceu.' });
+  
+      let cid = null, coment = null;
+      if (b.comentarioId) {
+        const n = Number(b.comentarioId);
+        const { rows: c } = await db.query(
+          `SELECT c.id_comentario AS id, c.texto, u.nome FROM comentarios c JOIN usuarios u ON u.id_usuario = c.id_usuario
+           WHERE c.id_comentario = $1 AND c.id_publicacao = $2`, [Number.isSafeInteger(n) ? n : 0, id]);
+        coment = c[0];
+        if (!coment) return res.status(404).json({ erro: 'Comentário não encontrado.' });
+        cid = coment.id;
+      }
+  
+      const { rows: ja } = await db.query(
+        'SELECT id FROM journal_reports WHERE id_denunciante = $1 AND id_publicacao = $2 AND id_comentario IS NOT DISTINCT FROM $3::int', [eu, id, cid]);
+      if (ja[0]) return res.status(409).json({ erro: 'Você já denunciou isso. Nossa equipe vai analisar.' });
+  
+      const { rows: nova } = await db.query(
+        'INSERT INTO journal_reports (id_publicacao, id_comentario, id_denunciante, motivo, descricao) VALUES ($1,$2,$3,$4,$5) RETURNING id',
+        [id, cid, eu, motivo, desc]);
+  
+      // Avisa a equipe por e-mail; se falhar, a denúncia continua salva
+      try {
+        const { rows: [quem] } = await db.query('SELECT nome, email FROM usuarios WHERE id_usuario = $1', [eu]);
+        const { rows: [dono] } = pub[0].id_usuario
+          ? await db.query('SELECT nome, email FROM usuarios WHERE id_usuario = $1', [pub[0].id_usuario]) : { rows: [] };
+        const link = (process.env.FRONTEND_URL || '') + '/html/journal.html#/artigo/' + id;
+        await transporter.sendMail({
+          from: `"NoteWave" <${process.env.EMAIL_USER}>`,
+          to: process.env.EMAIL_DENUNCIAS || process.env.EMAIL_USER,
+          subject: 'Denúncia #' + nova[0].id + ' (Journal) – ' + (coment ? 'comentário' : 'artigo') + ' em "' + pub[0].titulo + '"',
+          text: [
+            'Nova denúncia no NoteWave Journal.', '',
+            'Motivo: ' + ROTULO_MOTIVO[motivo],
+            'O que a pessoa escreveu:', desc, '',
+            'Artigo: ' + pub[0].titulo + ' (id ' + id + ')',
+            'Link: ' + link,
+            'Autor do artigo: ' + (dono ? dono.nome + ' <' + dono.email + '>' : 'equipe NoteWave'),
+            coment ? '\nComentário denunciado (id ' + coment.id + ', de ' + coment.nome + '):\n' + coment.texto : '',
+            '', 'Quem denunciou: ' + (quem ? quem.nome + ' <' + quem.email + '>' : 'não encontrado')
+          ].join('\n')
+        });
+      } catch (e) { console.error('EMAIL DENUNCIA JOURNAL:', e.message); }
+  
+      res.status(201).json({ ok: true });
+    }));
+
+    router.get('/versao', (req, res) => res.json({ denuncias: true }));
+    return router;
+  };
