@@ -80,3 +80,20 @@
    .jr .jr-reagir{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .jr .jr-reagir .jr-btn{display:inline-flex;align-items:center;gap:6px;height:44px;line-height:1}
 .jr .jr-reagir .jr-fim{margin-left:0}
+
+/* ---------- Denúncias ---------- */
+.jr-link{background:none;border:0;padding:0;color:var(--jr-muted);font:500 13px Inter,sans-serif;cursor:pointer;text-decoration:underline}
+.jr-link:hover{color:var(--jr-blue)}
+.jr-reagir + .jr-link{margin-top:14px}
+
+.jr-modal{position:fixed;inset:0;background:rgba(10,20,50,.55);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:2500;padding:16px}
+.jr-modal-caixa{background:var(--jr-card);color:var(--jr-text);border-radius:20px;padding:24px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 32px);overflow-y:auto;border:1px solid var(--jr-border);box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.jr-modal-caixa h2{font-size:20px;color:var(--jr-text)}
+.jr-modal-caixa textarea,.jr-modal-caixa select{width:100%;border:1px solid var(--jr-border);border-radius:12px;padding:11px 14px;background:var(--jr-bg);color:var(--jr-text);font:400 15px Inter,sans-serif;resize:vertical}
+.jr-modal-caixa textarea:focus,.jr-modal-caixa select:focus{border-color:var(--jr-blue);outline:0;box-shadow:0 0 0 3px rgba(56,132,255,.18)}
+.jr-modal-caixa form .jr-btn.primario{width:100%;justify-content:center;padding:12px 18px}
+.jr-modal-caixa .jr-contador{align-self:flex-end;font-size:12px;color:var(--jr-muted)}
+.jr-modal-caixa .jr-erro{color:#b91c1c;font-weight:600;font-size:14px}
+.jr-modal-caixa .jr-erro:empty{display:none}
+body.dark-mode .jr-modal-caixa .jr-erro{color:#fca5a5}
+.jr-coment-topo .jr-link{margin-left:auto}

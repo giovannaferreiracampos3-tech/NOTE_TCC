@@ -62,6 +62,9 @@
       'Escrever o que aprendeu no Caderno ajuda a fixar o conteúdo.'
     ];
     const REACOES = [['aprendi', '💡', 'Aprendi!'], ['adorei', '💙', 'Adorei!'], ['inspirador', '🎵', 'Inspirador!'], ['excelente', '⭐', 'Excelente!']];
+    const MOTIVOS = [['ofensivo', 'Ofensa ou xingamento'], ['discriminacao', 'Discriminação ou discurso de ódio'],
+  ['inadequado', 'Conteúdo sexual ou violento'], ['falsa', 'Informações falsas'], ['spam', 'Propaganda ou spam'],
+  ['dados', 'Divulgação indevida de dados pessoais'], ['copia', 'Texto copiado de outra pessoa'], ['outros', 'Outros']];
   
     const cat = id => CATS.find(c => c.id === id) || CATS[0];
     const $ = s => document.querySelector(s);
@@ -99,6 +102,37 @@
       return d;
     }
     const exigeLogin = () => { if (logado()) return true; toast('Entre na sua conta para fazer isso.'); return false; };
+    function modal(titulo, corpo) {
+      const ov = el('div', 'jr-modal jr'), cx = el('div', 'jr-modal-caixa');
+      cx.setAttribute('role', 'dialog'); cx.setAttribute('aria-modal', 'true'); cx.setAttribute('aria-label', titulo);
+      cx.append(el('h2', '', titulo), corpo); ov.appendChild(cx);
+      const esc = e => { if (e.key === 'Escape') fechar(); };
+      const fechar = () => { ov.remove(); document.removeEventListener('keydown', esc); };
+      document.addEventListener('keydown', esc);
+      ov.addEventListener('mousedown', e => { if (e.target === ov) fechar(); });
+      document.body.appendChild(ov); return fechar;
+    }
+    function contadorTxt(ctl) { const c = el('small', 'jr-contador'); const a = () => { c.textContent = (ctl.maxLength - ctl.value.length) + ' caracteres restantes'; }; ctl.addEventListener('input', a); a(); return c; }
+
+    function denunciar(artId, comentarioId) {
+      if (!exigeLogin()) return;
+      const cx = el('form'); cx.style.cssText = 'display:flex;flex-direction:column;gap:12px';
+      const s = el('select'); s.setAttribute('aria-label', 'Motivo'); MOTIVOS.forEach(([v, n]) => { const o = el('option', '', n); o.value = v; s.appendChild(o); });
+      const ta = el('textarea'); ta.rows = 5; ta.maxLength = 500; ta.required = true;
+      ta.placeholder = 'Conte o que aconteceu, para a nossa equipe analisar.'; ta.setAttribute('aria-label', 'Descrição da denúncia');
+      const er = el('div', 'jr-erro'), ok = el('button', 'jr-btn primario', 'Enviar denúncia'); ok.type = 'submit';
+      cx.append(s, ta, contadorTxt(ta), er, ok);
+      const fechar = modal(comentarioId ? 'Denunciar comentário' : 'Denunciar publicação', cx);
+      cx.addEventListener('submit', async e => {
+        e.preventDefault(); er.textContent = '';
+        if (ta.value.trim().length < 10) { er.textContent = 'Explique em pelo menos 10 caracteres o que aconteceu.'; ta.focus(); return; }
+        if (ok.disabled) return; ok.disabled = true;
+        try {
+          await api('/artigos/' + artId + '/denuncias', { method: 'POST', body: { motivo: s.value, descricao: ta.value.trim(), comentarioId: comentarioId || null } });
+          fechar(); toast('Denúncia enviada. Obrigado por ajudar a cuidar da comunidade.');
+        } catch (e2) { er.textContent = e2.message; ok.disabled = false; }
+      });
+    }
   
     // Texto com **negrito** e *itálico* montado por DOM (sem innerHTML => sem HTML arbitrário)
     function inline(parent, texto) {
@@ -540,6 +574,11 @@
         barra.appendChild(fim);
       }
       barraDesenhar();
+
+      if (!a.meu) {
+        const rep = el('button', 'jr-link', 'Denunciar esta publicação'); rep.type = 'button';
+        rep.onclick = () => denunciar(a.id); raiz.appendChild(rep);
+      }
   
       // Comentários
       const sc = el('section', 'jr-com'), lista = el('div', 'jr-com-lista'), tit = el('h2', '');
@@ -554,6 +593,10 @@
             const x = el('button', 'jr-mini'); x.type = 'button'; x.title = 'Apagar comentário'; x.setAttribute('aria-label', 'Apagar comentário'); x.appendChild(el('i', 'ph ph-trash'));
             x.onclick = async () => { try { await api('/comentarios/' + cm.id, { method: 'DELETE' }); a.comentarios = a.comentarios.filter(z => z.id !== cm.id); comentariosDesenhar(); } catch (er) { toast(er.message); } };
             topo.appendChild(x);
+          }
+          if (!cm.meu) {
+            const r = el('button', 'jr-link', 'Denunciar'); r.type = 'button';
+            r.onclick = () => denunciar(a.id, cm.id); topo.appendChild(r);
           }
           corpo.append(topo, el('p', '', cm.texto)); it.append(avatar('jr-avatar', cm.autor, cm.meu ? fotoMinha() : cm.autorFoto), corpo); lista.appendChild(it);
         });
