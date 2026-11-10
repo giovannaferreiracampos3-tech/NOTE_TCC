@@ -28,6 +28,7 @@ if (!process.env.JWT_SECRET && process.env.NODE_ENV === 'production') console.wa
 const CATEGORIAS = ['corda', 'sopro', 'percussao', 'teclas', 'acessorios', 'outros'];
 const STATUS = ['disponivel', 'em_processo', 'doada'];
 const MOTIVOS = ['venda', 'cobranca', 'falsa', 'diferente', 'inadequado', 'golpe', 'dados', 'outros'];
+const ROTULO_MOTIVO = { venda: 'Tentativa de venda', cobranca: 'Cobrança indevida', falsa: 'Informações falsas', diferente: 'Instrumento diferente do anunciado', inadequado: 'Conteúdo inadequado', golpe: 'Suspeita de golpe', dados: 'Divulgação indevida de dados pessoais', outros: 'Outros' };
 const MAX_FOTOS = 6, MAX_MB = 5;
 
 // ---------- helpers do Postgres ----------
@@ -480,17 +481,46 @@ module.exports = (db, transporter) => {
   // ================= DENÚNCIAS =================
   r.post('/donations/:id/reports', exige, limite(10, 3600000, 'denuncia'), h(async (req, res) => {
     const id = idn(req.params.id), b = req.body || {}, motivo = String(b.motivo || ''), desc = String(b.descricao || '').trim().slice(0, 500);
-    if (!(await buscar(id))) return erro(res, 404, 'Publicação não encontrada.');
+    const d = await buscar(id);
+    if (!d) return erro(res, 404, 'Publicação não encontrada.');
     if (!MOTIVOS.includes(motivo)) return erro(res, 400, 'Escolha um motivo para a denúncia.');
-    let cid = null;
+    if (desc.length < 10) return erro(res, 400, 'Explique em pelo menos 10 caracteres o que aconteceu.');
+    let cid = null, coment = null;
     if (b.comentarioId) {
-      const c = await um(db, 'SELECT id FROM donation_comments WHERE id=$1 AND donation_id=$2', [idn(b.comentarioId), id]);
-      if (!c) return erro(res, 404, 'Comentário não encontrado.'); cid = c.id;
+      coment = await um(db, 'SELECT c.id, c.comment, u.nome FROM donation_comments c JOIN usuarios u ON u.id_usuario=c.user_id WHERE c.id=$1 AND c.donation_id=$2', [idn(b.comentarioId), id]);
+      if (!coment) return erro(res, 404, 'Comentário não encontrado.'); cid = coment.id;
     }
     const ja = await um(db, 'SELECT id FROM donation_reports WHERE reporter_user_id=$1 AND donation_id=$2 AND comment_id IS NOT DISTINCT FROM $3::int', [req.user.id, id, cid]);
     if (ja) return erro(res, 409, 'Você já denunciou isso. Nossa equipe vai analisar.');
-    // Denúncias nunca apagam nada sozinhas: ficam na fila para a moderação
-    await db.query('INSERT INTO donation_reports (donation_id, comment_id, reporter_user_id, reason, description) VALUES ($1,$2,$3,$4,$5)', [id, cid, req.user.id, motivo, desc || null]);
+    // Denúncias nunca apagam nada sozinhas: ficam salvas no banco para a moderação
+    const nova = await um(db, 'INSERT INTO donation_reports (donation_id, comment_id, reporter_user_id, reason, description) VALUES ($1,$2,$3,$4,$5) RETURNING id', [id, cid, req.user.id, motivo, desc]);
+
+    // Avisa a equipe por e-mail. Se o e-mail falhar, a denúncia continua salva no banco.
+    try {
+      const eu = await um(db, 'SELECT nome, email FROM usuarios WHERE id_usuario=$1', [req.user.id]);
+      const dono = await um(db, 'SELECT nome, email FROM usuarios WHERE id_usuario=$1', [d.user_id]);
+      const link = (process.env.FRONTEND_URL || '') + '/html/doacao.html#/doacao/' + id;
+      await transporter.sendMail({
+        from: `"NoteWave" <${process.env.EMAIL_USER}>`,
+        to: process.env.EMAIL_DENUNCIAS || process.env.EMAIL_USER,
+        subject: 'Denúncia #' + nova.id + ' – ' + (coment ? 'comentário' : 'publicação') + ' em "' + d.instrument_name + '"',
+        text: [
+          'Nova denúncia no NoteWave Doações.',
+          '',
+          'Motivo: ' + ROTULO_MOTIVO[motivo],
+          'O que a pessoa escreveu:',
+          desc,
+          '',
+          'Publicação: ' + d.instrument_name + ' (id ' + id + ')',
+          'Link: ' + link,
+          'Dono da publicação: ' + (dono ? dono.nome + ' <' + dono.email + '>' : 'não encontrado'),
+          coment ? '\nComentário denunciado (id ' + coment.id + ', de ' + coment.nome + '):\n' + coment.comment : '',
+          '',
+          'Quem denunciou: ' + (eu ? eu.nome + ' <' + eu.email + '>' : 'não encontrado')
+        ].join('\n')
+      });
+    } catch (e) { console.error('EMAIL DENUNCIA:', e.message); }
+
     res.status(201).json({ ok: true });
   }));
 
