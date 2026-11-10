@@ -546,11 +546,8 @@ app.get('/uploads/*rest', (req, res) => {
 app.use('/api/usuarios', require('./fotoApi')(db, autenticar));
 
 // Doações (usa vários prefixos: /donations, /donation-interests, /donation-comments...)
-app.use('/api', require('./doacaoApi')(db));
+app.use('/api', require('./doacaoApi')(db, transporter));
 
-// ================================
-// INICIAR O SERVIDOR
-// ================================
 // ================================
 // INICIAR O SERVIDOR
 // ================================

@@ -58,7 +58,7 @@ const CHAVE_HMAC = crypto.createHmac('sha256', CHAVE).update('verificacao-sms').
 const hashTel = tel => crypto.createHmac('sha256', CHAVE_HMAC).update('tel:' + tel).digest('hex');
 const hashCodigo = (uid, tel, cod) => crypto.createHmac('sha256', CHAVE_HMAC).update('cod:' + uid + ':' + tel + ':' + cod).digest('hex');
 const CELULAR = /^\d{2}9\d{8}$/; // SMS só chega em celular (DDD + 9 + 8 dígitos)
-const MSG_SMS = 'Confirme seu celular pelo código enviado por SMS antes de publicar.';
+const MSG_SMS = 'Confirme o código enviado ao seu e-mail antes de publicar.';
 
 async function enviarSms(tel, texto) {
   const sid = process.env.TWILIO_SID, tok = process.env.TWILIO_TOKEN, from = process.env.TWILIO_FROM;
@@ -105,7 +105,7 @@ const tipoReal = b => { // confere o conteúdo REAL do arquivo, não a extensão
 const apagarArquivos = caminhos => Promise.all(caminhos.map(c => nuvem.apagarCaminho(c)));
 
 // `db` deve ser um pg.Pool
-module.exports = (db) => {
+module.exports = (db, transporter) => {
   const r = express.Router();
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_MB * 1024 * 1024, files: MAX_FOTOS } });
   const receber = (req, res, next) => upload.array('imagens', MAX_FOTOS)(req, res, err => {
@@ -178,49 +178,41 @@ module.exports = (db) => {
   const TIPOS_IMG = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp' };
   const salvar = arqs => Promise.all(arqs.map(a => nuvem.enviar(a.nome, a.buf, TIPOS_IMG[a.nome.split('.').pop()])));
 
-  // ================= CONFIRMAÇÃO DE CELULAR POR SMS =================
+  // ================= CONFIRMAÇÃO DE TELEFONE POR EMAIL =================
   r.post('/donations/phone/send-code', exige,
     (req, res, next) => SEM_LIMITE_SMS ? next() : limite(5, 3600000, 'sms')(req, res, next),
     h(async (req, res) => {
       const tel = String((req.body || {}).telefone || '').replace(/\D/g, '');
-      if (!CELULAR.test(tel)) return erro(res, 400, 'Informe um celular válido com DDD para receber o SMS.');
+      if (!CELULAR.test(tel)) return erro(res, 400, 'Informe um celular válido com DDD.');
       const ph = hashTel(tel);
 
       if (!SEM_LIMITE_SMS) {
         const u = await um(db, 'SELECT EXTRACT(EPOCH FROM (now() - created_at))::int AS s FROM donation_phone_verifications WHERE user_id=$1 ORDER BY id DESC LIMIT 1', [req.user.id]);
         if (u && u.s < 60) return erro(res, 429, 'Aguarde ' + (60 - u.s) + ' segundos para pedir outro código.');
-        // protege o dono do número contra "bombardeio" de SMS vindo de várias contas
-        const { n } = await um(db, `SELECT COUNT(*)::int AS n FROM donation_phone_verifications WHERE phone_hash=$1 AND created_at > now() - INTERVAL '1 hour'`, [ph]);
-        if (n >= 3) return erro(res, 429, 'Este número recebeu códigos demais. Tente novamente mais tarde.');
       }
+
+      // o código vai para o e-mail da conta de quem está logado
+      const usuario = await um(db, 'SELECT email, nome FROM usuarios WHERE id_usuario=$1', [req.user.id]);
+      if (!usuario || !usuario.email) return erro(res, 400, 'Sua conta não tem e-mail cadastrado.');
 
       const codigo = String(crypto.randomInt(0, 1000000)).padStart(6, '0');
       const ins = await um(db, `INSERT INTO donation_phone_verifications (user_id, phone_hash, code_hash, expires_at) VALUES ($1,$2,$3, now() + INTERVAL '10 minutes') RETURNING id`,
         [req.user.id, ph, hashCodigo(req.user.id, tel, codigo)]);
-      try { await enviarSms(tel, 'NoteWave: seu código de confirmação é ' + codigo + '. Vale por 10 minutos. Não compartilhe.'); }
-      catch (e) {
-        console.error('SMS:', e.message);
+
+      try {
+        await transporter.sendMail({
+          from: `"NoteWave" <${process.env.EMAIL_USER}>`,
+          to: usuario.email,
+          subject: 'Seu código de confirmação - NoteWave',
+          text: `Olá, ${usuario.nome}!\n\nSeu código de confirmação é ${codigo}.\nEle vale por 10 minutos. Não compartilhe com ninguém.`
+        });
+      } catch (e) {
+        console.error('EMAIL:', e.message);
         await db.query('DELETE FROM donation_phone_verifications WHERE id=$1', [ins.id]); // não conta como envio
-        return erro(res, 502, 'Não foi possível enviar o SMS agora. Tente de novo em instantes.');
+        return erro(res, 502, 'Não foi possível enviar o e-mail agora. Tente de novo em instantes.');
       }
       res.json({ ok: true });
     }));
-
-  r.post('/donations/phone/verify-code', exige, limite(15, 3600000, 'sms-verif'), h(async (req, res) => {
-    const b = req.body || {}, tel = String(b.telefone || '').replace(/\D/g, ''), cod = String(b.codigo || '').replace(/\D/g, '');
-    if (!CELULAR.test(tel) || cod.length !== 6) return erro(res, 400, 'Informe o telefone e o código de 6 números.');
-    const v = await um(db, 'SELECT id, code_hash, attempts, (expires_at < now()) AS expirou FROM donation_phone_verifications WHERE user_id=$1 AND phone_hash=$2 AND verified_at IS NULL ORDER BY id DESC LIMIT 1', [req.user.id, hashTel(tel)]);
-    if (!v) return erro(res, 400, 'Peça um novo código por SMS.');
-    if (v.expirou || v.attempts >= 5) return erro(res, 400, 'Código expirado ou com muitas tentativas. Peça um novo.');
-    // contagem atômica: requisições simultâneas não conseguem passar de 5 tentativas
-    const inc = await db.query('UPDATE donation_phone_verifications SET attempts=attempts+1 WHERE id=$1 AND attempts<5', [v.id]);
-    if (inc.rowCount !== 1) return erro(res, 400, 'Código expirado ou com muitas tentativas. Peça um novo.');
-    const certo = crypto.timingSafeEqual(Buffer.from(v.code_hash, 'hex'), Buffer.from(hashCodigo(req.user.id, tel, cod), 'hex'));
-    if (!certo) return erro(res, 400, 'Código incorreto.');
-    const ok = await db.query('UPDATE donation_phone_verifications SET verified_at=now() WHERE id=$1 AND verified_at IS NULL', [v.id]);
-    if (ok.rowCount !== 1) return erro(res, 400, 'Peça um novo código por SMS.');
-    res.json({ verificacaoId: v.id });
-  }));
 
   // limpeza de registros antigos
   setInterval(() => { db.query(`DELETE FROM donation_phone_verifications WHERE created_at < now() - INTERVAL '1 day'`).catch(() => {}); }, 3600000).unref();
@@ -301,7 +293,7 @@ module.exports = (db) => {
       const ins = await um(conn, `INSERT INTO donations (user_id, instrument_name, category, description, city, phone, phone_verified_at, consent_at)
         VALUES ($1,$2,$3,$4,$5,$6, CASE WHEN $7::boolean THEN now() END, now()) RETURNING id`,
         [req.user.id, c.nome, c.categoria, c.descricao, c.cidade, c.tel ? cifrar(c.tel) : null, !!c.tel]);
-      salvar(v.arquivos);
+        await salvar(v.arquivos);
       for (let i = 0; i < v.arquivos.length; i++) await conn.query('INSERT INTO donation_images (donation_id, image_path, "position") VALUES ($1,$2,$3)', [ins.id, v.arquivos[i].nome, i]);
       await conn.query('COMMIT'); res.status(201).json({ id: ins.id });
     } catch (e) { await rollback(conn); apagarArquivos(v.arquivos.map(a => a.nome)); throw e; } finally { conn.release(); }
@@ -329,7 +321,7 @@ module.exports = (db) => {
         await conn.query("UPDATE donation_contact_permissions SET consent_status='revogado', revoked_at=now() WHERE donation_id=$1 AND consent_status='autorizado'", [id]);
       }
       if (sai.length) await conn.query('DELETE FROM donation_images WHERE id = ANY($1::int[])', [sai.map(s => Number(s.id))]);
-      salvar(v.arquivos);
+      await salvar(v.arquivos);
       for (const a of v.arquivos) { const ins = await um(conn, 'INSERT INTO donation_images (donation_id, image_path) VALUES ($1,$2) RETURNING id', [id, a.nome]); ficam.push(Number(ins.id)); }
       for (let i = 0; i < ficam.length; i++) await conn.query('UPDATE donation_images SET "position"=$1 WHERE id=$2', [i, ficam[i]]);
       await conn.query('COMMIT'); apagarArquivos(sai.map(s => s.image_path)); res.json({ id });
