@@ -96,7 +96,7 @@
     box.appendChild(v);
   }
   function modal(titulo, corpo) {
-    const ov = el('div', 'dc-modal'), cx = el('div', 'dc-modal-caixa');
+    const ov = el('div', 'dc-modal dc'), cx = el('div', 'dc-modal-caixa');
     cx.setAttribute('role', 'dialog'); cx.setAttribute('aria-modal', 'true'); cx.setAttribute('aria-label', titulo);
     cx.append(el('h2', '', titulo), corpo); ov.appendChild(cx);
     const esc = e => { if (e.key === 'Escape') fechar(); };
@@ -427,13 +427,19 @@
     if (!exigeLogin()) return;
     const cx = el('form'); cx.style.cssText = 'display:flex;flex-direction:column;gap:12px';
     const s = el('select'); s.setAttribute('aria-label', 'Motivo'); MOTIVOS.forEach(([v, n]) => { const o = el('option', '', n); o.value = v; s.appendChild(o); });
-    const ta = el('textarea'); ta.rows = 3; ta.maxLength = 500; ta.placeholder = 'Quer explicar melhor? (opcional)'; ta.setAttribute('aria-label', 'Descrição da denúncia');
+    const ta = el('textarea'); ta.rows = 5; ta.maxLength = 500; ta.required = true;
+    ta.placeholder = 'Conte o que aconteceu, para a nossa equipe analisar.'; ta.setAttribute('aria-label', 'Descrição da denúncia');
     const er = el('div', 'dc-erro'), ok = el('button', 'dc-btn primario', 'Enviar denúncia'); ok.type = 'submit';
-    cx.append(s, ta, er, ok); const fechar = modal(comentarioId ? 'Denunciar comentário' : 'Denunciar publicação', cx);
-    cx.addEventListener('submit', e => { e.preventDefault(); espera(ok, async () => {
-      try { await api('/donations/' + donId + '/reports', { method: 'POST', body: { motivo: s.value, descricao: ta.value.trim(), comentarioId: comentarioId || null } }); fechar(); toast('Denúncia enviada. Obrigado por ajudar a cuidar da comunidade.'); }
-      catch (e2) { er.textContent = e2.message; }
-    }); });
+    cx.append(s, ta, contador(ta), er, ok);
+    const fechar = modal(comentarioId ? 'Denunciar comentário' : 'Denunciar publicação', cx);
+    cx.addEventListener('submit', e => {
+      e.preventDefault(); er.textContent = '';
+      if (ta.value.trim().length < 10) { er.textContent = 'Explique em pelo menos 10 caracteres o que aconteceu.'; ta.focus(); return; }
+      espera(ok, async () => {
+        try { await api('/donations/' + donId + '/reports', { method: 'POST', body: { motivo: s.value, descricao: ta.value.trim(), comentarioId: comentarioId || null } }); fechar(); toast('Denúncia enviada. Obrigado por ajudar a cuidar da comunidade.'); }
+        catch (e2) { er.textContent = e2.message; }
+      });
+    });
   }
 
   async function detalhe(id, manter) {
