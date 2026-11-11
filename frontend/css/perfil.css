@@ -673,3 +673,23 @@ color: #c53030;
 .day-item.completed:hover .day-flame {
   animation: queimando 0.6s infinite ease-in-out;
 }
+
+/* --- CORES POR SEMANA (5 cores em ciclo) --- */
+.day-item.completed.semana-cor-1 .day-circle { background: linear-gradient(135deg, #fff4e0, #ffd9a8); }
+.day-item.completed.semana-cor-2 .day-circle { background: linear-gradient(135deg, #e0efff, #a8cfff); }
+.day-item.completed.semana-cor-3 .day-circle { background: linear-gradient(135deg, #e3f8e5, #a8e6b0); }
+.day-item.completed.semana-cor-4 .day-circle { background: linear-gradient(135deg, #f0e6ff, #cfb2ff); }
+.day-item.completed.semana-cor-5 .day-circle { background: linear-gradient(135deg, #ffe4ef, #ffb0cc); }
+
+.day-item.completed.semana-cor-1 span { color: #f08a24; }
+.day-item.completed.semana-cor-2 span { color: #2f7fe0; }
+.day-item.completed.semana-cor-3 span { color: #2e9d4a; }
+.day-item.completed.semana-cor-4 span { color: #8250d6; }
+.day-item.completed.semana-cor-5 span { color: #d6407e; }
+
+/* Modo escuro */
+.dark-mode .day-item.completed.semana-cor-1 .day-circle { background: rgba(255, 150, 40, 0.25); }
+.dark-mode .day-item.completed.semana-cor-2 .day-circle { background: rgba(56, 140, 255, 0.25); }
+.dark-mode .day-item.completed.semana-cor-3 .day-circle { background: rgba(60, 200, 90, 0.25); }
+.dark-mode .day-item.completed.semana-cor-4 .day-circle { background: rgba(150, 100, 255, 0.25); }
+.dark-mode .day-item.completed.semana-cor-5 .day-circle { background: rgba(255, 90, 150, 0.25); }

@@ -309,28 +309,53 @@
           sub.textContent = sequencia > 1 ? 'Continue assim!' : 'Boa! Volte amanhã para manter a sequência.';
         }
     
-        // Semana atual (segunda a domingo)
-        const ordem = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
-        const hoje = new Date();
-        const segunda = new Date(hoje);
-        segunda.setDate(hoje.getDate() - ((hoje.getDay() + 6) % 7));
-    
-        ordem.forEach((id, i) => {
-          const data = new Date(segunda);
-          data.setDate(segunda.getDate() + i);
-    
-          const item = $(`day-${id}`);
-          if (!item) return;
-          const circulo = item.querySelector('.day-circle');
-          if (!circulo) return;
-    
-          const estudou = set.has(dataLocal(data));
-          item.classList.toggle('completed', estudou);
-          item.classList.toggle('today', dataLocal(data) === dataLocal(hoje));
-          circulo.innerHTML = estudou
-            ? '<i class="day-flame">🔥</i>'
-            : '<i class="ph ph-check"></i>';
-        });
+           // Semana atual (segunda a domingo)
+    const ordem = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const segunda = new Date(hoje);
+    segunda.setDate(hoje.getDate() - ((hoje.getDay() + 6) % 7));
+
+    // Cor da semana: 5 cores que se repetem, fixas pelo número da semana
+    const NUM_CORES = 5;
+    const REF_SEGUNDA = Date.UTC(2024, 0, 1); // uma segunda-feira qualquer de referência
+    function corDaSemana(segundaDaSemana) {
+      const utc = Date.UTC(segundaDaSemana.getFullYear(), segundaDaSemana.getMonth(), segundaDaSemana.getDate());
+      const semanas = Math.round((utc - REF_SEGUNDA) / (7 * 24 * 60 * 60 * 1000));
+      return (((semanas % NUM_CORES) + NUM_CORES) % NUM_CORES) + 1; // 1 a 5
+    }
+
+    ordem.forEach((id, i) => {
+      const item = $(`day-${id}`);
+      if (!item) return;
+      const circulo = item.querySelector('.day-circle');
+      if (!circulo) return;
+
+      // Dia desta semana
+      const dataAtual = new Date(segunda);
+      dataAtual.setDate(segunda.getDate() + i);
+
+      // Se esse dia ainda não chegou, continua mostrando o da semana passada
+      const jaChegou = dataAtual <= hoje;
+      const data = new Date(dataAtual);
+      const segundaDaData = new Date(segunda);
+      if (!jaChegou) {
+        data.setDate(data.getDate() - 7);
+        segundaDaData.setDate(segundaDaData.getDate() - 7);
+      }
+
+      const estudou = set.has(dataLocal(data));
+
+      // Limpa as cores antigas e aplica a da semana a que esse dia pertence
+      for (let c = 1; c <= NUM_CORES; c++) item.classList.remove(`semana-cor-${c}`);
+      if (estudou) item.classList.add(`semana-cor-${corDaSemana(segundaDaData)}`);
+
+      item.classList.toggle('completed', estudou);
+      item.classList.toggle('today', dataLocal(dataAtual) === dataLocal(hoje));
+      circulo.innerHTML = estudou
+        ? '<i class="day-flame">🔥</i>'
+        : '<i class="ph ph-check"></i>';
+    });
       }
     
       // ---------------------------------------------------------------
