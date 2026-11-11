@@ -55,7 +55,7 @@ function minutos(blocos, resumo) {
 }
 
 // Aceita só os tipos de bloco que o usuário pode criar; descarta qualquer outra coisa
-function limparBlocos(brutos) {
+function limparBlocos(brutos, equipe = false) {
   if (!Array.isArray(brutos) || !brutos.length || brutos.length > 80) return null;
   const out = [];
   for (const b of brutos) {
@@ -71,6 +71,11 @@ function limparBlocos(brutos) {
       case 'citacao': {
         const t = texto(b.texto, 1000);
         if (t) out.push({ tipo: 'citacao', texto: t, ...(b.fonte ? { fonte: texto(b.fonte, 120) } : {}) }); break;
+      }
+      case 'caixa': {
+        if (!equipe) return null;
+        const t = texto(b.texto, 1000);
+        if (t) out.push({ tipo: 'caixa', titulo: texto(b.titulo, 100) || 'Você sabia?', texto: t }); break;
       }
       default: return null;
     }
@@ -106,6 +111,12 @@ module.exports = function (db, transporter) {
   };
   // id da URL: inteiro positivo ou null
   const idDaUrl = req => { const n = Number(req.params.id); return Number.isSafeInteger(n) && n > 0 && n < 2147483647 ? n : null; };
+  router.get('/eu', seguro(async (req, res) => {
+    const eu = usuarioDaRequisicao(req);
+    if (!eu) return res.json({ equipe: false });
+    const { rows } = await db.query('SELECT papel FROM usuarios WHERE id_usuario = $1', [eu]);
+    res.json({ equipe: rows[0]?.papel === 'equipe' });
+  }));
 
   // LEFT JOIN em usuarios: artigos da equipe (id_usuario nulo) continuam aparecendo, só sem foto.
   // Atenção: no Postgres alias sem aspas vira minúsculo, então os camelCase precisam de "aspas".
@@ -185,34 +196,40 @@ module.exports = function (db, transporter) {
     });
   }));
 
-  // ---------- PUBLICAR ----------
-  router.post('/artigos', seguro(async (req, res) => {
+   // ---------- PUBLICAR ----------
+   router.post('/artigos', seguro(async (req, res) => {
     const eu = exigir(req, res); if (!eu) return;
 
+    const { rows: us } = await db.query('SELECT nome, papel FROM usuarios WHERE id_usuario = $1', [eu]);
+    if (!us[0]) return res.status(401).json({ erro: 'Usuário não encontrado. Entre de novo.' });
+    const ehEquipe = us[0].papel === 'equipe';
+    const comoEquipe = req.body.comoEquipe === true;
+    if (comoEquipe && !ehEquipe)
+      return res.status(403).json({ erro: 'Apenas a equipe pode publicar como Equipe NoteWave.' });
+
     const titulo = texto(req.body.titulo, 120), resumo = texto(req.body.resumo, 200), categoria = req.body.categoria;
-    const blocos = limparBlocos(req.body.blocos);
+    const blocos = limparBlocos(req.body.blocos, comoEquipe);
     if (titulo.length < 5) return res.status(400).json({ erro: 'O título precisa ter pelo menos 5 caracteres.' });
     if (resumo.length < 20) return res.status(400).json({ erro: 'O resumo precisa ter pelo menos 20 caracteres.' });
-    if (!CATEGORIAS_USUARIO.includes(categoria)) return res.status(400).json({ erro: 'Escolha uma categoria válida.' });
+    if (!(comoEquipe ? CATEGORIAS : CATEGORIAS_USUARIO).includes(categoria))
+      return res.status(400).json({ erro: 'Escolha uma categoria válida.' });
     if (!blocos) return res.status(400).json({ erro: 'Texto inválido.' });
     const corpo = textoDosBlocos(blocos);
     if (corpo.length < 200) return res.status(400).json({ erro: 'O texto está curto. Escreva pelo menos 200 caracteres.' });
 
-    // Moderação por palavras-chave (título, resumo e texto)
-    const mod = moderar({ 'título': titulo, 'resumo': resumo, 'texto': corpo });
-    if (!mod.ok) return res.status(422).json({ erro: mod.mensagem });
+    if (!comoEquipe) {
+      const mod = moderar({ 'título': titulo, 'resumo': resumo, 'texto': corpo });
+      if (!mod.ok) return res.status(422).json({ erro: mod.mensagem });
+      const { rows: cont } = await db.query(
+        `SELECT COUNT(*)::int AS total FROM publicacoes WHERE id_usuario = $1 AND criada_em > (now() - INTERVAL '1 hour')`, [eu]);
+      if (cont[0].total >= MAX_POSTS_POR_HORA)
+        return res.status(429).json({ erro: 'Você publicou bastante em pouco tempo. Tente de novo daqui a pouco.' });
+    }
 
-    // Limite de publicações por hora (evita spam)
-    const { rows: cont } = await db.query(
-      `SELECT COUNT(*)::int AS total FROM publicacoes WHERE id_usuario = $1 AND criada_em > (now() - INTERVAL '1 hour')`, [eu]);
-    if (cont[0].total >= MAX_POSTS_POR_HORA)
-      return res.status(429).json({ erro: 'Você publicou bastante em pouco tempo. Tente de novo daqui a pouco.' });
+    const origem = comoEquipe ? 'equipe' : 'comunidade';
+    const autor = comoEquipe ? (categoria === 'notinha' ? 'Notinha' : 'Equipe NoteWave') : us[0].nome;
+    const destaque = comoEquipe && req.body.destaque === true;
 
-    // Nome do autor vem do banco (nunca do que o navegador enviou)
-    const { rows: us } = await db.query('SELECT nome FROM usuarios WHERE id_usuario = $1', [eu]);
-    if (!us[0]) return res.status(401).json({ erro: 'Usuário não encontrado. Entre de novo.' });
-
-    // Imagem de capa (opcional)
     let imagemUrl = null;
     if (req.body.imagem) {
       const img = lerImagem(req.body.imagem);
@@ -222,14 +239,13 @@ module.exports = function (db, transporter) {
     }
 
     try {
-      // Se "destaque" for SMALLINT/TINYINT no seu schema, troque FALSE por 0
       const { rows } = await db.query(
         `INSERT INTO publicacoes (titulo, resumo, categoria, blocos, autor, origem, destaque, id_usuario, imagem)
-         VALUES ($1, $2, $3, $4, $5, 'comunidade', FALSE, $6, $7)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          RETURNING id_publicacao`,
-        [titulo, resumo, categoria, JSON.stringify(blocos), us[0].nome, eu, imagemUrl]);
+        [titulo, resumo, categoria, JSON.stringify(blocos), autor, origem, destaque, eu, imagemUrl]);
       res.status(201).json({ id: rows[0].id_publicacao });
-    } catch (e) { await apagarArquivo(imagemUrl); throw e; } // não deixa imagem órfã
+    } catch (e) { await apagarArquivo(imagemUrl); throw e; }
   }));
 
   // ---------- APAGAR ARTIGO (apaga do banco: comentários, reações, favoritos e a imagem) ----------
