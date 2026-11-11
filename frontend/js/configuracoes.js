@@ -61,55 +61,82 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// === ALTERAR NOME / APELIDO ===
+// === ALTERAR NOME / E-MAIL / SENHA ===
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('formConfiguracoes');
     const inputNome = document.getElementById('nome');
+    const inputEmail = document.getElementById('email');
+    const inputSenha = document.getElementById('senha');
+    const inputAtual = document.getElementById('senhaAtual');
     if (!form || !inputNome) return;
+
+    const API = 'https://note-tcc-backend.vercel.app/api';
 
     // Mesma chave que o perfil.js usa para mostrar "Olá, ..."
     let nomeAtual = localStorage.getItem('noteWave_user') || '';
     inputNome.value = nomeAtual;
 
+    async function enviar(caminho, corpo) {
+        const r = await fetch(API + caminho, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
+            body: JSON.stringify(corpo)
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.message || 'Não foi possível salvar.');
+        if (d.token) localStorage.setItem('token', d.token);   // token novo, com os dados atualizados
+        return d;
+    }
+
     form.addEventListener('submit', async (e) => {
-        e.preventDefault(); // evita recarregar a página
+        e.preventDefault();
 
         const novoNome = inputNome.value.trim();
+        const novoEmail = inputEmail ? inputEmail.value.trim() : '';
+        const novaSenha = inputSenha ? inputSenha.value : '';
+        const senhaAtual = inputAtual ? inputAtual.value : '';
 
-        if (novoNome === '') {
-            alert('O nome não pode ficar vazio.');
+        if (novoNome === '') { alert('O nome não pode ficar vazio.'); return; }
+
+        const mudouNome = novoNome !== nomeAtual;
+        if (!mudouNome && !novoEmail && !novaSenha) return;   // nada para salvar
+
+        if ((novoEmail || novaSenha) && !senhaAtual) {
+            alert('Digite sua senha atual para trocar o e-mail ou a senha.');
+            if (inputAtual) inputAtual.focus();
+            return;
+        }
+        if (novaSenha && novaSenha.length < 8) {
+            alert('A nova senha precisa ter pelo menos 8 caracteres.');
             return;
         }
 
-        // Só envia se realmente mudou
-        if (novoNome === nomeAtual) return;
-
+        const feitos = [];
         try {
-            const token = localStorage.getItem('token');
-
-            // 1) Salva no banco de dados (backend na porta 5000, com o token do login)
-            const resposta = await fetch('https://note-tcc-backend.vercel.app/api/usuario/nome', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-                body: JSON.stringify({ nome: novoNome })
-            });
-
-            if (!resposta.ok) throw new Error('Falha ao salvar no servidor');
-
-            const dados = await resposta.json();
-
-            // 2) Só atualiza o local depois que o banco confirmou
-            localStorage.setItem('token', dados.token);          // token novo, com o nome atualizado
-            localStorage.setItem('noteWave_user', dados.username);
-            nomeAtual = dados.username;
-
-            alert('Nome atualizado com sucesso!');
+            if (mudouNome) {
+                const d = await enviar('/usuario/nome', { nome: novoNome });
+                localStorage.setItem('noteWave_user', d.username);
+                nomeAtual = d.username;
+                feitos.push('Nome atualizado.');
+            }
+            if (novoEmail) {
+                await enviar('/usuario/conta/email', { email: novoEmail, senhaAtual });
+                feitos.push('E-mail atualizado.');
+                inputEmail.value = '';
+            }
+            if (novaSenha) {
+                await enviar('/usuario/conta/senha', { novaSenha, senhaAtual });
+                feitos.push('Senha alterada.');
+                inputSenha.value = '';
+            }
+            if (inputAtual) inputAtual.value = '';
+            alert(feitos.join('\n'));
         } catch (erro) {
             console.error(erro);
-            alert('Não foi possível salvar o nome. Tente novamente.');
+            alert((feitos.length ? feitos.join('\n') + '\n\n' : '') + erro.message);
         }
     });
 });

@@ -480,6 +480,85 @@ app.put('/api/usuario/nome', autenticar, async (req, res) => {
 });
 
 // ================================
+// ROTA: ALTERAR E-MAIL (exige a senha atual)
+// ================================
+app.put('/api/usuario/conta/email', autenticar, async (req, res) => {
+    const senhaAtual = String((req.body && req.body.senhaAtual) || '');
+    const email = String((req.body && req.body.email) || '').trim().toLowerCase();
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 100) {
+        return res.status(400).json({ message: 'Digite um e-mail válido.' });
+    }
+    if (!senhaAtual) {
+        return res.status(400).json({ message: 'Digite sua senha atual para trocar o e-mail.' });
+    }
+
+    try {
+        const { rows } = await db.query('SELECT senha FROM usuarios WHERE id_usuario = $1', [req.usuario.id]);
+        if (!rows[0]) return res.status(404).json({ message: 'Usuário não encontrado.' });
+
+        if (!(await bcrypt.compare(senhaAtual, rows[0].senha))) {
+            return res.status(401).json({ message: 'Senha atual incorreta.' });
+        }
+
+        const dup = await db.query(
+            'SELECT 1 FROM usuarios WHERE LOWER(email) = $1 AND id_usuario <> $2',
+            [email, req.usuario.id]
+        );
+        if (dup.rowCount > 0) {
+            return res.status(400).json({ message: 'Este e-mail já está em uso por outra conta.' });
+        }
+
+        await db.query('UPDATE usuarios SET email = $1 WHERE id_usuario = $2', [email, req.usuario.id]);
+
+        return res.json({
+            message: 'E-mail atualizado com sucesso!',
+            email,
+            token: gerarToken({ id: req.usuario.id, email })
+        });
+    } catch (e) {
+        if (e.code === '23505') return res.status(400).json({ message: 'Este e-mail já está em uso por outra conta.' });
+        console.error('ERRO AO ALTERAR EMAIL:', e);
+        return res.status(500).json({ message: 'Não foi possível alterar o e-mail agora.' });
+    }
+});
+
+// ================================
+// ROTA: ALTERAR SENHA (exige a senha atual)
+// ================================
+app.put('/api/usuario/conta/senha', autenticar, async (req, res) => {
+    const senhaAtual = String((req.body && req.body.senhaAtual) || '');
+    const novaSenha = String((req.body && req.body.novaSenha) || '');
+
+    if (!senhaAtual) {
+        return res.status(400).json({ message: 'Digite sua senha atual para trocar a senha.' });
+    }
+    if (novaSenha.length < 8) {
+        return res.status(400).json({ message: 'A nova senha precisa ter pelo menos 8 caracteres.' });
+    }
+    if (novaSenha === senhaAtual) {
+        return res.status(400).json({ message: 'A nova senha precisa ser diferente da atual.' });
+    }
+
+    try {
+        const { rows } = await db.query('SELECT senha FROM usuarios WHERE id_usuario = $1', [req.usuario.id]);
+        if (!rows[0]) return res.status(404).json({ message: 'Usuário não encontrado.' });
+
+        if (!(await bcrypt.compare(senhaAtual, rows[0].senha))) {
+            return res.status(401).json({ message: 'Senha atual incorreta.' });
+        }
+
+        const hash = await bcrypt.hash(novaSenha, 10);
+        await db.query('UPDATE usuarios SET senha = $1 WHERE id_usuario = $2', [hash, req.usuario.id]);
+
+        return res.json({ message: 'Senha alterada com sucesso!' });
+    } catch (e) {
+        console.error('ERRO AO ALTERAR SENHA:', e);
+        return res.status(500).json({ message: 'Não foi possível alterar a senha agora.' });
+    }
+});
+
+// ================================
 // ROTA: EXCLUIR CONTA (apaga o usuário e tudo ligado a ele)
 // ================================
 app.delete('/api/usuario/conta', autenticar, async (req, res) => {
