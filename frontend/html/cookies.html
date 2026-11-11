@@ -157,6 +157,24 @@
             color: var(--nw-gold-shadow);
         }
 
+
+        .cookie-section > p a { color: var(--nw-blue); font-weight: 600; }
+        .cookie-btn {
+            flex: 0 0 auto;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--nw-blue);
+            background: var(--nw-card-solid);
+            border: 2px solid var(--nw-line);
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: border-color 0.2s ease;
+        }
+        .cookie-btn:hover { border-color: var(--nw-aqua); }
+        .cookie-msg { display: block; margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--nw-blue); }
+
         @media (max-width: 560px) {
             .help-main-container { padding: 26px 20px; border-radius: 24px; }
             .cookie-item { flex-direction: column; align-items: flex-start; }
@@ -182,45 +200,81 @@
         </div>
 
         <header class="page-header">
-            <h1>Preferências de Cookies</h1>
-            <p>Gerencie como o NoteWave utiliza seus dados de navegação.</p>
+            <h1>Cookies e Dados do Navegador</h1>
+            <p>Veja o que o NoteWave guarda no seu navegador e gerencie suas preferências.</p>
         </header>
 
         <div class="cookie-section">
-            <h2>🍪 Uso de Cookies no NoteWave</h2>
+            <h2>🍪 Cookies e Armazenamento Local</h2>
             <p>
-                Utilizamos cookies para manter sua sessão de estudo ativa, salvar suas preferências visuais e registrar seu progresso (pontuação, medalhas e constância).
+                O NoteWave <strong>não usa cookies de publicidade nem de rastreamento</strong>. Para funcionar, ele guarda alguns dados no armazenamento local do seu navegador (localStorage e sessionStorage), que funciona de forma parecida com cookies. Veja abaixo o que fica salvo e para quê. Mais detalhes na
+                <a href="privacidade.html#privacidade">Política de Privacidade</a>.
             </p>
 
-            <!-- Opção 1: Essenciais -->
+            <!-- Essenciais -->
             <div class="cookie-item">
                 <div class="cookie-main">
                     <div class="cookie-icone"><i class="ph ph-lock-key"></i></div>
                     <div class="cookie-info">
-                        <span class="title">Cookies Essenciais</span>
-                        <span class="desc">Necessários para fazer login e manter o site funcionando corretamente.</span>
+                        <span class="title">Essenciais</span>
+                        <span class="desc">Token de login (válido por 7 dias), seu nome e a foto de perfil, para você continuar conectado. Também guardam, só durante a visita, a última página aberta e se a abertura já foi exibida.</span>
                     </div>
                 </div>
                 <span class="cookie-fixo"><i class="ph-fill ph-check-circle"></i> Sempre Ativo</span>
             </div>
 
-            <!-- Opção 2: Progresso e Métricas -->
+            <!-- Progresso -->
             <div class="cookie-item">
                 <div class="cookie-main">
                     <div class="cookie-icone"><i class="ph ph-chart-line-up"></i></div>
                     <div class="cookie-info">
-                        <span class="title">Cookies de Progresso &amp; Métricas</span>
-                        <span class="desc">Permitem salvar o histórico de aulas, acertos, erros e dias seguidos.</span>
+                        <span class="title">Progresso de estudo</span>
+                        <span class="desc">Lições concluídas, acertos e erros, pontos, medalhas, dias seguidos, caderno e jogo. O que vale é a cópia salva na sua conta; o navegador guarda uma cópia para abrir mais rápido. Faz parte do serviço, por isso não dá para desativar. Para apagar, exclua a conta em Configurações.</span>
                     </div>
                 </div>
-                <label class="switch">
-                    <input type="checkbox" checked>
-                    <span class="slider round"></span>
-                </label>
+                <span class="cookie-fixo"><i class="ph-fill ph-check-circle"></i> Sempre Ativo</span>
+            </div>
+
+            <!-- Preferências (com controle de verdade) -->
+            <div class="cookie-item">
+                <div class="cookie-main">
+                    <div class="cookie-icone"><i class="ph ph-palette"></i></div>
+                    <div class="cookie-info">
+                        <span class="title">Preferências do aparelho</span>
+                        <span class="desc">Tema claro/escuro e o e-mail lembrado na tela de login (só se você marcar "lembrar"). Você pode apagar essas preferências quando quiser; sua conta e seu progresso não são afetados.</span>
+                        <span class="cookie-msg" id="cookieMsg" role="status" aria-live="polite"></span>
+                    </div>
+                </div>
+                <button type="button" class="cookie-btn" id="btnLimparPref">Limpar preferências</button>
+            </div>
+
+            <!-- Terceiros -->
+            <div class="cookie-item">
+                <div class="cookie-main">
+                    <div class="cookie-icone"><i class="ph ph-globe"></i></div>
+                    <div class="cookie-info">
+                        <span class="title">Serviços de terceiros</span>
+                        <span class="desc">O login com Google e as fontes do Google Fonts podem usar cookies ou identificadores próprios, regidos pela política do Google. Os ícones são carregados do unpkg. Você pode bloquear cookies de terceiros nas configurações do navegador; o login com Google pode deixar de funcionar.</span>
+                    </div>
+                </div>
+                <span class="cookie-fixo">Terceiros</span>
             </div>
         </div>
 
     </div>
+
+    <script>
+        // Apaga só as preferências do aparelho (tema e e-mail lembrado). Não mexe no login nem no progresso.
+        document.getElementById('btnLimparPref').addEventListener('click', function () {
+            try {
+                ['theme', 'darkMode', 'remember_email'].forEach(function (k) { localStorage.removeItem(k); });
+                document.body.classList.remove('dark-mode');
+                document.getElementById('cookieMsg').textContent = 'Preferências apagadas. O tema voltou ao padrão.';
+            } catch (e) {
+                document.getElementById('cookieMsg').textContent = 'Não foi possível apagar agora. Tente limpar os dados do navegador.';
+            }
+        });
+    </script>
 
     <script src="../js/rodape.js"></script>
     <script src="../js/music.js"></script>
