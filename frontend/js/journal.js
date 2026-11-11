@@ -300,12 +300,16 @@
   
     // ---------- PUBLICAR ----------
     // Converte o texto simples do editor em blocos (o mesmo formato dos artigos da equipe)
-    function textoParaBlocos(texto) {
+    function textoParaBlocos(texto, equipe = false) {
       const out = [];
       texto.replace(/\r/g, '').replace(/^(#{2,3} .*)$/gm, '\n\n$1\n\n').split(/\n{2,}/).map(s => s.trim()).filter(Boolean).slice(0, 80).forEach(bl => {
         const linhas = bl.split('\n').map(l => l.trim()).filter(Boolean);
         if (bl.startsWith('### ')) out.push({ tipo: 'subtitulo', texto: bl.slice(4).trim() });
         else if (bl.startsWith('## ')) out.push({ tipo: 'titulo', texto: bl.slice(3).trim() });
+        else if (equipe && bl.startsWith('!! ')) {
+          const [t, ...r] = linhas.join(' ').slice(3).split('|');
+          out.push(r.length ? { tipo: 'caixa', titulo: t.trim(), texto: r.join('|').trim() } : { tipo: 'caixa', titulo: 'Você sabia?', texto: t.trim() });
+        }
         else if (linhas.every(l => /^[-•]\s+/.test(l))) out.push({ tipo: 'lista', ordenada: false, itens: linhas.map(l => l.replace(/^[-•]\s+/, '')) });
         else if (linhas.every(l => /^\d+[.)]\s+/.test(l))) out.push({ tipo: 'lista', ordenada: true, itens: linhas.map(l => l.replace(/^\d+[.)]\s+/, '')) });
         else if (bl.startsWith('> ')) out.push({ tipo: 'citacao', texto: linhas.map(l => l.replace(/^>\s?/, '')).join(' ') });
@@ -359,7 +363,7 @@
       ov.onclick = ir_; setTimeout(ir_, 2200);
     }
   
-    function publicar() {
+    async function publicar() {
       ver('publicar'); ++ticket;
       const raiz = $('#jrPublicar'); raiz.textContent = '';
   
@@ -371,6 +375,9 @@
       hero.append(ht, hi); raiz.appendChild(hero);
   
       if (!logado()) { vazio(raiz, 'Entre na sua conta para publicar.', ['Entrar', 'login.html']); return; }
+      let ehEquipe = false;
+      try { ehEquipe = (await api('/eu')).equipe; } catch (e) { /* segue como usuário comum */ }
+      let comoEquipe = false, destaque = false;
   
       let imagemData = '', categoria = 'teoria';
       const grade = el('div', 'jr-pub'), fm = el('form', 'jr-form'), lateral = el('aside', 'jr-lateral');
@@ -381,7 +388,7 @@
       titulo.setAttribute('aria-label', 'Título');
       const tw = el('div', 'jr-campo'); tw.append(titulo, contador(titulo));
       const cats = el('div', 'jr-chips jr-cats-pick'); cats.setAttribute('role', 'radiogroup'); cats.setAttribute('aria-label', 'Categoria');
-      CATS.filter(c => c.id !== 'notinha').forEach(c => {
+      CATS.filter(c => ehEquipe || c.id !== 'notinha').forEach(c => {
         const b = el('button', 'jr-chip' + (c.id === categoria ? ' ativo' : '')); b.type = 'button';
         b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', c.id === categoria);
         b.append(el('i', 'ph ' + c.icone), document.createTextNode(c.nome));
@@ -450,10 +457,22 @@
        'Sem links, telefones, e-mails ou propaganda.', 'Suas publicações são verificadas automaticamente e você pode apagá-las quando quiser.']
         .forEach(t => ul.appendChild(el('li', '', t)));
       regras.appendChild(ul);
+      let boxEquipe = null;
+      if (ehEquipe) {
+        boxEquipe = el('div', 'jr-regras');
+        const l1 = el('label'), c1 = el('input'); c1.type = 'checkbox';
+        c1.onchange = () => { comoEquipe = c1.checked; atualizar(); };
+        l1.append(c1, document.createTextNode(' Publicar como Equipe NoteWave'));
+        const l2 = el('label'), c2 = el('input'); c2.type = 'checkbox';
+        c2.onchange = () => { destaque = c2.checked; };
+        l2.append(c2, document.createTextNode(' Marcar como destaque'));
+        boxEquipe.append(el('b', '', 'Opções da equipe'), document.createElement('br'), l1, document.createElement('br'), l2,
+          el('small', 'jr-dica', 'Caixa de destaque no texto: comece o parágrafo com "!! Título | texto".'));
+      }
       const erro = el('div', 'jr-erro'); erro.setAttribute('role', 'alert');
       const env = el('button', 'jr-btn primario grande'); env.type = 'submit';
       env.append(el('i', 'ph ph-paper-plane-tilt'), document.createTextNode('Publicar'));
-      fm.append(s1, s2, s3, s4, regras, erro, env);
+      fm.append(s1, s2, s3, s4, ...(boxEquipe ? [boxEquipe] : []), regras, erro, env);
   
       // ---- Lateral: prévia ao vivo + lista de requisitos + Notinha ----
       const pv = el('div', 'jr-card jr-previa-card');
@@ -477,7 +496,7 @@
         const palavras = conteudo.value.trim() ? conteudo.value.trim().split(/\s+/).length : 0;
         const a = {
           categoria, titulo: titulo.value.trim() || 'O título da sua publicação', resumo: resumo.value.trim() || 'O resumo aparece aqui, no card.',
-          autor: 'você', origem: 'comunidade', data: new Date().toISOString(), minutos: Math.max(1, Math.round(palavras / 200)),
+          autor: comoEquipe ? (categoria === 'notinha' ? 'Notinha' : 'Equipe NoteWave') : 'você', origem: comoEquipe ? 'equipe' : 'comunidade',data: new Date().toISOString(), minutos: Math.max(1, Math.round(palavras / 200)),
           totalComentarios: 0, totalReacoes: 0, imagem: imagemData || null
         };
         pv.textContent = '';
@@ -495,7 +514,7 @@
         if (!v.x) { erro.textContent = 'O texto está curto. Escreva pelo menos 200 caracteres.'; conteudo.focus(); return; }
         env.disabled = true; env.lastChild.textContent = 'Publicando…';
         try {
-          const res = await api('/artigos', { method: 'POST', body: { titulo: t, resumo: r, categoria, blocos: textoParaBlocos(c), imagem: imagemData || null } });
+          const res = await api('/artigos', { method: 'POST', body: { titulo: t, resumo: r, categoria, blocos: textoParaBlocos(c, comoEquipe), imagem: imagemData || null, comoEquipe, destaque: comoEquipe && destaque } });
           comemorar(res.id);
         } catch (er) { erro.textContent = er.message; env.disabled = false; env.lastChild.textContent = 'Publicar'; }
       });
