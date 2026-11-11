@@ -612,6 +612,10 @@
   line-height: 1.6;
 }
 
+.terms-body h5 { font-size: 14px; font-weight: 700; margin: 14px 0 4px; color: var(--brand); }
+.terms-body ul { margin: 6px 0 6px 20px; padding: 0; list-style: disc; }
+.terms-body li { color: var(--text); font-size: .85rem; line-height: 1.55; margin-bottom: 4px; }
+.terms-body p + p, .terms-body p + ul { margin-top: 8px; }
 .terms-content .modal-btns { margin-top: 22px; }
 .terms-content .btn-submit { flex: 1.3; }
 .terms-content .btn-cancel { flex: 1; }

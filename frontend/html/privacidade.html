@@ -97,7 +97,13 @@
             line-height: 1.6;
         }
 
-        .privacy-item p strong { color: var(--nw-title); }
+        .privacy-item p strong, .privacy-item li strong { color: var(--nw-title); }
+        .privacy-item ul { margin: 8px 0 0 20px; padding: 0; list-style: disc; }
+        .privacy-item li { font-size: 14px; color: var(--nw-muted); line-height: 1.6; margin-bottom: 6px; }
+        .privacy-item p + p, .privacy-item p + ul, .privacy-item ul + p { margin-top: 10px; }
+        .privacy-data { font-size: 13px; color: var(--nw-muted); }
+        .privacy-nav { margin-top: 10px; font-size: 14px; font-weight: 600; }
+        .privacy-section { scroll-margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -119,26 +125,124 @@
         </div>
 
         <header class="page-header">
-            <h1>Políticas de Privacidade &amp; LGPD</h1>
-            <p>Saiba como protegemos seus dados na plataforma de ensino NoteWave.</p>
+            <h1>Termos de Uso &amp; Política de Privacidade</h1>
+            <p>Veja as regras de uso do NoteWave e como tratamos seus dados pessoais (LGPD).</p>
+            <p class="privacy-nav"><a href="#termos">Termos de Uso</a> · <a href="#privacidade">Política de Privacidade</a></p>
         </header>
 
-        <div class="privacy-section">
-            <h2><i class="ph ph-shield-check"></i> Como Tratamos Seus Dados</h2>
-
+        <div class="privacy-section" id="termos">
+            <h2><i class="ph ph-scroll"></i> Termos de Uso</h2>
+            <p class="privacy-data">Última atualização: 11 de novembro de 2026</p>
             <div class="privacy-item">
-                <h3>1. Coleta de Informações</h3>
-                <p>Coletamos seu e-mail e senha para autenticação, ou dados básicos da sua Conta Google caso opte pelo login simplificado.</p>
+                <h3>1. Aceitação dos Termos</h3>
+                <p>Estes Termos de Uso regulam o uso do NoteWave, plataforma gratuita de ensino de música com aulas, atividades, jogos e comunidade. Ao criar uma conta e marcar o aceite no cadastro, você declara que leu e concorda com estes Termos e com a Política de Privacidade. Se não concordar, não use a plataforma.</p>
             </div>
-
             <div class="privacy-item">
-                <h3>2. Acesso à Galeria de Fotos</h3>
-                <p>A permissão de acesso à galeria do dispositivo é usada <strong>exclusivamente</strong> quando você decide alterar sua foto de perfil na plataforma.</p>
+                <h3>2. Quem pode usar</h3>
+                <p>O NoteWave é voltado a pessoas interessadas em aprender música. Menores de 18 anos só devem usar a plataforma com o conhecimento e o consentimento de um dos pais ou responsável legal, que responde pelo uso feito pelo menor. Crianças (menores de 12 anos) só podem ter conta criada por seus responsáveis.</p>
             </div>
-
             <div class="privacy-item">
-                <h3>3. Sistema de Gamificação</h3>
-                <p>Seus pontos, conquistas de medalhas e registros de constância são associados ao seu perfil para exibir seu progresso nas aulas de música.</p>
+                <h3>3. Sua conta</h3>
+                <ul><li>Você pode se cadastrar com nome, e-mail e senha ou entrar com a sua Conta Google.</li><li>Os dados informados devem ser verdadeiros. Cada e-mail só pode ter uma conta.</li><li>Você é responsável por manter sua senha em sigilo e por tudo o que ocorre na sua conta. Se suspeitar de acesso indevido, redefina a senha e avise-nos.</li><li>Você pode excluir sua conta a qualquer momento em Configurações.</li></ul>
+            </div>
+            <div class="privacy-item">
+                <h3>4. Uso permitido</h3>
+                <p>Você concorda em usar o NoteWave apenas para fins lícitos e educacionais. É proibido:</p>
+                <ul><li>publicar conteúdo ofensivo, discriminatório, sexual, violento, que incentive autoagressão ou que faça apologia a crimes ou drogas;</li><li>praticar assédio, ameaça, golpe, spam ou propaganda não autorizada;</li><li>publicar dados pessoais de terceiros sem autorização ou se passar por outra pessoa;</li><li>publicar conteúdo que viole direitos autorais ou outros direitos de terceiros;</li><li>tentar burlar a segurança, sobrecarregar, copiar em massa ou acessar áreas e contas que não são suas;</li><li>manipular pontos, moedas, medalhas ou rankings por meios indevidos.</li></ul>
+            </div>
+            <div class="privacy-item">
+                <h3>5. Conteúdo publicado por você (Journal, comentários e Doações)</h3>
+                <p>Você continua sendo o autor do que publica (textos, imagens de capa, comentários, descrições e fotos de instrumentos) e é responsável por esse conteúdo. Ao publicar, você nos autoriza, de forma gratuita, a armazenar e exibir esse conteúdo dentro do NoteWave para que outros usuários o vejam, enquanto ele permanecer publicado. Você pode editar ou apagar suas publicações; ao excluir a conta, elas são apagadas.</p>
+                <p>Seu nome e sua foto de perfil aparecem junto das suas publicações e comentários. Antes de serem publicados, os textos passam por um filtro automático de palavras e frases impróprias, que pode recusar conteúdo. O filtro não é perfeito: por isso, qualquer usuário logado pode denunciar publicações e comentários, e as denúncias são analisadas por nossa equipe. Podemos remover conteúdo que viole estes Termos, sem aviso prévio.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>6. Doações de instrumentos</h3>
+                <p>A área de Doações permite que usuários anunciem instrumentos musicais para doar e que outros usuários demonstrem interesse. O NoteWave apenas aproxima as pessoas: não participa, não garante e não se responsabiliza pela entrega, pelo estado ou pela procedência dos instrumentos, nem pelo acordo entre doador e interessado.</p>
+                <ul><li>É permitido anunciar apenas instrumentos que você possui e pode doar, gratuitamente. Venda, troca com pagamento e pedidos de dinheiro (inclusive Pix) são proibidos.</li><li>Para anunciar, você informa cidade e um celular, que é confirmado por um código enviado ao e-mail da sua conta.</li><li>O seu telefone não é público: só é liberado a um interessado depois que você aceita a solicitação dele e autoriza expressamente o compartilhamento. Você pode revogar essa autorização.</li><li>Combine encontros em locais públicos e movimentados, de preferência acompanhado, e desconfie de pedidos incomuns. Tome suas próprias precauções: o NoteWave não verifica a identidade dos usuários.</li></ul>
+            </div>
+            <div class="privacy-item">
+                <h3>7. Pontos, moedas, medalhas e loja</h3>
+                <p>Pontos, moedas, medalhas, sequências de estudo e itens da loja são recursos virtuais de motivação, sem valor monetário, que não podem ser trocados por dinheiro nem transferidos. Podemos ajustar as regras, os valores e os recursos a qualquer momento, e corrigir pontuações obtidas por erro ou uso indevido.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>8. Propriedade intelectual</h3>
+                <p>O NoteWave, sua marca, personagens (como a Notinha), ilustrações, aulas, atividades, textos, jogos e código pertencem ao responsável pelo projeto ou são usados com autorização. Você pode usar o conteúdo para estudar, mas não pode copiá-lo, vendê-lo ou redistribuí-lo sem autorização.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>9. Disponibilidade e responsabilidade</h3>
+                <p>Fazemos o possível para manter a plataforma no ar e segura, mas ela é oferecida “como está”, sem garantia de funcionamento ininterrupto ou livre de erros. O conteúdo educacional tem caráter introdutório e não substitui aulas formais com professor. Na medida permitida pela lei, não nos responsabilizamos por danos decorrentes de indisponibilidade, perda de dados causada por falhas técnicas, conteúdo de outros usuários ou negociações entre usuários. Nada nestes Termos exclui direitos que a lei assegura a você, inclusive os do Código de Defesa do Consumidor, quando aplicáveis.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>10. Suspensão e encerramento</h3>
+                <p>Podemos advertir, limitar ou encerrar contas que descumpram estes Termos ou a lei, removendo o conteúdo envolvido. Você também pode encerrar a sua conta quando quiser.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>11. Alterações destes Termos</h3>
+                <p>Podemos atualizar estes Termos. A data da última atualização aparece no topo da página. Quando houver mudança relevante, avisaremos na plataforma; continuar usando o NoteWave depois disso significa que você concorda com a nova versão.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>12. Lei aplicável e contato</h3>
+                <p>Estes Termos seguem as leis da República Federativa do Brasil. Dúvidas, denúncias ou pedidos podem ser enviados para [E-MAIL DE CONTATO].</p>
+            </div>
+        </div>
+
+        <div class="privacy-section" id="privacidade">
+            <h2><i class="ph ph-shield-check"></i> Política de Privacidade (LGPD)</h2>
+            <p class="privacy-data">Última atualização: 11 de novembro de 2026</p>
+            <div class="privacy-item">
+                <h3>1. Quem somos</h3>
+                <p>O NoteWave é uma plataforma de ensino de música. O controlador dos seus dados pessoais, ou seja, quem decide como eles são tratados, é [NOME DO RESPONSÁVEL PELO NOTEWAVE]. Esta Política explica, conforme a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018), quais dados coletamos, por quê, com quem os compartilhamos e como você exerce seus direitos.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>2. Quais dados coletamos</h3>
+                <p>Coletamos apenas o que o site realmente usa:</p>
+                <ul><li><strong>Cadastro e login:</strong> nome, e-mail e senha (guardada apenas de forma criptografada, nunca em texto aberto) e a data e hora em que você aceitou estes termos. Se entrar com o Google, recebemos seu nome e seu e-mail verificado; não recebemos a sua senha do Google.</li><li><strong>Foto de perfil (opcional):</strong> a imagem que você escolher. O acesso à galeria do dispositivo é usado somente quando você decide trocar a foto.</li><li><strong>Progresso de estudo:</strong> lições concluídas, acertos e erros, pontos, moedas, medalhas, itens da loja, sequência de dias, desafios e missões, e as partidas do jogo Notinha Runner.</li><li><strong>Journal:</strong> artigos que você publicar (título, texto, imagem de capa), comentários, reações, favoritos e denúncias que você enviar (motivo e descrição).</li><li><strong>Doações (opcional):</strong> nome, categoria e descrição do instrumento, cidade, fotos, celular, comentários, solicitações de interesse, autorizações de contato e notificações relacionadas.</li><li><strong>Segurança:</strong> códigos temporários de confirmação enviados por e-mail, tokens de redefinição de senha (guardados em formato irreversível) e registros técnicos de acesso (como endereço IP e data/hora) mantidos pelos serviços de hospedagem.</li><li><strong>No seu navegador:</strong> o token de sessão, o tema (claro/escuro), sua foto, o e-mail lembrado (se você marcar essa opção), o andamento das lições e preferências do tour. Isso fica no armazenamento local do seu dispositivo, e não em cookies de rastreamento.</li></ul>
+                <p>Não coletamos dados bancários, CPF, localização por GPS, nem dados sensíveis (como saúde, religião ou origem racial), e não pedimos sua data de nascimento.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>3. Para que usamos e em que base legal</h3>
+                <ul><li><strong>Criar e manter sua conta, autenticar e salvar seu progresso</strong> (execução do contrato, art. 7º, V, LGPD).</li><li><strong>Exibir pontos, medalhas e rankings, e o seu nome e foto no Journal e nas Doações</strong> (execução do contrato).</li><li><strong>Enviar e-mails de segurança:</strong> código de confirmação, redefinição de senha e avisos sobre doações (execução do contrato e legítimo interesse, art. 7º, IX).</li><li><strong>Moderar conteúdo, analisar denúncias, prevenir fraudes e abusos</strong> (legítimo interesse e exercício regular de direitos).</li><li><strong>Foto de perfil, telefone nas Doações e liberação do contato a um interessado</strong> (consentimento, art. 7º, I), que você pode retirar a qualquer momento.</li><li><strong>Cumprir obrigações legais ou ordens de autoridades</strong>, quando houver (art. 7º, II).</li></ul>
+                <p>Não vendemos seus dados e não usamos seus dados para publicidade nem para criar perfis de marketing.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>4. O que é visível para outras pessoas</h3>
+                <ul><li>Seu <strong>nome e foto de perfil</strong> aparecem nas suas publicações e comentários do Journal e nos seus anúncios de Doação.</li><li>Seu <strong>e-mail</strong> e sua <strong>senha</strong> nunca são exibidos a outros usuários.</li><li>Seu <strong>celular</strong> do anúncio de doação só é mostrado a um interessado específico, depois que você aceita a solicitação dele e autoriza o compartilhamento. Você pode revogar a autorização.</li><li>Sua <strong>cidade</strong> e as <strong>fotos</strong> do instrumento aparecem no anúncio.</li></ul>
+            </div>
+            <div class="privacy-item">
+                <h3>5. Com quem compartilhamos (operadores e serviços)</h3>
+                <p>Para o NoteWave funcionar, usamos serviços de terceiros que tratam dados em nosso nome, apenas para essa finalidade:</p>
+                <ul><li><strong>Supabase:</strong> banco de dados (PostgreSQL) e armazenamento das imagens (fotos de perfil, capas de artigos e fotos de doações).</li><li><strong>Vercel:</strong> hospedagem do site e do servidor.</li><li><strong>Google:</strong> login com Google e fontes (Google Fonts); o Google recebe dados técnicos quando você usa esses recursos, conforme a política dele.</li><li><strong>Gmail (SMTP):</strong> envio dos e-mails de confirmação, redefinição de senha, avisos e denúncias.</li><li><strong>unpkg (CDN):</strong> entrega de bibliotecas de ícones usadas nas telas.</li></ul>
+                <p>Esses serviços podem armazenar dados em servidores fora do Brasil. Nesses casos, a transferência internacional é feita para fornecedores que adotam medidas de segurança adequadas, conforme o art. 33 da LGPD. Também podemos compartilhar dados com autoridades quando a lei exigir.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>6. Cookies e armazenamento local</h3>
+                <p>O NoteWave não usa cookies de publicidade nem de rastreamento próprios. Usamos o armazenamento local do navegador (localStorage) para manter sua sessão, o tema e o seu progresso. Se você limpar os dados do navegador, será desconectado. Os serviços do Google (login e fontes) podem usar seus próprios cookies ou identificadores, sujeitos à política do Google.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>7. Por quanto tempo guardamos</h3>
+                <ul><li><strong>Dados da conta e do progresso:</strong> enquanto sua conta existir. Ao excluir a conta, apagamos seus dados, publicações, doações, progresso, medalhas e dados do jogo.</li><li><strong>Códigos de confirmação do telefone:</strong> expiram em 10 minutos e são apagados automaticamente em até 1 dia.</li><li><strong>Links de redefinição de senha:</strong> expiram em 30 minutos.</li><li><strong>Fotos antigas:</strong> são removidas do armazenamento quando você troca ou apaga a imagem.</li><li><strong>Backups e registros técnicos:</strong> podem manter cópias por um curto período após a exclusão, e dados necessários para cumprir obrigação legal ou defender direitos podem ser mantidos pelo prazo legal.</li></ul>
+            </div>
+            <div class="privacy-item">
+                <h3>8. Seus direitos (art. 18 da LGPD)</h3>
+                <p>Você pode, a qualquer momento, pedir:</p>
+                <ul><li>confirmação de que tratamos seus dados e acesso a eles;</li><li>correção de dados incompletos ou desatualizados (você mesmo altera o nome em Configurações);</li><li>anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desacordo com a lei;</li><li>portabilidade, quando regulamentada;</li><li>informação sobre com quem compartilhamos seus dados;</li><li>revogação do consentimento e eliminação dos dados tratados com base nele;</li><li>revisão de decisões e oposição a tratamentos feitos sem seu consentimento, quando cabível.</li></ul>
+                <p><strong>Excluir sua conta:</strong> em Configurações, no botão de excluir conta (é preciso confirmar com a senha). Para os demais pedidos, escreva para [E-MAIL DE CONTATO]. Respondemos em até 15 dias. Se não ficar satisfeito, você pode reclamar à Autoridade Nacional de Proteção de Dados (ANPD).</p>
+            </div>
+            <div class="privacy-item">
+                <h3>9. Crianças e adolescentes</h3>
+                <p>Como o conteúdo de música atrai público jovem, tratamos os dados de crianças e adolescentes no seu melhor interesse (art. 14 da LGPD). Para menores de 18 anos, o uso deve ser acompanhado por um responsável. Para crianças, o cadastro deve ser feito pelo responsável, que pode pedir acesso, correção ou exclusão dos dados da criança pelo contato abaixo. Recomendamos que menores não divulguem telefone nem se encontrem com desconhecidos nas Doações sem acompanhamento.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>10. Segurança</h3>
+                <p>Adotamos medidas como senhas criptografadas, conexão segura (HTTPS), sessões com token de validade limitada, limite de tentativas de login e de envio de códigos, filtro de conteúdo e acesso restrito ao banco de dados. Nenhum sistema é 100% seguro; se houver incidente que possa causar risco relevante a você, avisaremos você e a ANPD, conforme a lei. Use uma senha forte e exclusiva e não a compartilhe.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>11. Alterações desta Política</h3>
+                <p>Podemos atualizar esta Política. A data da última atualização aparece no topo e, em caso de mudança relevante, avisaremos na plataforma.</p>
+            </div>
+            <div class="privacy-item">
+                <h3>12. Contato (encarregado)</h3>
+                <p>Dúvidas, pedidos de direitos ou denúncias sobre privacidade: [NOME DO RESPONSÁVEL PELO NOTEWAVE] — [E-MAIL DE CONTATO].</p>
             </div>
         </div>
 
