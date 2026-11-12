@@ -54,6 +54,12 @@
             font-weight: 600;
             font-size: 14px;
         }
+
+        /* Respostas longas não ficam cortadas */
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding: 0 20px 20px 20px;
+        }
     </style>
 </head>
 <body>
@@ -130,164 +136,165 @@
                 <div class="faq-answer">
                     <p>Você pode rever a apresentação dos recursos do NoteWave a qualquer momento acessando a página de <strong>Configurações</strong> e clicando no botão "Refazer Tour Guiado" ao final da página.</p>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Esqueci minha senha. O que fazer?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Na tela de login, clique em "Esqueci minha senha" e informe seu e-mail. Você receberá um link válido por 30 minutos e de uso único. Se não chegar, olhe a caixa de <strong>spam</strong> e espere 1 minuto antes de pedir outro.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Esqueci minha senha. O que fazer?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Na tela de login, clique em "Esqueci minha senha" e informe seu e-mail. Você receberá um link válido por 30 minutos e de uso único. Se não chegar, olhe a caixa de <strong>spam</strong> e espere 1 minuto antes de pedir outro.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como trocar minha foto de perfil?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>No <strong>Perfil</strong>, clique na sua foto, escolha uma imagem (JPG, PNG ou WEBP de até 8 MB), ajuste o recorte e confirme.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como trocar minha foto de perfil?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>No <strong>Perfil</strong>, clique na sua foto, escolha uma imagem (JPG, PNG ou WEBP de até 8 MB), ajuste o recorte e confirme.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como ativar o modo escuro?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Em <strong>Configurações</strong>, na seção "Aparência", ligue o interruptor "Modo Escuro". A escolha fica salva neste navegador.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como ativar o modo escuro?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Em <strong>Configurações</strong>, na seção "Aparência", ligue o interruptor "Modo Escuro". A escolha fica salva neste navegador.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Por que uma etapa da trilha está bloqueada?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>As etapas da <strong>Trilha de Aulas</strong> abrem em sequência: a próxima só libera quando você conclui a anterior. A etapa disponível aparece destacada em azul.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Por que uma etapa da trilha está bloqueada?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>As etapas da <strong>Trilha de Aulas</strong> abrem em sequência: a próxima só libera quando você conclui a anterior. A etapa disponível aparece destacada em azul.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como funciona a sequência de estudos?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Cada dia em que você acessa o NoteWave é marcado no seu <strong>Perfil</strong> com uma chama. Se você entrar em dias seguidos, a sequência cresce. Se pular um dia, ela recomeça.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como funciona a sequência de estudos?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Cada dia em que você acessa o NoteWave é marcado no seu <strong>Perfil</strong> com uma chama. Se você entrar em dias seguidos, a sequência cresce. Se pular um dia, ela recomeça.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como funciona o Caderno de Anotações?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>O Caderno tem 100 páginas para você anotar o que estudou, as dificuldades e o que aprendeu. Use "Nova anotação" para a próxima página livre. Páginas apagadas vão para a <strong>Lixeira</strong>, de onde você pode recuperá-las.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como funciona o Caderno de Anotações?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>O Caderno tem 100 páginas para você anotar o que estudou, as dificuldades e o que aprendeu. Use "Nova anotação" para a próxima página livre. Páginas apagadas vão para a <strong>Lixeira</strong>, de onde você pode recuperá-las.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como publico um texto no Jornal?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>No <strong>Jornal</strong>, clique em "Publicar". Você precisa de título (mín. 5 caracteres), resumo (mín. 20) e texto (mín. 200). A imagem de capa é opcional. É permitido publicar até 5 textos por hora.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como publico um texto no Jornal?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>No <strong>Jornal</strong>, clique em "Publicar". Você precisa de título (mín. 5 caracteres), resumo (mín. 20) e texto (mín. 200). A imagem de capa é opcional. É permitido publicar até 5 textos por hora.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Meu texto do Jornal não foi publicado. Por quê?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Os textos passam por uma verificação automática de palavras. Não são aceitos xingamentos, conteúdo sexual ou violento, links, telefones, e-mails ou propaganda. A mensagem na tela indica o motivo, e você pode ajustar o texto e tentar de novo.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Meu texto do Jornal não foi publicado. Por quê?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Os textos passam por uma verificação automática de palavras. Não são aceitos xingamentos, conteúdo sexual ou violento, links, telefones, e-mails ou propaganda. A mensagem na tela indica o motivo, e você pode ajustar o texto e tentar de novo.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como apago uma publicação ou comentário meu?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>No Jornal, abra <strong>Meus posts</strong> e use a lixeira no card, ou abra o artigo e clique em "Apagar". Nos comentários, use o ícone da lixeira ao lado do seu comentário. O dono do artigo também pode apagar comentários feitos nele.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como apago uma publicação ou comentário meu?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>No Jornal, abra <strong>Meus posts</strong> e use a lixeira no card, ou abra o artigo e clique em "Apagar". Nos comentários, use o ícone da lixeira ao lado do seu comentário. O dono do artigo também pode apagar comentários feitos nele.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como denunciar um conteúdo inadequado?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Em artigos, comentários e doações há o botão "Denunciar". Escolha o motivo e explique em pelo menos 10 caracteres o que aconteceu. Nossa equipe recebe o aviso e analisa.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como denunciar um conteúdo inadequado?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Em artigos, comentários e doações há o botão "Denunciar". Escolha o motivo e explique em pelo menos 10 caracteres o que aconteceu. Nossa equipe recebe o aviso e analisa.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como doar um instrumento?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Em <strong>Doações</strong>, clique em "Publicar uma doação", informe o nome, a categoria, a descrição e até 6 fotos. O município e o telefone são opcionais. A doação é sempre gratuita: venda e cobrança não são permitidas.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como doar um instrumento?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Em <strong>Doações</strong>, clique em "Publicar uma doação", informe o nome, a categoria, a descrição e até 6 fotos. O município e o telefone são opcionais. A doação é sempre gratuita: venda e cobrança não são permitidas.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como peço um instrumento que alguém está doando?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Abra a publicação e clique em "Tenho interesse". O responsável vai analisar e, se aceitar, poderá liberar o telefone dele para você. Você é avisado pelo sininho.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como peço um instrumento que alguém está doando?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Abra a publicação e clique em "Tenho interesse". O responsável vai analisar e, se aceitar, poderá liberar o telefone dele para você. Você é avisado pelo sininho.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Por que preciso confirmar meu telefone por e-mail?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Se você informar um telefone na doação, enviamos um código de 6 números para o <strong>e-mail da sua conta</strong>, válido por 10 minutos. Veja também o spam. O telefone não aparece na publicação: só é liberado para a pessoa que você aceitar.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Por que preciso confirmar meu telefone por e-mail?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Se você informar um telefone na doação, enviamos um código de 6 números para o <strong>e-mail da sua conta</strong>, válido por 10 minutos. Veja também o spam. O telefone não aparece na publicação: só é liberado para a pessoa que você aceitar.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como combinar a entrega com segurança?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Combine em locais públicos e, principalmente se houver menores de idade, com um responsável por perto. Nunca envie dinheiro e não passe endereço de casa em comentários.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como combinar a entrega com segurança?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Combine em locais públicos e, principalmente se houver menores de idade, com um responsável por perto. Nunca envie dinheiro e não passe endereço de casa em comentários.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Para que serve o sininho de notificações?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Ele avisa quando alguém comenta no seu artigo, demonstra interesse na sua doação, responde à sua solicitação ou libera um contato. Clique no aviso para abrir e use "Marcar todas como lidas" para limpar.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Para que serve o sininho de notificações?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Ele avisa quando alguém comenta no seu artigo, demonstra interesse na sua doação, responde à sua solicitação ou libera um contato. Clique no aviso para abrir e use "Marcar todas como lidas" para limpar.</p>
                 </div>
-    
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>Como apagar minha conta?</span>
-                        <i class="ph ph-caret-right faq-icon"></i>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Em <strong>Configurações</strong>, no fim da página, clique em "Apagar conta" e digite sua senha. Perfil, progresso, medalhas e publicações são excluídos e não dá para desfazer. Enviamos um e-mail confirmando a exclusão.</p>
-                    </div>
+            </div>
+
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Como apagar minha conta?</span>
+                    <i class="ph ph-caret-right faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Em <strong>Configurações</strong>, no fim da página, clique em "Apagar conta" e digite sua senha. Perfil, progresso, medalhas e publicações são excluídos e não dá para desfazer. Enviamos um e-mail confirmando a exclusão.</p>
                 </div>
             </div>
 
