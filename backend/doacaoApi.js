@@ -379,6 +379,21 @@ module.exports = (db, transporter) => {
       pai = c.parent_comment_id || c.id; // respostas ficam em um só nível
     }
     const ins = await um(db, 'INSERT INTO donation_comments (donation_id, user_id, parent_comment_id, comment) VALUES ($1,$2,$3,$4) RETURNING id', [id, req.user.id, pai, texto]);
+
+    // Avisa o dono da doação (e quem recebeu a resposta). Nunca avisa a si mesmo.
+    try {
+      const eu = await um(db, 'SELECT nome FROM usuarios WHERE id_usuario=$1', [req.user.id]);
+      const quem = nomePublico(eu && eu.nome);
+      const destinos = new Set();
+      const d = await buscar(id);
+      if (d && !igual(d.user_id, req.user.id)) destinos.add(Number(d.user_id));
+      if (b.paiId) {
+        const orig = await um(db, 'SELECT user_id FROM donation_comments WHERE id=$1', [idn(b.paiId)]);
+        if (orig && !igual(orig.user_id, req.user.id)) destinos.add(Number(orig.user_id));
+      }
+      for (const u of destinos) await notificar(db, u, id, quem + ' comentou em "' + d.instrument_name + '".');
+    } catch (e) { console.error('NOTIFICACAO COMENTARIO DOACAO:', e.message); }
+
     res.status(201).json({ id: ins.id });
   }));
 

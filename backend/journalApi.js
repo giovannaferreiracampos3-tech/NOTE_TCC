@@ -118,6 +118,30 @@ module.exports = function (db, transporter) {
     res.json({ equipe: rows[0]?.papel === 'equipe' });
   }));
 
+    // ---------- NOTIFICAÇÕES DO JORNAL (comentários nos seus artigos) ----------
+    router.get('/notificacoes', seguro(async (req, res) => {
+      const eu = exigir(req, res); if (!eu) return;
+      const { rows } = await db.query(
+        `SELECT id, message AS texto, created_at AS data, is_read AS lida, id_publicacao AS "publicacaoId"
+         FROM journal_notifications WHERE user_id = $1
+         ORDER BY created_at DESC LIMIT 30`, [eu]);
+      res.json(rows);
+    }));
+  
+    router.put('/notificacoes/lidas', seguro(async (req, res) => {
+      const eu = exigir(req, res); if (!eu) return;
+      await db.query('UPDATE journal_notifications SET is_read = true WHERE user_id = $1 AND is_read = false', [eu]);
+      res.json({ ok: true });
+    }));
+  
+    router.put('/notificacoes/:id/lida', seguro(async (req, res) => {
+      const eu = exigir(req, res); if (!eu) return;
+      const id = idDaUrl(req);
+      if (!id) return res.status(404).json({ erro: 'Notificação não encontrada.' });
+      await db.query('UPDATE journal_notifications SET is_read = true WHERE id = $1 AND user_id = $2', [id, eu]);
+      res.json({ ok: true });
+    }));
+
   // LEFT JOIN em usuarios: artigos da equipe (id_usuario nulo) continuam aparecendo, só sem foto.
   // Atenção: no Postgres alias sem aspas vira minúsculo, então os camelCase precisam de "aspas".
   // $1 = id do usuário logado (ou 0)
@@ -320,10 +344,21 @@ module.exports = function (db, transporter) {
     const mod = moderar({ 'comentário': t });
     if (!mod.ok) return res.status(422).json({ erro: mod.mensagem });
 
-    const { rows: p } = await db.query('SELECT 1 FROM publicacoes WHERE id_publicacao = $1', [id]);
+    const { rows: p } = await db.query('SELECT id_usuario, titulo FROM publicacoes WHERE id_publicacao = $1', [id]);
     if (!p[0]) return res.status(404).json({ erro: 'Publicação não encontrada.' });
     const { rows } = await db.query(
       'INSERT INTO comentarios (id_publicacao, id_usuario, texto) VALUES ($1, $2, $3) RETURNING id_comentario', [id, eu, t]);
+
+    // Avisa o dono do artigo (nunca avisa a si mesmo). Se falhar, o comentário continua salvo.
+    try {
+      if (p[0].id_usuario && Number(p[0].id_usuario) !== eu) {
+        const { rows: q } = await db.query('SELECT nome FROM usuarios WHERE id_usuario = $1', [eu]);
+        const msg = ('@' + (q[0] ? q[0].nome : 'Alguém') + ' comentou em "' + p[0].titulo + '"').slice(0, 255);
+        await db.query('INSERT INTO journal_notifications (user_id, id_publicacao, message) VALUES ($1, $2, $3)',
+          [p[0].id_usuario, id, msg]);
+      }
+    } catch (e) { console.error('ERRO NOTIFICACAO JOURNAL:', e.message); }
+
     res.status(201).json({ id: rows[0].id_comentario });
   }));
 
