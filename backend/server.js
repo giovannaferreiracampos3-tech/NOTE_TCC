@@ -572,7 +572,7 @@ app.delete('/api/usuario/conta', autenticar, async (req, res) => {
     const conn = await db.connect();
     try {
         const { rows } = await conn.query(
-            'SELECT senha FROM usuarios WHERE id_usuario = $1',
+            'SELECT senha, nome, email FROM usuarios WHERE id_usuario = $1',
             [idUsuario]
         );
         if (rows.length === 0) {
@@ -591,6 +591,24 @@ app.delete('/api/usuario/conta', autenticar, async (req, res) => {
         // O resto (progresso, medalhas, mural, doações, runner) é apagado em cascata.
         await conn.query('DELETE FROM usuarios WHERE id_usuario = $1', [idUsuario]);
         await conn.query('COMMIT');
+
+        // Avisa por e-mail. Se falhar, a conta já foi apagada e a resposta continua sendo sucesso.
+        try {
+            await transporter.sendMail({
+                from: `"NoteWave" <${process.env.EMAIL_USER}>`,
+                to: rows[0].email,
+                subject: 'Sua conta no NoteWave foi excluída',
+                html: `
+                    <h2>Olá, ${escaparHtml(rows[0].nome)}!</h2>
+                    <p>Confirmamos que a sua conta no NoteWave foi <b>excluída</b>.</p>
+                    <p>Seu perfil, progresso, medalhas, publicações, doações e demais dados da conta foram apagados da plataforma e não podem ser recuperados.</p>
+                    <p>Se não foi você quem pediu a exclusão, entre em contato com a equipe do NoteWave o quanto antes.</p>
+                    <p>Obrigado por ter feito parte da nossa comunidade musical!</p>
+                `
+            });
+        } catch (e) {
+            console.error('ERRO AO ENVIAR EMAIL DE CONTA EXCLUIDA:', e.message);
+        }
 
         return res.json({ message: 'Conta excluída com sucesso.' });
     } catch (e) {
