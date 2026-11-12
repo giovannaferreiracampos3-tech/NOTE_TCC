@@ -44,7 +44,7 @@
     'Não estou tentando vender, cobrar ou solicitar qualquer pagamento.',
     'As informações e fotografias correspondem ao instrumento anunciado.',
     'Estou ciente das regras de utilização do NoteWave Doações.',
-    'Autorizo o NoteWave a confirmar meu celular por SMS e a compartilhá-lo somente com a pessoa que eu aceitar.'];
+    'Autorizo o NoteWave a confirmar meu celular por e-mail e a compartilhá-lo somente com a pessoa que eu aceitar.'];
   const SEGURANCA = 'Combine entregas em locais públicos e com acompanhamento de um responsável, principalmente quando houver menores de idade. Nunca envie dinheiro.';
 
   const cat = id => CATS.find(c => c.id === id) || CATS[5];
@@ -267,7 +267,7 @@
     desc.placeholder = 'Conte o estado de conservação, se funciona bem, há quanto tempo é usado, o que acompanha e se precisa de reparos.';
     const s3 = bloco('Descrição', null, campo('Descrição *', desc, contador(desc)));
 
-    // 4. Contato (opcional) + confirmação por SMS
+    // 4. Contato (opcional) + confirmação por E-MAIL
     const tel = el('input'); tel.type = 'tel'; tel.inputMode = 'numeric'; tel.placeholder = '(19) 91234-5678'; tel.autocomplete = 'tel';
     const digitos = () => tel.value.replace(/\D/g, '');
     // máscara (DDD) 91234-5678
@@ -279,8 +279,8 @@
     });
 
     let verif = { tel: null, id: null }, enviadoPara = null;
-    const codigo = el('input'); codigo.type = 'text'; codigo.inputMode = 'numeric'; codigo.maxLength = 6; codigo.placeholder = 'Código de 6 números'; codigo.autocomplete = 'one-time-code'; codigo.setAttribute('aria-label', 'Código recebido por SMS');
-    const enviar = el('button', 'dc-btn peq', 'Enviar código por SMS'); enviar.type = 'button';
+    const codigo = el('input'); codigo.type = 'text'; codigo.inputMode = 'numeric'; codigo.maxLength = 6; codigo.placeholder = 'Código de 6 números'; codigo.autocomplete = 'one-time-code'; codigo.setAttribute('aria-label', 'Código recebido por e-mail');
+    const enviar = el('button', 'dc-btn peq', 'Enviar código por e-mail'); enviar.type = 'button';
     const conferir = el('button', 'dc-btn peq primario', 'Confirmar código'); conferir.type = 'button';
     const stSms = el('div', 'dc-dica'); stSms.setAttribute('role', 'status');
     const linhaCod = el('div', 'dc-linha'); linhaCod.append(codigo, conferir);
@@ -292,7 +292,7 @@
       if (enviadoPara && enviadoPara !== d) enviadoPara = null;
       const ok = !!d && verif.tel === d;
       boxSms.hidden = !celular; enviar.hidden = ok; linhaCod.hidden = ok || enviadoPara !== d;
-      if (ok) stSms.textContent = '✔ Telefone confirmado por SMS.';
+      if (ok) stSms.textContent = '✔ Telefone confirmado por e-mail.';
       else if (verif.tel === null && stSms.textContent.startsWith('✔')) stSms.textContent = '';
     }
     tel.addEventListener('input', sincSms); // registrado ANTES do listener de atualizar()
@@ -302,7 +302,7 @@
       try {
         await api('/donations/phone/send-code', { method: 'POST', body: { telefone: digitos() } });
         enviadoPara = digitos(); enviar.textContent = 'Reenviar código'; sincSms(); codigo.focus();
-        stSms.textContent = 'Enviamos um código para o seu celular. Ele vale por 10 minutos.';
+        stSms.textContent = 'Enviamos um código para o seu e-mail. Ele vale por 10 minutos. Se não achar, veja a caixa de spam.';
       } catch (er) { stSms.textContent = er.message; }
     });
     conferir.onclick = () => espera(conferir, async () => {
@@ -314,7 +314,7 @@
       } catch (er) { stSms.textContent = er.message; }
     });
 
-    const av = el('div', 'dc-aviso'); av.append(el('i', 'ph ph-lock-key'), el('p', '', 'O telefone é opcional. Se você informar, vamos confirmá-lo por SMS. Ele não aparece na publicação: só é liberado, com a sua autorização, para a pessoa que você aceitar.'));
+    const av = el('div', 'dc-aviso'); av.append(el('i', 'ph ph-lock-key'), el('p', '', 'O telefone é opcional. Se você informar, vamos confirmá-lo com um código enviado ao seu e-mail de cadastro. Ele não aparece na publicação: só é liberado, com a sua autorização, para a pessoa que você aceitar.'));
     const s4 = bloco('Telefone para contato (opcional)', null,
       campo(edit ? 'Celular (deixe em branco para manter o atual)' : 'Celular com DDD', tel), boxSms, av);
 
@@ -331,7 +331,7 @@
     // Lateral
     const lista = el('ul', 'dc-reqs');
     const reqs = [['n', 'Nome do instrumento'], ['c', 'Categoria'], ['d', 'Descrição (mín. ' + LIM.descMin + ' caracteres)'],
-      ['t', 'Celular válido (se informado)'], ['v', 'Celular confirmado por SMS (se informado)'], ['k', 'Confirmações']]
+      ['t', 'Celular válido (se informado)'], ['v', 'Celular confirmado por e-mail (se informado)'], ['k', 'Confirmações']]
       .map(([k, tx]) => {
         const li = el('li'); li.dataset.k = k;
         li.append(el('i', 'ph ph-circle'), document.createTextNode(tx));
@@ -364,7 +364,7 @@
       if (!v.c) { erro.textContent = 'Escolha a categoria do instrumento.'; sel.focus(); return; }
       if (!v.d) { erro.textContent = 'A descrição precisa ter pelo menos ' + LIM.descMin + ' caracteres.'; desc.focus(); return; }
       if (!v.t) { erro.textContent = 'Informe um celular com DDD, por exemplo (19) 91234-5678.'; tel.focus(); return; }
-      if (!v.v) { erro.textContent = 'Confirme seu celular pelo código enviado por SMS (ou apague o telefone para publicar sem ele).'; return; }
+      if (!v.v) { erro.textContent = 'Confirme seu celular pelo código enviado por e-mail (ou apague o telefone para publicar sem ele).'; return; }
       if (!v.k) { erro.textContent = 'Marque todas as confirmações para continuar.'; return; }
       const fd = new FormData();
       fd.append('nome', nome.value.trim()); fd.append('categoria', sel.value); fd.append('descricao', desc.value.trim()); fd.append('cidade', cidade.value.trim());
