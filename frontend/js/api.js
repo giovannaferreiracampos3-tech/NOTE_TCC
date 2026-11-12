@@ -47,6 +47,8 @@
   }
   async function resgatarDesafio(id) {
     const ids = missoesFeitasHoje();
+    // o bônus não tem missão própria; os desafios só podem ser resgatados com a missão feita
+    if (id !== 'bonus' && ids.indexOf(id) < 0) throw new Error('missao-pendente');
     if (ids.length) await chamar('POST', '/desafios/missoes', { ids: ids });
     return chamar('POST', '/desafios/resgatar', { id: id });
   }

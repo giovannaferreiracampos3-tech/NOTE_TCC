@@ -56,11 +56,14 @@
       NW.missoes.abrir(ch, {
         dia: estado.dia,
         aoConcluir: function (r) {
-            msg = r.novo
+          const metaOk = (estado.progresso[ch.id] | 0) >= ch.meta;
+          msg = !r.novo
+            ? 'Missão concluída de novo. Bom treino!'
+            : metaOk
               ? 'Missão concluída! O desafio foi completado: clique em Resgatar.'
-              : 'Missão concluída de novo. Bom treino!';
-            recarregar();
-          }
+              : 'Missão concluída! Agora falta cumprir a meta jogando.';
+          recarregar();
+        }
       });
     }
   
@@ -74,15 +77,19 @@
       R.lista.innerHTML = '';
       lista.forEach(function (ch) {
         const prog = Math.min(estado.progresso[ch.id] | 0, ch.meta);
-        const pronto = prog >= ch.meta, feito = resg.indexOf(ch.id) >= 0;
+        const feito = resg.indexOf(ch.id) >= 0;
         const def = NW.missoes && NW.missoes.definicao(ch.id);
         const missaoFeita = !!(NW.missoes && NW.missoes.feita(estado.dia, ch.id));
+        const metaOk = prog >= ch.meta;
+        const missaoOk = !def || missaoFeita;          // sem missão definida, não trava o desafio
+        const pronto = metaOk && missaoOk;             // só fica verde com as duas coisas
         const li = document.createElement('li');
         li.className = 'nwr-des__item' + (feito ? ' is-feito' : pronto ? ' is-pronto' : '');
         li.dataset.ch = ch.id; li.tabIndex = -1;
         let acao;
         if (feito) acao = '<span class="nwr-tag nwr-tag--ok">Resgatado</span>';
         else if (pronto) acao = '<button type="button" class="nwr-btn nwr-btn--mini" data-resgatar="' + ch.id + '"' + (ocupado ? ' disabled' : '') + '>Resgatar</button>';
+        else if (metaOk && !missaoOk) acao = '<span class="nwr-tag">Falta a missão</span>';
         else acao = '<span class="nwr-tag">Em andamento</span>';
         const missao = def
           ? '<div class="nwr-des__missao">' +
@@ -145,7 +152,9 @@
         if (NW.somMoedas) NW.somMoedas.dinheiro();
         pulsarSaldo();
       } catch (e) {
-        msg = e.message === 'ja-resgatado' ? 'Você já resgatou esta recompensa.' : 'Não foi possível resgatar agora. Tente de novo.';
+        msg = e.message === 'ja-resgatado' ? 'Você já resgatou esta recompensa.'
+    : e.message === 'missao-pendente' ? 'Conclua a missão musical antes de resgatar.'
+    : 'Não foi possível resgatar agora. Tente de novo.';
       }
       ocupado = false; desenhar(); focar(id);
     }
