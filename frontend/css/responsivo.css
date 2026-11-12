@@ -158,3 +158,67 @@
       overflow-x: clip;
     }
   }
+
+  /* ===== MOBILE (celular): só Jornal, Doações e Caderno ===== */
+@media (max-width: 600px) {
+
+    /* ---------- JORNAL ---------- */
+    .main-content.jr .jr-wrap,
+    .main-content.jr .jr-view { gap: 22px; }
+    .main-content.jr .jr-head p { font-size: 14px; }
+    .main-content.jr .jr-grid { gap: 16px; }
+    .main-content.jr .jr-card p {
+      display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    /* botões do topo e categorias: uma faixa que rola de lado */
+    .main-content.jr > .jr-wrap > .jr-acoes,
+    .main-content.jr .jr-chips {
+      flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 6px;
+    }
+    .main-content.jr > .jr-wrap > .jr-acoes::-webkit-scrollbar,
+    .main-content.jr .jr-chips::-webkit-scrollbar { display: none; }
+    .main-content.jr > .jr-wrap > .jr-acoes > *,
+    .main-content.jr .jr-chips > * { flex: 0 0 auto; white-space: nowrap; }
+    /* menos texto de apoio */
+    .main-content.jr .jr-comunidade p { display: none; }
+    .main-content.jr .jr-notinha { padding: 16px; gap: 12px; }
+    .main-content.jr .jr-reagir .jr-btn { flex: 1 1 calc(50% - 8px); justify-content: center; }
+  
+    /* ---------- DOAÇÕES ---------- */
+    .main-content.dc .dc-wrap,
+    .main-content.dc #dcRoot { gap: 20px; }
+    /* banner menor: tira o espaço enorme do mascote e o parágrafo longo */
+    .main-content.dc .dc-hero { padding: 20px 18px 170px; }
+    .main-content.dc .dc-hero p { display: none; }
+    .main-content.dc .dc-hero h1 { font-size: 26px; }
+    .main-content.dc .dc-hero img { width: 170px; height: 170px; }
+    /* números lado a lado */
+    .main-content.dc .dc-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .main-content.dc .dc-stat { flex-direction: column; text-align: center; padding: 10px 4px; gap: 4px; }
+    .main-content.dc .dc-stat i { width: 34px; height: 34px; font-size: 20px; }
+    .main-content.dc .dc-stat b { font-size: 18px; }
+    .main-content.dc .dc-stat span { font-size: 11px; line-height: 1.2; }
+    /* filtros em faixa que rola de lado */
+    .main-content.dc .dc-chips {
+      flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 6px;
+    }
+    .main-content.dc .dc-chips::-webkit-scrollbar { display: none; }
+    .main-content.dc .dc-chip { flex: 0 0 auto; white-space: nowrap; }
+    .main-content.dc .dc-acoes .dc-btn.primario { flex: 1 1 100%; }
+    .main-content.dc .dc-gerir .dc-btn { flex: 1 1 calc(50% - 8px); }
+  
+    /* ---------- CADERNO ---------- */
+    .main-in { gap: 14px; }
+    .panel-head p { display: none; }
+    .tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 6px; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tabs > * { flex: 0 0 auto; white-space: nowrap; }
+    .boxes { grid-template-columns: 1fr; }
+    #side .sticky { display: none; }
+  }
+  
+  @media (max-width: 380px) {
+    .main-content.dc .dc-stats { grid-template-columns: 1fr; }
+    .main-content.dc .dc-stat { flex-direction: row; text-align: left; gap: 12px; padding: 10px 14px; }
+  }
