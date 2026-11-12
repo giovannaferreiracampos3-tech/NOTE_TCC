@@ -229,8 +229,7 @@
 
     function barHtml(){
       return '<header class="bar"><div class="bar-in gut">'+
-       '<label class="search"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="#0c2a6b" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="#0c2a6b" stroke-width="2.4" stroke-linecap="round"/></svg><span class="sr">Buscar</span><input id="search" type="search" placeholder="Buscar nas anotações…" value="'+esc(ui.q)+'" autocomplete="off"></label>'+
-       '<div class="bar-r"><button class="icon-btn" type="button" id="bell" aria-label="Avisos"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15z" fill="none" stroke="#0c2a6b" stroke-width="2" stroke-linejoin="round"/><path d="M10 21h4" stroke="#0c2a6b" stroke-width="2" stroke-linecap="round"/></svg></button></div>'+
+       '<label class="search"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="#0c2a6b" stroke-width="2.4"/><path d="M15.5 15.5L21 21" stroke="#0c2a6b" stroke-width="2.4" stroke-linecap="round"/></svg><span class="sr">Buscar</span><input id="search" type="search" placeholder="Buscar nas anotações…" value="'+esc(ui.q)+'" autocomplete="off"></label>'+     
        '</div></header>';
     }
     function footHtml(){
@@ -462,7 +461,6 @@
       }
       if(t.id==="changeCover"){ui.view="cover";ui.pick=S.cover||ui.pick;render();window.scrollTo(0,0);return}
       if(t.id==="newNote"){newNote();return}
-      if(t.id==="bell"){toast("Sem avisos novos por enquanto.");return}
       if(t.dataset.tab){ui.tab=t.dataset.tab;renderTabs();renderStage();return}
       if(t.dataset.nav){
         var d=parseInt(t.dataset.nav,10);

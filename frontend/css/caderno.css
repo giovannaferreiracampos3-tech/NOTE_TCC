@@ -372,3 +372,5 @@ body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;
    .dark-mode .nw-card{background:#17264f;border-color:#2a3c6e;box-shadow:0 24px 50px rgba(0,0,0,.6)}
    .dark-mode .nw-card h2{color:#fff}
    .dark-mode .nw-btn.danger{background:rgba(255,143,163,.14);color:#ff9fb0;box-shadow:0 4px 0 rgba(255,143,163,.25)}
+
+   .bar .search { margin-right: 70px; }
