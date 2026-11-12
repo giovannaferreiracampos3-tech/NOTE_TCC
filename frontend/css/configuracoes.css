@@ -453,7 +453,7 @@
     }
     
     .faq-item.active .faq-answer {
-      max-height: 200px; /* Altura suficiente para o texto da resposta */
+      max-height: 500px;
       padding: 0 20px 20px 20px;
     }
 
