@@ -542,3 +542,16 @@
   gap: 10px;
   margin-top: 16px;
 }
+
+/* Olhinho de mostrar/esconder senha */
+.campo-senha { position: relative; width: 100%; }
+.campo-senha .form-input { width: 100%; padding-right: 48px; box-sizing: border-box; }
+.olho-senha {
+    position: absolute; top: 50%; right: 12px; transform: translateY(-50%);
+    background: none; border: 0; padding: 6px; cursor: pointer;
+    font-size: 22px; line-height: 1; color: #003399;
+    display: grid; place-items: center; border-radius: 8px;
+}
+.olho-senha:hover { background: rgba(0, 51, 153, .08); }
+.olho-senha:focus-visible { outline: 2px solid #38bdf8; }
+body.dark-mode .olho-senha { color: #38bdf8; }

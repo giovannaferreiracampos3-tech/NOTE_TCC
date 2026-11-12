@@ -210,3 +210,32 @@ document.addEventListener('DOMContentLoaded', () => {
     btnConfirmar.addEventListener('click', apagar);
     inputSenha.addEventListener('keydown', (e) => { if (e.key === 'Enter') apagar(); });
 });
+
+// === OLHINHO PARA MOSTRAR/ESCONDER SENHA ===
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('input[type="password"]').forEach(campo => {
+        // Envolve o campo para posicionar o botão por cima
+        const caixa = document.createElement('div');
+        caixa.className = 'campo-senha';
+        campo.parentNode.insertBefore(caixa, campo);
+        caixa.appendChild(campo);
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'olho-senha';
+        btn.setAttribute('aria-label', 'Mostrar senha');
+        btn.setAttribute('aria-pressed', 'false');
+        btn.innerHTML = '<i class="ph ph-eye"></i>';
+
+        btn.addEventListener('click', () => {
+            const mostrar = campo.type === 'password';
+            campo.type = mostrar ? 'text' : 'password';
+            btn.setAttribute('aria-label', mostrar ? 'Esconder senha' : 'Mostrar senha');
+            btn.setAttribute('aria-pressed', String(mostrar));
+            btn.innerHTML = '<i class="ph ' + (mostrar ? 'ph-eye-slash' : 'ph-eye') + '"></i>';
+            campo.focus();
+        });
+
+        caixa.appendChild(btn);
+    });
+});
