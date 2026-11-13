@@ -538,7 +538,7 @@
       }).catch(er => { li.textContent = ''; li.appendChild(el('p', 'dc-erro', er.message)); });
     }
     if (d.equipe && !d.meu) {
-      const pm = el('section', 'dc-painel dc-mod');
+      const pm = el('section', 'dc-mod');
       const ic = el('span', 'dc-mod-ico'); ic.appendChild(el('i', 'ph ph-shield-check'));
       const tx = el('div', 'dc-mod-txt');
       tx.append(el('h2', '', 'Cuidando da comunidade'),

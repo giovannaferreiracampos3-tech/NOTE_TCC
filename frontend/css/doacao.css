@@ -1706,11 +1706,12 @@ body.dark-mode .dc-hero .dc-btn.primario:hover {
 
 /* Painel de moderação da equipe */
 .dc-mod {
-    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    display: flex; flex-direction: row; align-items: center; gap: 14px; flex-wrap: wrap;
     position: relative; overflow: hidden;
+    min-height: 0; height: auto; margin: 18px 0;
     background: linear-gradient(135deg, #eaf6ff 0%, #cfe9fb 100%);
     border: 1px solid rgba(0, 51, 153, .12);
-    border-radius: 22px; padding: 18px 22px;
+    border-radius: 22px; padding: 14px 20px;
     box-shadow: 0 6px 18px rgba(0, 51, 153, .08);
   }
   .dc-mod::after { /* nota musical de fundo */
@@ -1735,3 +1736,4 @@ body.dark-mode .dc-hero .dc-btn.primario:hover {
   }
   .dc-mod-btn:hover { background: #b42318; color: #fff; transform: translateY(-1px); }
   .dc-mod-btn:disabled { opacity: .6; cursor: wait; }
+  .dc-mod-btn { align-self: center; flex: none; }
