@@ -108,6 +108,7 @@ const apagarArquivos = caminhos => Promise.all(caminhos.map(c => nuvem.apagarCam
 // `db` deve ser um pg.Pool
 module.exports = (db, transporter) => {
   const r = express.Router();
+  const equipe = require('./equipe')(db);
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_MB * 1024 * 1024, files: MAX_FOTOS } });
   const receber = (req, res, next) => upload.array('imagens', MAX_FOTOS)(req, res, err => {
     if (!err) return next();
@@ -271,11 +272,12 @@ module.exports = (db, transporter) => {
       if (i) meuInteresse = { id: i.id, status: i.status, contatoLiberado: !!i.liberado };
     }
     const dono = !!req.user && igual(req.user.id, d.user_id);
-    // O telefone NUNCA sai nesta rota; só o dono sabe se existe um cadastrado
-    res.json({
+const ehEquipe = !!req.user && await equipe.ehEquipe(req.user.id);
+// O telefone NUNCA sai nesta rota; só o dono sabe se existe um cadastrado
+res.json({
       id: d.id, nome: d.instrument_name, categoria: d.category, descricao: d.description, cidade: d.city,
       autor: nomePublico(d.autor_nome), autorFoto: d.autor_foto || null,
-      data: d.created_at, status: d.status, meu: dono, temTelefone: dono ? !!d.phone : undefined,
+      data: d.created_at, status: d.status, meu: dono, equipe: ehEquipe, temTelefone: dono ? !!d.phone : undefined,
       imagens: imgs.map(x => ({ id: x.id, url: '/uploads/' + x.image_path })), meuInteresse,
       comentarios: coms.map(c => comentarioJson(c, req))
     });
@@ -348,14 +350,20 @@ module.exports = (db, transporter) => {
   r.delete('/donations/:id', exige, h(async (req, res) => {
     const id = idn(req.params.id), d = await buscar(id);
     if (!d) return erro(res, 404, 'Publicação não encontrada.');
-    if (!igual(d.user_id, req.user.id)) return erro(res, 403, 'Você só pode excluir as suas próprias publicações.');
+    const dono = igual(d.user_id, req.user.id);
+    const modera = !dono && await equipe.ehEquipe(req.user.id);
+    if (!dono && !modera) return erro(res, 403, 'Você só pode excluir as suas próprias publicações.');
+    const motivo = String((req.body || {}).motivo || req.query.motivo || '').trim().slice(0, 250);
     const conn = await db.connect(); // exclusão lógica: preserva histórico para auditoria
     try {
       await conn.query('BEGIN');
       await conn.query('UPDATE donations SET deleted_at=now() WHERE id=$1', [id]);
       await conn.query("UPDATE donation_contact_permissions SET consent_status='revogado', revoked_at=now() WHERE donation_id=$1 AND consent_status='autorizado'", [id]);
-      await conn.query('COMMIT'); res.json({ ok: true });
+      if (modera) await notificar(conn, d.user_id, id, 'Sua publicação "' + d.instrument_name + '" foi removida pela equipe por não seguir os Termos de Uso.');
+      await conn.query('COMMIT');
     } catch (e) { await rollback(conn); throw e; } finally { conn.release(); }
+    if (modera) await equipe.registrar(req.user.id, 'remover_doacao', 'doacao', id, d.instrument_name + ' — ' + d.description, motivo);
+    res.json({ ok: true });
   }));
 
   // ================= COMENTÁRIOS =================
@@ -399,10 +407,18 @@ module.exports = (db, transporter) => {
 
   r.delete('/donation-comments/:id', exige, h(async (req, res) => {
     const id = idn(req.params.id);
-    const c = await um(db, 'SELECT c.id, c.user_id, d.user_id AS dono FROM donation_comments c JOIN donations d ON d.id=c.donation_id WHERE c.id=$1', [id]);
+    const c = await um(db, 'SELECT c.id, c.user_id, c.comment, c.donation_id, d.user_id AS dono, d.instrument_name FROM donation_comments c JOIN donations d ON d.id=c.donation_id WHERE c.id=$1', [id]);
     if (!c) return erro(res, 404, 'Comentário não encontrado.');
-    if (!igual(c.user_id, req.user.id) && !igual(c.dono, req.user.id)) return erro(res, 403, 'Você não pode excluir este comentário.');
-    await db.query('DELETE FROM donation_comments WHERE id=$1', [id]); res.json({ ok: true });
+    const meu = igual(c.user_id, req.user.id) || igual(c.dono, req.user.id);
+    const modera = !meu && await equipe.ehEquipe(req.user.id);
+    if (!meu && !modera) return erro(res, 403, 'Você não pode excluir este comentário.');
+    await db.query('DELETE FROM donation_comments WHERE id=$1', [id]);
+    if (modera) {
+      try { await notificar(db, c.user_id, c.donation_id, 'Um comentário seu em "' + c.instrument_name + '" foi removido pela equipe por não seguir os Termos de Uso.'); }
+      catch (e) { console.error('NOTIFICACAO MODERACAO:', e.message); }
+      await equipe.registrar(req.user.id, 'remover_comentario_doacao', 'comentario_doacao', id, c.comment, String((req.body || {}).motivo || req.query.motivo || '').trim().slice(0, 250));
+    }
+    res.json({ ok: true });
   }));
 
   // ================= INTERESSE =================

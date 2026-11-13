@@ -103,6 +103,7 @@ async function apagarArquivo(url) { await nuvem.apagar(url); }
 // `db` deve ser um pg.Pool
 module.exports = function (db, transporter) {
   const router = express.Router();
+  const equipe = require('./equipe')(db);
   const seguro = fn => (req, res) => fn(req, res).catch(e => { console.error('ERRO NO JOURNAL:', e); res.status(500).json({ erro: 'Erro no servidor. Tente de novo.' }); });
   const exigir = (req, res) => {
     const id = usuarioDaRequisicao(req);
@@ -277,25 +278,28 @@ module.exports = function (db, transporter) {
     const eu = exigir(req, res); if (!eu) return;
     const id = idDaUrl(req);
     if (!id) return res.status(400).json({ erro: 'Publicação inválida.' });
-
-    const { rows: a } = await db.query('SELECT id_usuario, imagem FROM publicacoes WHERE id_publicacao = $1', [id]);
+  
+    const { rows: a } = await db.query('SELECT id_usuario, imagem, titulo, autor, resumo FROM publicacoes WHERE id_publicacao = $1', [id]);
     if (!a[0]) return res.status(404).json({ erro: 'Publicação não encontrada.' });
-    if (a[0].id_usuario == null || Number(a[0].id_usuario) !== eu)
-      return res.status(403).json({ erro: 'Você só pode apagar as suas próprias publicações.' });
-
+    const dono = a[0].id_usuario != null && Number(a[0].id_usuario) === eu;
+    const modera = !dono && await equipe.ehEquipe(eu);
+    if (!dono && !modera) return res.status(403).json({ erro: 'Você só pode apagar as suas próprias publicações.' });
+    const motivo = texto((req.body && req.body.motivo) || req.query.motivo, 250);
+  
     const conn = await db.connect();
     try {
       await conn.query('BEGIN');
       await conn.query('DELETE FROM comentarios WHERE id_publicacao = $1', [id]);
       await conn.query('DELETE FROM reacoes WHERE id_publicacao = $1', [id]);
       await conn.query('DELETE FROM favoritos WHERE id_publicacao = $1', [id]);
-      await conn.query('DELETE FROM publicacoes WHERE id_publicacao = $1 AND id_usuario = $2', [id, eu]);
+      await conn.query('DELETE FROM publicacoes WHERE id_publicacao = $1', [id]);
       await conn.query('COMMIT');
     } catch (e) {
       await conn.query('ROLLBACK').catch(() => {});
       throw e;
     } finally { conn.release(); }
-
+  
+    if (modera) await equipe.registrar(eu, 'apagar_artigo', 'artigo', id, '"' + a[0].titulo + '" por ' + a[0].autor + '\n' + a[0].resumo, motivo);
     await apagarArquivo(a[0].imagem);
     res.json({ ok: true });
   }));
@@ -362,20 +366,30 @@ module.exports = function (db, transporter) {
     res.status(201).json({ id: rows[0].id_comentario });
   }));
 
-  // Pode apagar: o autor do comentário OU o dono do artigo
-  router.delete('/comentarios/:id', seguro(async (req, res) => {
-    const eu = exigir(req, res); if (!eu) return;
-    const id = idDaUrl(req);
-    if (!id) return res.status(403).json({ erro: 'Você só pode apagar os seus comentários ou os do seu artigo.' });
-    const r = await db.query(
-      `DELETE FROM comentarios c
-       USING publicacoes p
-       WHERE p.id_publicacao = c.id_publicacao
-         AND c.id_comentario = $1 AND (c.id_usuario = $2 OR p.id_usuario = $2)`,
-      [id, eu]);
-    if (!r.rowCount) return res.status(403).json({ erro: 'Você só pode apagar os seus comentários ou os do seu artigo.' });
-    res.json({ ok: true });
-  }));
+  // Pode apagar: o autor do comentário, o dono do artigo ou a equipe
+router.delete('/comentarios/:id', seguro(async (req, res) => {
+  const eu = exigir(req, res); if (!eu) return;
+  const id = idDaUrl(req);
+  const NEGADO = { erro: 'Você só pode apagar os seus comentários ou os do seu artigo.' };
+  if (!id) return res.status(403).json(NEGADO);
+  const { rows: [c] } = await db.query(
+    `SELECT c.id_comentario, c.texto, c.id_usuario, c.id_publicacao, p.id_usuario AS dono, p.titulo
+     FROM comentarios c JOIN publicacoes p ON p.id_publicacao = c.id_publicacao WHERE c.id_comentario = $1`, [id]);
+  if (!c) return res.status(403).json(NEGADO);
+  const meu = Number(c.id_usuario) === eu || (c.dono != null && Number(c.dono) === eu);
+  const modera = !meu && await equipe.ehEquipe(eu);
+  if (!meu && !modera) return res.status(403).json(NEGADO);
+
+  await db.query('DELETE FROM comentarios WHERE id_comentario = $1', [id]);
+  if (modera) {
+    try {
+      await db.query('INSERT INTO journal_notifications (user_id, id_publicacao, message) VALUES ($1,$2,$3)',
+        [c.id_usuario, c.id_publicacao, ('Um comentário seu em "' + c.titulo + '" foi removido pela equipe por não seguir os Termos de Uso.').slice(0, 255)]);
+    } catch (e) { console.error('NOTIFICACAO MODERACAO:', e.message); }
+    await equipe.registrar(eu, 'apagar_comentario', 'comentario', id, c.texto, texto((req.body && req.body.motivo) || req.query.motivo, 250));
+  }
+  res.json({ ok: true });
+}));
 
     // ---------- DENÚNCIAS ----------
     const hitsDen = new Map();
