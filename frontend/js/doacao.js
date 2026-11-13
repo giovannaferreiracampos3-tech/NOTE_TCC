@@ -558,7 +558,7 @@
         tp.append(el('b', '', '@' + cm.autor), el('span', '', dataBR(cm.data)));
         const ac = el('div', 'dc-coment-acoes');
         if (!resp) { const r = el('button', 'dc-link', 'Responder'); r.type = 'button'; r.onclick = () => { if (!logado()) { exigeLogin(); return; } respondendo = cm; ta.focus(); aviso(); }; ac.appendChild(r); }
-        if (cm.meu || d.meu) { const x = el('button', 'dc-link', 'Excluir'); x.type = 'button'; x.onclick = () => espera(x, async () => {if (!confirm('Excluir este comentário?')) return;
+        if (cm.meu || d.meu || d.equipe) { const x = el('button', 'dc-link', 'Excluir'); x.type = 'button'; x.onclick = () => espera(x, async () => {if (!confirm('Excluir este comentário?')) return;
           let q = '';
           if (d.equipe && !cm.meu && !d.meu) {
             const mo = prompt('Motivo da remoção (fica registrado):');
