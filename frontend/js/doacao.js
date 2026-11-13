@@ -538,11 +538,15 @@
       }).catch(er => { li.textContent = ''; li.appendChild(el('p', 'dc-erro', er.message)); });
     }
     if (d.equipe && !d.meu) {
-      const pm = el('section', 'dc-painel'); pm.appendChild(el('h2', '', 'Moderação (equipe)'));
-      const bm = el('button', 'dc-btn peq perigo'); bm.type = 'button';
-      bm.append(el('i', 'ph ph-shield-warning'), document.createTextNode('Remover esta publicação'));
+      const pm = el('section', 'dc-painel dc-mod');
+      const ic = el('span', 'dc-mod-ico'); ic.appendChild(el('i', 'ph ph-shield-check'));
+      const tx = el('div', 'dc-mod-txt');
+      tx.append(el('h2', '', 'Cuidando da comunidade'),
+        el('p', '', 'Você está vendo esta publicação como Equipe NoteWave. Se ela não seguir os Termos de Uso, pode removê-la. O motivo fica registrado.'));
+      const bm = el('button', 'dc-mod-btn'); bm.type = 'button';
+      bm.append(el('i', 'ph ph-trash'), document.createTextNode('Remover publicação'));
       bm.onclick = () => espera(bm, async () => { if (await removerComoEquipe(d)) location.hash = '#/'; });
-      pm.appendChild(bm); root.appendChild(pm);
+      pm.append(ic, tx, bm); root.appendChild(pm);
     }
 
     // Comentários

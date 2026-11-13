@@ -1703,3 +1703,35 @@ body.dark-mode .dc-hero .dc-btn.primario:hover {
     outline: 0;
     box-shadow: 0 0 0 3px rgba(56, 132, 255, .18);
 }
+
+/* Painel de moderação da equipe */
+.dc-mod {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    position: relative; overflow: hidden;
+    background: linear-gradient(135deg, #eaf6ff 0%, #cfe9fb 100%);
+    border: 1px solid rgba(0, 51, 153, .12);
+    border-radius: 22px; padding: 18px 22px;
+    box-shadow: 0 6px 18px rgba(0, 51, 153, .08);
+  }
+  .dc-mod::after { /* nota musical de fundo */
+    content: "♪"; position: absolute; right: 16px; top: -14px;
+    font-size: 96px; line-height: 1; color: rgba(0, 51, 153, .07); pointer-events: none;
+  }
+  .dc-mod-ico {
+    flex: none; width: 46px; height: 46px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 24px; color: #fff;
+    background: linear-gradient(135deg, var(--dc-blue, #003399), #2aa9ee);
+  }
+  .dc-mod-txt { flex: 1 1 260px; min-width: 0; }
+  .dc-mod-txt h2 { margin: 0 0 2px; font-size: 1.05rem; color: var(--dc-blue, #003399); }
+  .dc-mod-txt p { margin: 0; font-size: .9rem; color: #4a5b78; }
+  .dc-mod-btn {
+    flex: none; position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: 999px; cursor: pointer;
+    font: inherit; font-weight: 700; color: #b42318;
+    background: #fff; border: 1.5px solid #f1b5ae;
+    transition: background .15s, color .15s, transform .15s;
+  }
+  .dc-mod-btn:hover { background: #b42318; color: #fff; transform: translateY(-1px); }
+  .dc-mod-btn:disabled { opacity: .6; cursor: wait; }
