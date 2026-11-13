@@ -147,6 +147,14 @@
     try { await api('/donations/' + d.id, { method: 'DELETE' }); toast('Publicação excluída.'); return true; }
     catch (er) { toast(er.message); return false; }
   }
+  async function removerComoEquipe(d) {
+    const mo = prompt('Remover "' + d.nome + '" como equipe.\n\nInforme o motivo (fica registrado):');
+    if (mo === null) return false;
+    try {
+      await api('/donations/' + d.id + '?motivo=' + encodeURIComponent(mo.trim().slice(0, 250)), { method: 'DELETE' });
+      toast('Publicação removida.'); return true;
+    } catch (er) { toast(er.message); return false; }
+  }
 
   // ---------- INÍCIO ----------
   const F = { q: '', cat: '', status: '', cidade: '', pagina: 1 };
@@ -529,6 +537,13 @@
         });
       }).catch(er => { li.textContent = ''; li.appendChild(el('p', 'dc-erro', er.message)); });
     }
+    if (d.equipe && !d.meu) {
+      const pm = el('section', 'dc-painel'); pm.appendChild(el('h2', '', 'Moderação (equipe)'));
+      const bm = el('button', 'dc-btn peq perigo'); bm.type = 'button';
+      bm.append(el('i', 'ph ph-shield-warning'), document.createTextNode('Remover esta publicação'));
+      bm.onclick = () => espera(bm, async () => { if (await removerComoEquipe(d)) location.hash = '#/'; });
+      pm.appendChild(bm); root.appendChild(pm);
+    }
 
     // Comentários
     const sc = el('section', 'dc-com'), tit = el('h2'), lista = el('div'); lista.style.cssText = 'display:flex;flex-direction:column;gap:10px';
@@ -543,7 +558,14 @@
         tp.append(el('b', '', '@' + cm.autor), el('span', '', dataBR(cm.data)));
         const ac = el('div', 'dc-coment-acoes');
         if (!resp) { const r = el('button', 'dc-link', 'Responder'); r.type = 'button'; r.onclick = () => { if (!logado()) { exigeLogin(); return; } respondendo = cm; ta.focus(); aviso(); }; ac.appendChild(r); }
-        if (cm.meu || d.meu) { const x = el('button', 'dc-link', 'Excluir'); x.type = 'button'; x.onclick = () => espera(x, async () => { if (!confirm('Excluir este comentário?')) return; try { await api('/donation-comments/' + cm.id, { method: 'DELETE' }); d.comentarios = d.comentarios.filter(z => z.id !== cm.id && z.paiId !== cm.id); comentarios(); } catch (er) { toast(er.message); } }); ac.appendChild(x); }
+        if (cm.meu || d.meu) { const x = el('button', 'dc-link', 'Excluir'); x.type = 'button'; x.onclick = () => espera(x, async () => {if (!confirm('Excluir este comentário?')) return;
+          let q = '';
+          if (d.equipe && !cm.meu && !d.meu) {
+            const mo = prompt('Motivo da remoção (fica registrado):');
+            if (mo === null) return;
+            q = '?motivo=' + encodeURIComponent(mo.trim().slice(0, 250));
+          }
+          try { await api('/donation-comments/' + cm.id + q, { method: 'DELETE' }); d.comentarios = d.comentarios.filter(z => z.id !== cm.id && z.paiId !== cm.id); comentarios(); } catch (er) { toast(er.message); } }); ac.appendChild(x); }
         if (!cm.meu) { const r = el('button', 'dc-link', 'Denunciar'); r.type = 'button'; r.onclick = () => denunciar(d.id, cm.id); ac.appendChild(r); }
         cp.append(tp, el('p', '', cm.texto), ac); it.append(avatar(cm.autor, cm.meu ? fotoMinha() : cm.autorFoto), cp); lista.appendChild(it);
       };

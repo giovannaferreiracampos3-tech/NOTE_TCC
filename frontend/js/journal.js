@@ -181,11 +181,20 @@
     }
   
     // Apagar publicação (apaga também do banco: comentários, reações, favoritos e imagem)
-    async function apagarArtigo(a) {
-      if (!confirm('Apagar "' + a.titulo + '"?\n\nOs comentários e reações também serão apagados. Isso não pode ser desfeito.')) return false;
-      try { await api('/artigos/' + a.id, { method: 'DELETE' }); toast('Publicação apagada.'); return true; }
-      catch (er) { toast(er.message); return false; }
+    async function apagarArtigo(a, comoEquipe) {
+      let motivo = '';
+      if (comoEquipe) {
+        const m = prompt('Remover "' + a.titulo + '" como equipe.\n\nInforme o motivo (fica registrado):');
+        if (m === null) return false;
+        motivo = m.trim().slice(0, 250);
+        if (!confirm('Confirmar a remoção de "' + a.titulo + '"? Isso não pode ser desfeito.')) return false;
+      } else if (!confirm('Apagar "' + a.titulo + '"?\n\nOs comentários e reações também serão apagados. Isso não pode ser desfeito.')) return false;
+      try {
+        await api('/artigos/' + a.id + (motivo ? '?motivo=' + encodeURIComponent(motivo) : ''), { method: 'DELETE' });
+        toast('Publicação apagada.'); return true;
+      } catch (er) { toast(er.message); return false; }
     }
+
     function delBtn(a, depois) {
       const b = el('button', 'jr-del'); b.type = 'button'; b.title = 'Apagar publicação'; b.setAttribute('aria-label', 'Apagar ' + a.titulo);
       b.appendChild(el('i', 'ph ph-trash'));
@@ -543,6 +552,11 @@
         raiz.append(el('p', 'jr-vazio', er.status === 404 ? 'Publicação não encontrada.' : er.message), v); return;
       }
       if (meu !== ticket) return;
+      let ehEquipe = false;
+      if (logado()) {
+        try { ehEquipe = (await api('/eu')).equipe; } catch (e) { /* segue como usuário comum */ }
+        if (meu !== ticket) return;
+      }
       document.title = a.titulo + ' – NoteWave Journal';
       const c = cat(a.categoria);
       const mig = el('nav', 'jr-migalhas'); mig.setAttribute('aria-label', 'Você está em');
@@ -590,6 +604,12 @@
           bd.onclick = async () => { if (await apagarArtigo(a)) ir('#/meus'); };
           fim.appendChild(bd);
         }
+        else if (ehEquipe) {
+          const bd = el('button', 'jr-btn perigo'); bd.type = 'button';
+          bd.append(el('i', 'ph ph-shield-warning'), document.createTextNode('Remover (equipe)'));
+          bd.onclick = async () => { if (await apagarArtigo(a, true)) ir('#/'); };
+          fim.appendChild(bd);
+        }
         barra.appendChild(fim);
       }
       barraDesenhar();
@@ -608,9 +628,18 @@
         a.comentarios.forEach(cm => {
           const it = el('div', 'jr-coment'), corpo = el('div', 'jr-coment-corpo'), topo = el('div', 'jr-coment-topo');
           topo.append(el('b', '', '@' + cm.autor), el('span', '', dataBR(cm.data)));
-          if (cm.meu || a.meu) { // autor do comentário OU dono do artigo pode apagar
+          if (cm.meu || a.meu || ehEquipe) { // autor, dono do artigo ou equipe
             const x = el('button', 'jr-mini'); x.type = 'button'; x.title = 'Apagar comentário'; x.setAttribute('aria-label', 'Apagar comentário'); x.appendChild(el('i', 'ph ph-trash'));
-            x.onclick = async () => { try { await api('/comentarios/' + cm.id, { method: 'DELETE' }); a.comentarios = a.comentarios.filter(z => z.id !== cm.id); comentariosDesenhar(); } catch (er) { toast(er.message); } };
+            x.onclick = async () => {
+              let q = '';
+              if (ehEquipe && !cm.meu && !a.meu) {
+                const mo = prompt('Remover comentário como equipe.\nMotivo (fica registrado):');
+                if (mo === null) return;
+                q = '?motivo=' + encodeURIComponent(mo.trim().slice(0, 250));
+              }
+              try { await api('/comentarios/' + cm.id + q, { method: 'DELETE' }); a.comentarios = a.comentarios.filter(z => z.id !== cm.id); comentariosDesenhar(); }
+              catch (er) { toast(er.message); }
+            };
             topo.appendChild(x);
           }
           if (!cm.meu) {
