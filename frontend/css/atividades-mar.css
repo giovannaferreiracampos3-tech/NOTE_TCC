@@ -122,3 +122,10 @@
      .tide i,.listen::after,.fb::before,.res::before,.opt.right,.opt.wrong{animation:none}
      .card,.card::after,.opt,.btn{transition:none}
    }
+
+   /* ---------- Topo: contador de estrelas e botão de tema ---------- */
+.treasure{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:#ffe7a8;padding:5px 18px;border:3px solid transparent;background:linear-gradient(#0e4a6b,#06223f) padding-box,var(--ouro) border-box;box-shadow:0 4px 0 rgba(0,20,40,.35),inset 0 2px 5px rgba(255,255,255,.22)}
+.nw-tema{width:44px;height:44px;border:4px solid transparent;background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.9) 0 9%,#a8e6ee 38%,#1b9aaa) padding-box,var(--ouro) border-box;box-shadow:0 4px 0 rgba(0,20,40,.35),inset -3px -4px 8px rgba(255,255,255,.35);transition:transform .2s}
+.nw-tema:hover{transform:rotate(-14deg) scale(1.07)}
+.nw-tema:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,20,40,.35)}
+:root[data-tema=escuro] .nw-tema{background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.55) 0 8%,#1f7ea0 40%,#06223f) padding-box,var(--ouro) border-box}
