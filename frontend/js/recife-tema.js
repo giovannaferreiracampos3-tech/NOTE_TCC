@@ -1,9 +1,16 @@
 // NoteWave - tema claro/escuro, cena do recife e vídeo de entrada.
 // Carregue no <head>, sem defer, para o tema aplicar antes da página aparecer.
 (function () {
-    var R = document.documentElement, K = 'nw_tema';
-    try { R.dataset.tema = localStorage.getItem(K) || (matchMedia('(prefers-color-scheme:dark)').matches ? 'escuro' : 'claro'); }
-    catch (e) { R.dataset.tema = 'claro'; }
+  var R = document.documentElement;
+  // O tema é escolhido em Configurações (tema.js grava 'theme' = dark/light).
+  function sync() {
+    var escuro = false;
+    try { escuro = localStorage.getItem('theme') === 'dark' || (localStorage.getItem('theme') === null && localStorage.getItem('darkMode') === 'true'); } catch (e) {}
+    R.dataset.tema = escuro ? 'escuro' : 'claro';
+  }
+  sync();
+  window.addEventListener('storage', function (e) { if (e.key === 'theme') sync(); });
+  window.addEventListener('pageshow', function (e) { if (e.persisted) sync(); });
   
     var bolhas = [[180,9],[340,13],[520,11],[700,15],[900,10],[1080,14],[1260,12],[1440,16]].map(function (p, i) {
       return '<circle class="b" cx="' + p[0] + '" cy="880" r="' + (5 + i % 4 * 3) + '" style="animation-duration:' + p[1] + 's;animation-delay:-' + i * 2 + 's"/>';
