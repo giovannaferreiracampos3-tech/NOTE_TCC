@@ -43,19 +43,30 @@
   $('correctCount').textContent = ok; $('wrongCount').textContent = err;
   $('btnHelp').onclick = () => { const h = $('helpBox'); h.style.display = h.style.display === 'none' ? 'block' : 'none'; };
 
-  const DUR = 1.5;
-  $('audioTime').textContent = `0:00 / ${fmt(DUR)}`;
+  const DUR = 2;
+  const barra = document.querySelector('.wave-line');
+  const resetPlayer = () => {
+    cancelAnimationFrame(relogio);
+    barra.style.width = '0%';
+    $('audioTime').textContent = `0:00 / ${fmt(DUR)}`;
+    playBtn.innerHTML = "<span class='play-icon'>▶</span>";
+  };
+  resetPlayer();
   playBtn.onclick = () => {
     const m = C.midi[licao.classePosicao];
     if (m === undefined) { console.error('Sem nota MIDI para', licao.classePosicao); return; }
     sintetizar(m, DUR);
-    clearInterval(relogio);
+    cancelAnimationFrame(relogio);
+    playBtn.innerHTML = "<span class='play-icon'>⏸</span>";
     const ini = performance.now();
-    relogio = setInterval(() => {
-      const s = Math.min((performance.now() - ini) / 1000, DUR);
+    const passo = agora => {
+      const s = Math.min((agora - ini) / 1000, DUR);
+      barra.style.width = (s / DUR * 100) + '%';
       $('audioTime').textContent = `${fmt(s)} / ${fmt(DUR)}`;
-      if (s >= DUR) clearInterval(relogio);
-    }, 100);
+      if (s < DUR) relogio = requestAnimationFrame(passo);
+      else playBtn.innerHTML = "<span class='play-icon'>▶</span>";
+    };
+    relogio = requestAnimationFrame(passo);
   };
 
   const botoes = [...document.querySelectorAll('.option-btn')];
