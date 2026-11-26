@@ -26,7 +26,7 @@
   const BASE = window.NW_API || 'https://note-tcc-backend.vercel.app/api';
   const HOST = BASE.replace(/\/api\/?$/, '');
   const MASCOTE = '../img/viola.png';
-  const LIM = { fotos: 6, mb: 5, nome: 80, desc: 1000, descMin: 20, coment: 500 };
+  const LIM = { fotos: 6, mb: 25, nome: 80, desc: 1000, descMin: 20, coment: 500 };
 
   const CATS = [
     { id: 'corda', nome: 'Instrumentos de corda', curto: 'Cordas', icone: 'ph-guitar' },
@@ -258,14 +258,38 @@
       });
       zona.hidden = todas.length >= LIM.fotos;
     }
-    function aceitar(lista) {
-      [...lista].forEach(f => {
-        if (mantidas.length + novas.length >= LIM.fotos) { toast('Máximo de ' + LIM.fotos + ' fotos.'); return; }
-        if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { toast('"' + f.name + '": use JPG, PNG ou WEBP.'); return; }
-        if (f.size > LIM.mb * 1024 * 1024) { toast('"' + f.name + '" passa de ' + LIM.mb + ' MB.'); return; }
-        novas.push({ file: f, src: URL.createObjectURL(f) });
-      }); desenharFotos();
-    }
+        // Redimensiona e comprime a foto no navegador (máx. 1600 px, ~700 KB)
+        async function reduzir(file) {
+          const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+          let lado = 1600, q = 0.82, blob;
+          for (let i = 0; i < 5; i++) {
+            const esc = Math.min(1, lado / Math.max(bmp.width, bmp.height));
+            const cv = document.createElement('canvas');
+            cv.width = Math.round(bmp.width * esc); cv.height = Math.round(bmp.height * esc);
+            const ctx = cv.getContext('2d');
+            ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cv.width, cv.height);
+            ctx.drawImage(bmp, 0, 0, cv.width, cv.height);
+            blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', q));
+            if (blob && blob.size <= 700 * 1024) break;
+            lado *= 0.85; q = Math.max(0.55, q - 0.07);
+          }
+          bmp.close();
+          if (!blob) throw new Error('falha');
+          return new File([blob], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' });
+        }
+    
+        async function aceitar(lista) {
+          for (const f of [...lista]) {
+            if (mantidas.length + novas.length >= LIM.fotos) { toast('Máximo de ' + LIM.fotos + ' fotos.'); break; }
+            if (!/^image\/(jpeg|png|webp)$/.test(f.type)) { toast('"' + f.name + '": use JPG, PNG ou WEBP.'); continue; }
+            if (f.size > LIM.mb * 1024 * 1024) { toast('"' + f.name + '" passa de ' + LIM.mb + ' MB.'); continue; }
+            try {
+              const leve = await reduzir(f);
+              novas.push({ file: leve, src: URL.createObjectURL(leve) });
+              desenharFotos();
+            } catch (e) { toast('Não foi possível processar "' + f.name + '".'); }
+          }
+        }
     arq.addEventListener('change', () => { aceitar(arq.files); arq.value = ''; });
     zona.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); arq.click(); } });
     const s2 = bloco('Fotografias', 'Mostre o instrumento de frente, de lado e os detalhes.', zona, fotos); desenharFotos();
